@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LetsWatchFootballTogether</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name_kor">같이 축구 볼 사람?</string>
 </resources>
