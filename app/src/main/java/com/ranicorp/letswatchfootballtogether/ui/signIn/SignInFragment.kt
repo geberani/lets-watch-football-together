@@ -12,6 +12,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -118,6 +119,7 @@ class SignInFragment : Fragment() {
                     val user = auth.currentUser
                     if (user != null) {
                         viewModel.saveUserInfo(user)
+                        findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToHomeFragment())
                     }
                 } else {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
