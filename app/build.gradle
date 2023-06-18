@@ -6,6 +6,9 @@ plugins {
     id 'kotlin-kapt'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.ranicorp.letswatchfootballtogether'
     compileSdk 33
@@ -17,6 +20,8 @@ android {
         versionCode 1
         versionName "1.0"
 
+        buildConfigField "String", "GOOGLE_CLIENT_ID", properties["google_client_id"]
+        buildConfigField "String", "BASE_URL", properties["base_url"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
