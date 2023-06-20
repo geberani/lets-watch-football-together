@@ -46,14 +46,18 @@ class SettingViewModel(
             _errorType.value = Constants.ERROR_MAX_LENGTH
         } else {
             viewModelScope.launch {
-                if (existingNickName.value?.contains(nickName) == false) {
-                    isValidNickName.value = true
-                    _errorType.value = null
-                } else {
-                    isValidNickName.value = false
-                    _errorType.value = Constants.ERROR_DUPLICATE_NICK_NAME
-                }
+                verifyDuplicateNickName(nickName)
             }
+        }
+    }
+
+    private fun verifyDuplicateNickName(nickName: String) {
+        if (existingNickName.value?.contains(nickName) == false) {
+            isValidNickName.value = true
+            _errorType.value = null
+        } else {
+            isValidNickName.value = false
+            _errorType.value = Constants.ERROR_DUPLICATE_NICK_NAME
         }
     }
 
