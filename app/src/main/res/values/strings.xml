@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">LetsWatchFootballTogether</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name_kor">같이 축구 볼 사람?</string>
+
+    <!-- Navigation Graph -->
+    <string name="label_sign_in_destination">Sign In</string>
+    <string name="label_setting_destination">Setting</string>
+    <string name="label_home_destination">Home</string>
+    <string name="label_chat_destination">Chat</string>
+    <string name="label_profile_destination">Profile</string>
+
 </resources>
