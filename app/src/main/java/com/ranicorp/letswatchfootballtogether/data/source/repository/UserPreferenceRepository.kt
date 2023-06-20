@@ -16,4 +16,16 @@ class UserPreferenceRepository {
             getString(Constants.KEY_FIREBASE_UID, "")
         }
     }
+
+    fun saveUserNickName(nickName: String) {
+        with(FootballApplication.preferencesManager) {
+            putString(Constants.KEY_FIREBASE_NICK_NAME, nickName)
+        }
+    }
+
+    fun getUserNickName(): String {
+        return with(FootballApplication.preferencesManager) {
+            getString(Constants.KEY_FIREBASE_NICK_NAME, "")
+        }
+    }
 }

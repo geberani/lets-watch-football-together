@@ -1,14 +1,28 @@
 package com.ranicorp.letswatchfootballtogether.data.source.remote
 
 import com.ranicorp.letswatchfootballtogether.BuildConfig
+import com.ranicorp.letswatchfootballtogether.data.model.User
 import com.squareup.moshi.Moshi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
 
 interface ApiClient {
+
+    @GET("userNickNames.json")
+    suspend fun getUserNickNames() : Response<Map<String, String>>
+
+    @POST("userNickNames.json")
+    suspend fun addUserNickName(@Body userNickName: String) : Response<Map<String, String>>
+
+    @POST("users.json")
+    suspend fun addUser(@Body user: User) : Response<Map<String, String>>
 
     companion object {
 
