@@ -10,8 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import coil.load
-import coil.transform.CircleCropTransformation
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.FootballApplication
 import com.ranicorp.letswatchfootballtogether.R
@@ -41,9 +39,6 @@ class SettingFragment : Fragment() {
         pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    binding.ivProfile.load(uri) {
-                        transformations(CircleCropTransformation())
-                    }
                     viewModel.setProfileUri(uri.toString())
                 } else {
                 }
@@ -61,6 +56,8 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
         binding.ivProfile.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -71,9 +68,6 @@ class SettingFragment : Fragment() {
             viewModel.errorMsg.observe(viewLifecycleOwner) { errorMsg ->
                 setErrorMsg(errorMsg)
             }
-        }
-        binding.btnComplete.setOnClickListener {
-            viewModel.addUser()
         }
     }
 

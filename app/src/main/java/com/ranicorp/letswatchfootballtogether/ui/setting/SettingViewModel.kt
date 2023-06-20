@@ -22,8 +22,8 @@ class SettingViewModel(
     private val firebaseStorage: FirebaseStorage
 ) : ViewModel() {
 
-    private val profileUri: MutableLiveData<String> = MutableLiveData()
-    private val nickName: MutableLiveData<String> = MutableLiveData()
+    val profileUri: MutableLiveData<String> = MutableLiveData()
+    val nickName: MutableLiveData<String> = MutableLiveData()
     private val _errorType: MutableLiveData<String?> = MutableLiveData()
     val errorMsg: LiveData<String?> = _errorType
     private val isValidProfileUri: MutableLiveData<Boolean> = MutableLiveData()
