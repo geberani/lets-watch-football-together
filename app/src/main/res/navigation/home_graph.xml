@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.signIn.SignInFragment"
-        android:label="fragment_sign_in"
+        android:label="@string/label_sign_in_destination"
         tools:layout="@layout/fragment_sign_in" >
         <action
             android:id="@+id/action_signInFragment_to_settingFragment"
@@ -20,7 +20,7 @@
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.setting.SettingFragment"
-        android:label="fragment_setting"
+        android:label="@string/label_setting_destination"
         tools:layout="@layout/fragment_setting" >
         <action
             android:id="@+id/action_settingFragment_to_homeFragment"
@@ -29,16 +29,16 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.home.HomeFragment"
-        android:label="fragment_home"
+        android:label="@string/label_home_destination"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.chat.ChatFragment"
-        android:label="fragment_chat"
+        android:label="@string/label_chat_destination"
         tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="@string/label_profile_destination"
         tools:layout="@layout/fragment_profile" />
 </navigation>
