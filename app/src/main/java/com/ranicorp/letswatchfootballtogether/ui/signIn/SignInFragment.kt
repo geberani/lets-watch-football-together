@@ -116,9 +116,9 @@ class SignInFragment : Fragment() {
         auth.signInWithCredential(firebaseCredential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    if (user != null) {
-                        viewModel.saveUserInfo(user)
+                    val googleUid = auth.currentUser?.uid
+                    if (googleUid != null) {
+                        viewModel.saveUserInfo(googleUid)
                         findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingFragment())
                     }
                 } else {
