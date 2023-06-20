@@ -28,8 +28,8 @@
 
     <ImageView
         android:id="@+id/ivProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_marginTop="30dp"
         android:contentDescription="@string/content_description_set_profile_picture"
         android:src="@drawable/ic_profile"
@@ -41,9 +41,10 @@
         android:id="@+id/ivCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="-13dp"
+        android:layout_marginBottom="-8dp"
         android:contentDescription="@string/content_description_set_profile_picture"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_camera"
         app:layout_constraintBottom_toBottomOf="@id/ivProfile"
         app:layout_constraintEnd_toEndOf="@id/ivProfile" />
@@ -53,6 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/background_edit_nickname"
         android:hint="@string/hint_write_nickname"
         android:importantForAutofill="no"
@@ -62,7 +64,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivCamera" />
+        app:layout_constraintTop_toBottomOf="@id/ivProfile" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnComplete"
