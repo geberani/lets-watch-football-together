@@ -17,7 +17,7 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun moveToFirstScreen() {
-        if (userPreferenceRepository.getFirebaseUserId().isNotEmpty()) {
+        if (userPreferenceRepository.getUserUid().isNotEmpty()) {
             supportFragmentManager.commit {
                 replace(R.id.homeNavHost, HomeFragment())
             }
