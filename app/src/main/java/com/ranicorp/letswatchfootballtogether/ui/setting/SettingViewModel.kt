@@ -69,6 +69,11 @@ class SettingViewModel(
     }
 
     fun addUser() {
+        if (profileUri.value.isNullOrEmpty() || nickName.value.isNullOrEmpty()) {
+            //TODO 프로필 또는 닉네임을 설정하지 않았을 때에 대한 처리
+            return
+        }
+
         viewModelScope.launch {
             val imageLocations = addImageToStorage(profileUri.value!!)
             val user =
