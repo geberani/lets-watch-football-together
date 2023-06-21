@@ -19,4 +19,14 @@
     <string name="error_message_max_length">20자 이내로 입력해주세요.</string>
     <string name="error_message_duplicate_nick_name">중복된 닉네임입니다.</string>
 
+    <!-- 글쓰기 -->
+    <string name="title_write_post">모집 글쓰기</string>
+    <string name="hint_post_title">모집명</string>
+    <string name="hint_post_location">장소</string>
+    <string name="hint_post_time">시간</string>
+    <string name="hint_post_recruit_number">모집 인원</string>
+    <string name="hint_post_description">모집에 대한 설명을 작성해주세요</string>
+    <string name="label_complete">완료</string>
+    <string name="hint_posting_date">날짜</string>
+
 </resources>

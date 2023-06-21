@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="App.Title" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="App.CustomToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="navigationIcon">@drawable/ic_back_arrow</item>
+        <item name="titleCentered">true</item>
+        <item name="titleTextAppearance">@style/App.Title</item>
+    </style>
+
+    <style name="App.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:backgroundTint">@color/grey</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+</resources>
