@@ -6,7 +6,7 @@ import androidx.fragment.app.commit
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.ui.home.HomeFragment
 
-class MainActivity : AppCompatActivity() {
+class LauncherActivity : AppCompatActivity() {
 
     private val userPreferenceRepository = UserPreferenceRepository()
 
@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun moveToFirstScreen() {
-        if (userPreferenceRepository.getFirebaseUserId().isNotEmpty()) {
+        if (userPreferenceRepository.getUserUid().isNotEmpty()) {
             supportFragmentManager.commit {
                 replace(R.id.homeNavHost, HomeFragment())
             }
