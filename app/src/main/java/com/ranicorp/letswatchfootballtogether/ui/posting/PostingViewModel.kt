@@ -42,7 +42,7 @@ class PostingViewModel(
         _imageUriList.value = currentList.plus(uri)
     }
 
-    fun addPost() {
+    fun complete() {
         if (isNotValidInfo(imageUriList.value.toString(), R.string.guide_message_set_image)) return
         if (isNotValidInfo(title.value, R.string.guide_message_set_title)) return
         if (isNotValidInfo(location.value, R.string.guide_message_set_location)) return

@@ -81,7 +81,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
             ).show()
         }
         binding.btnAddPost.setOnClickListener {
-            viewModel.addPost()
+            viewModel.complete()
         }
         viewModel.isAdded.observe(viewLifecycleOwner) {
             if (it == true) {
