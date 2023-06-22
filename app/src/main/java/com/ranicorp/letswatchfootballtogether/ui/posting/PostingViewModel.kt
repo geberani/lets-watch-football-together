@@ -51,6 +51,22 @@ class PostingViewModel(
         if (isNotValidInfo(maxParticipants.value, R.string.guide_message_set_max_participants)) return
         if (isNotValidInfo(description.value, R.string.guide_message_set_description)) return
 
+        addPost()
+    }
+
+    fun removeImage(uri: Uri) {
+        _imageUriList.value = _imageUriList.value?.minus(uri)
+    }
+
+    private fun isNotValidInfo(text: String?, messageResId: Int): Boolean {
+        if (text.isNullOrBlank() || text == "null") {
+            _errorMsgResId.value = messageResId
+            return true
+        }
+        return false
+    }
+
+    private fun addPost() {
         viewModelScope.launch {
             _isAdded.value = true
             val imageLocations = addImageToStorage(_imageUriList.value?.toList() ?: emptyList())
@@ -72,18 +88,6 @@ class PostingViewModel(
             }
             //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가
         }
-    }
-
-    fun removeImage(uri: Uri) {
-        _imageUriList.value = _imageUriList.value?.minus(uri)
-    }
-
-    private fun isNotValidInfo(text: String?, messageResId: Int): Boolean {
-        if (text.isNullOrBlank() || text == "null") {
-            _errorMsgResId.value = messageResId
-            return true
-        }
-        return false
     }
 
     private suspend fun addImageToStorage(imageList: List<Uri>): List<String> = coroutineScope {
