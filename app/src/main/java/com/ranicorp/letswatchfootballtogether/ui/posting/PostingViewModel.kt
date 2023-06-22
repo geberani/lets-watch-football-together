@@ -43,18 +43,12 @@ class PostingViewModel(
     }
 
     fun addPost() {
-        if (imageUriList.value.isNullOrEmpty()) {
-            _errorMsgResId.value = R.string.guide_message_set_image
-            return
-        }
+        if (isNotValidInfo(imageUriList.value.toString(), R.string.guide_message_set_image)) return
         if (isNotValidInfo(title.value, R.string.guide_message_set_title)) return
         if (isNotValidInfo(location.value, R.string.guide_message_set_location)) return
         if (isNotValidInfo(date.value, R.string.guide_message_set_date)) return
         if (isNotValidInfo(time.value, R.string.guide_message_set_time)) return
-        if (maxParticipants.value.isNullOrBlank()) {
-            _errorMsgResId.value = R.string.guide_message_set_max_participants
-            return
-        }
+        if (isNotValidInfo(maxParticipants.value, R.string.guide_message_set_max_participants)) return
         if (isNotValidInfo(description.value, R.string.guide_message_set_description)) return
 
         viewModelScope.launch {
@@ -85,7 +79,7 @@ class PostingViewModel(
     }
 
     private fun isNotValidInfo(text: String?, messageResId: Int): Boolean {
-        if (text.isNullOrBlank()) {
+        if (text.isNullOrBlank() || text == "null") {
             _errorMsgResId.value = messageResId
             return true
         }
