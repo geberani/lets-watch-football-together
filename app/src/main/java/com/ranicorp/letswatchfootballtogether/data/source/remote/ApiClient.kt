@@ -1,6 +1,7 @@
 package com.ranicorp.letswatchfootballtogether.data.source.remote
 
 import com.ranicorp.letswatchfootballtogether.BuildConfig
+import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import com.squareup.moshi.Moshi
 import okhttp3.Interceptor
@@ -23,6 +24,9 @@ interface ApiClient {
 
     @POST("users.json")
     suspend fun addUser(@Body user: User): Response<Map<String, String>>
+
+    @POST("posts.json")
+    suspend fun addPost(@Body post: Post): Response<Map<String, String>>
 
     companion object {
 
