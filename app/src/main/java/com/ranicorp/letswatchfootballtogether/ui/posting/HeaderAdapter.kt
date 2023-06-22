@@ -35,10 +35,8 @@ class HeaderAdapter(private val onHeaderClick: HeaderClickListener) :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(numberOfImage: String) {
-            binding.tvNumberOfAttachedImages.text = numberOfImage
-            binding.root.setOnClickListener {
-                onHeaderClick.onHeaderClick()
-            }
+            binding.numberOfImage = numberOfImage
+            binding.headerClickListener = onHeaderClick
         }
 
         companion object {

@@ -25,10 +25,8 @@ class ImageAdapter(private val onDeleteClick: DeleteClickListener) :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(uri: Uri) {
-            binding.ivPreview.setImageURI(uri)
-            binding.ivDeleteAttachedImage.setOnClickListener {
-                onDeleteClickListener.onDeleteClick(uri.toString())
-            }
+            binding.imageUri = uri.toString()
+            binding.onDeleteClickListener = onDeleteClickListener
         }
 
         companion object {
