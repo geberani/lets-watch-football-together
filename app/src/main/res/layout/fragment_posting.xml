@@ -1,191 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.posting.PostingFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <data>
 
+        <variable
+            name="viewModel"
+            type="com.ranicorp.letswatchfootballtogether.ui.posting.PostingViewModel" />
+    </data>
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/postingToolbar"
-            style="@style/App.CustomToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/imageRecyclerView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll"
-            app:title="@string/title_write_post" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        tools:context=".ui.posting.PostingFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/imageRecyclerView"
-                android:layout_width="0dp"
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/postingToolbar"
+                style="@style/App.CustomToolbar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="17dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@id/etTitle"
+                app:layout_constraintBottom_toTopOf="@id/imageRecyclerView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:listitem="@layout/item_attached_image" />
+                app:layout_scrollFlags="scroll"
+                app:title="@string/title_write_post" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/imageRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="17dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toTopOf="@id/etTitle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:listitem="@layout/item_attached_image" />
 
 
-            <EditText
-                android:id="@+id/etTitle"
-                style="@style/App.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:hint="@string/hint_post_title"
-                android:inputType="text"
-                app:layout_constraintBottom_toTopOf="@id/etLocation"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imageRecyclerView" />
+                <EditText
+                    android:id="@+id/etTitle"
+                    style="@style/App.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:hint="@string/hint_post_title"
+                    android:inputType="text"
+                    android:text="@={viewModel.title}"
+                    app:layout_constraintBottom_toTopOf="@id/etLocation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imageRecyclerView" />
 
-            <ImageView
-                android:id="@+id/ivLocationPin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ic_location_pin"
-                app:layout_constraintBottom_toTopOf="@id/ivDate"
-                app:layout_constraintEnd_toStartOf="@id/etLocation"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/etTitle" />
+                <ImageView
+                    android:id="@+id/ivLocationPin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_location_pin"
+                    app:layout_constraintBottom_toTopOf="@id/ivDate"
+                    app:layout_constraintEnd_toStartOf="@id/etLocation"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/etTitle" />
 
-            <EditText
-                android:id="@+id/etLocation"
-                style="@style/App.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="16dp"
-                android:hint="@string/hint_post_location"
-                android:inputType="text"
-                app:layout_constraintBottom_toTopOf="@id/etDate"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivLocationPin"
-                app:layout_constraintTop_toBottomOf="@id/etTitle" />
+                <EditText
+                    android:id="@+id/etLocation"
+                    style="@style/App.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/hint_post_location"
+                    android:inputType="text"
+                    android:text="@={viewModel.location}"
+                    app:layout_constraintBottom_toTopOf="@id/etDate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivLocationPin"
+                    app:layout_constraintTop_toBottomOf="@id/etTitle" />
 
-            <ImageView
-                android:id="@+id/ivDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="30dp"
-                android:src="@drawable/ic_calendar"
-                app:layout_constraintBottom_toTopOf="@id/ivTime"
-                app:layout_constraintEnd_toStartOf="@id/etDate"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivLocationPin" />
+                <ImageView
+                    android:id="@+id/ivDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="30dp"
+                    android:src="@drawable/ic_calendar"
+                    app:layout_constraintBottom_toTopOf="@id/ivTime"
+                    app:layout_constraintEnd_toStartOf="@id/etDate"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ivLocationPin" />
 
-            <EditText
-                android:id="@+id/etDate"
-                style="@style/App.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="16dp"
-                android:hint="@string/hint_posting_date"
-                android:inputType="date"
-                app:layout_constraintBottom_toTopOf="@id/etTime"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivDate"
-                app:layout_constraintTop_toBottomOf="@id/etLocation" />
+                <EditText
+                    android:id="@+id/etDate"
+                    style="@style/App.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/hint_posting_date"
+                    android:inputType="date"
+                    android:text="@={viewModel.date}"
+                    app:layout_constraintBottom_toTopOf="@id/etTime"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivDate"
+                    app:layout_constraintTop_toBottomOf="@id/etLocation" />
 
-            <ImageView
-                android:id="@+id/ivTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="30dp"
-                android:src="@drawable/ic_clock"
-                app:layout_constraintEnd_toStartOf="@id/etTime"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivDate" />
+                <ImageView
+                    android:id="@+id/ivTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="30dp"
+                    android:src="@drawable/ic_clock"
+                    app:layout_constraintEnd_toStartOf="@id/etTime"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ivDate" />
 
-            <EditText
-                android:id="@+id/etTime"
-                style="@style/App.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="16dp"
-                android:hint="@string/hint_post_time"
-                android:inputType="time"
-                app:layout_constraintBottom_toTopOf="@id/etNumberOfRecruits"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivTime"
-                app:layout_constraintTop_toBottomOf="@id/etDate" />
+                <EditText
+                    android:id="@+id/etTime"
+                    style="@style/App.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/hint_post_time"
+                    android:inputType="time"
+                    android:text="@={viewModel.time}"
+                    app:layout_constraintBottom_toTopOf="@id/etNumberOfRecruits"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivTime"
+                    app:layout_constraintTop_toBottomOf="@id/etDate" />
 
-            <EditText
-                android:id="@+id/etNumberOfRecruits"
-                style="@style/App.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:hint="@string/hint_post_recruit_number"
-                android:inputType="number"
-                app:layout_constraintBottom_toTopOf="@id/etDescription"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/etTime" />
+                <EditText
+                    android:id="@+id/etNumberOfRecruits"
+                    style="@style/App.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:hint="@string/hint_post_recruit_number"
+                    android:inputType="text"
+                    android:text="@={viewModel.maxParticipants}"
+                    app:layout_constraintBottom_toTopOf="@id/etDescription"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/etTime" />
 
-            <EditText
-                android:id="@+id/etDescription"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/background_edit_nickname"
-                android:gravity="top"
-                android:hint="@string/hint_post_description"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine"
-                android:minHeight="300dp"
-                android:padding="10dp"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@id/btnAddPost"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_min="200dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/etNumberOfRecruits" />
+                <EditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/background_edit_nickname"
+                    android:gravity="top"
+                    android:hint="@string/hint_post_description"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine"
+                    android:minHeight="300dp"
+                    android:padding="10dp"
+                    android:text="@={viewModel.description}"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@id/btnAddPost"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_min="200dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/etNumberOfRecruits" />
 
-            <Button
-                android:id="@+id/btnAddPost"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="10dp"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="@color/blue"
-                android:insetBottom="0dp"
-                android:text="@string/label_complete"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/etDescription" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                <Button
+                    android:id="@+id/btnAddPost"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="10dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="@color/blue"
+                    android:insetBottom="0dp"
+                    android:text="@string/label_complete"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/etDescription" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
