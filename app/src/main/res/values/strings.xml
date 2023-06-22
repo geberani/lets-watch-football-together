@@ -14,7 +14,7 @@
     <string name="guide_message_set_profile">프로필을 설정해주세요.</string>
     <string name="hint_write_nickname">닉네임을 입력해주세요.</string>
     <string name="label_settings_complete">설정 완료하기</string>
-    <string name="content_description_set_profile_picture">클릭하여 프로필 사진을 설정할 수 있습니다</string>
+    <string name="content_description_set_profile_picture">클릭하여 프로필 사진을 설정할 수 있습니다.</string>
     <string name="error_message_empty_nick_name">닉네임을 입력해주세요.</string>
     <string name="error_message_max_length">20자 이내로 입력해주세요.</string>
     <string name="error_message_duplicate_nick_name">중복된 닉네임입니다.</string>
@@ -25,7 +25,7 @@
     <string name="hint_post_location">장소</string>
     <string name="hint_post_time">시간</string>
     <string name="hint_post_recruit_number">모집 인원</string>
-    <string name="hint_post_description">모집에 대한 설명을 작성해주세요</string>
+    <string name="hint_post_description">모집에 대한 설명을 작성해주세요.</string>
     <string name="label_complete">완료</string>
     <string name="hint_posting_date">날짜</string>
     <string name="guide_message_please_wait">잠시 기다려주세요.</string>

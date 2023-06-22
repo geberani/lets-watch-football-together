@@ -16,13 +16,13 @@ import retrofit2.http.POST
 interface ApiClient {
 
     @GET("userNickNames.json")
-    suspend fun getUserNickNames() : Response<Map<String, String>>
+    suspend fun getUserNickNames(): Response<Map<String, String>>
 
     @POST("userNickNames.json")
-    suspend fun addUserNickName(@Body userNickName: String) : Response<Map<String, String>>
+    suspend fun addUserNickName(@Body userNickName: String): Response<Map<String, String>>
 
     @POST("users.json")
-    suspend fun addUser(@Body user: User) : Response<Map<String, String>>
+    suspend fun addUser(@Body user: User): Response<Map<String, String>>
 
     companion object {
 
