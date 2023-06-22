@@ -20,7 +20,7 @@
             android:layout_height="wrap_content">
 
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/postingToolbar"
                 style="@style/App.CustomToolbar"
                 android:layout_width="match_parent"
@@ -31,6 +31,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_scrollFlags="scroll"
                 app:title="@string/title_write_post" />
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
@@ -55,7 +56,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:listitem="@layout/item_attached_image" />
-
 
                 <EditText
                     android:id="@+id/etTitle"
@@ -168,7 +168,7 @@
                 <EditText
                     android:id="@+id/etDescription"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="15dp"
                     android:background="@drawable/background_edit_nickname"
@@ -198,10 +198,15 @@
                     android:text="@string/label_complete"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/etDescription" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.core.widget.NestedScrollView>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>
