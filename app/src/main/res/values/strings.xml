@@ -14,7 +14,7 @@
     <string name="guide_message_set_profile">프로필을 설정해주세요.</string>
     <string name="hint_write_nickname">닉네임을 입력해주세요.</string>
     <string name="label_settings_complete">설정 완료하기</string>
-    <string name="content_description_set_profile_picture">클릭하여 프로필 사진을 설정할 수 있습니다</string>
+    <string name="content_description_set_profile_picture">클릭하여 프로필 사진을 설정할 수 있습니다.</string>
     <string name="error_message_empty_nick_name">닉네임을 입력해주세요.</string>
     <string name="error_message_max_length">20자 이내로 입력해주세요.</string>
     <string name="error_message_duplicate_nick_name">중복된 닉네임입니다.</string>
@@ -25,8 +25,22 @@
     <string name="hint_post_location">장소</string>
     <string name="hint_post_time">시간</string>
     <string name="hint_post_recruit_number">모집 인원</string>
-    <string name="hint_post_description">모집에 대한 설명을 작성해주세요</string>
+    <string name="hint_post_description">모집에 대한 설명을 작성해주세요.</string>
     <string name="label_complete">완료</string>
     <string name="hint_posting_date">날짜</string>
+    <string name="guide_message_please_wait">잠시 기다려주세요.</string>
+    <string name="number_of_image_displayed">%1$d/10</string>
+    <string name="guide_message_set_image">이미지를 추가해주세요.</string>
+    <string name="guide_message_set_title">모집명을 작성해주세요.</string>
+    <string name="guide_message_set_location">장소를 추가해주세요.</string>
+    <string name="guide_message_set_date">날짜를 추가해주세요.</string>
+    <string name="guide_message_set_time">시간을 추가해주세요.</string>
+    <string name="guide_message_set_max_participants">모집 인원을 작성해주세요.</string>
+    <string name="guide_message_set_description">모집에 대한 설명을 작성해주세요.</string>
+    <string name="guide_message_limit_max_images">사진은 10장까지 추가할 수 있습니다.</string>
+    <string name="title_set_date">모임 날짜를 정해주세요.</string>
+    <string name="title_set_time">모임 시간을 정해주세요</string>
+    <string name="label_am_time">오전 %1$d : %2$d</string>
+    <string name="label_pm_time">오후 %1$d : %2$d</string>
 
 </resources>
