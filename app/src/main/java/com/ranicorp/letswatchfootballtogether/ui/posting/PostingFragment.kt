@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.FootballApplication
 import com.ranicorp.letswatchfootballtogether.R
@@ -87,6 +89,12 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         binding.etDate.setOnClickListener {
             chooseDate()
         }
+        binding.ivTime.setOnClickListener {
+            chooseTime()
+        }
+        binding.etTime.setOnClickListener {
+            chooseTime()
+        }
     }
 
     private fun setAdapter() {
@@ -120,8 +128,29 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
                 .build()
         datePicker.show(childFragmentManager, null)
         datePicker.addOnPositiveButtonClickListener {
-            datePicker.dismiss()
             binding.etDate.setText(DateFormatText.longToDateString(it))
+        }
+    }
+
+    private fun chooseTime() {
+        val timePicker =
+            MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_12H)
+                .setHour(12)
+                .setMinute(10)
+                .setTitleText(getString(R.string.title_set_time))
+                .build()
+        timePicker.show(childFragmentManager, null)
+        timePicker.addOnPositiveButtonClickListener {
+            var hour = timePicker.hour
+            val minute = timePicker.minute
+
+            if (hour<=12) {
+                binding.etTime.setText(getString(R.string.label_am_time, hour, minute))
+            } else {
+                hour -= 12
+                binding.etTime.setText(getString(R.string.label_pm_time, hour, minute))
+            }
         }
     }
 
