@@ -33,8 +33,8 @@ class PostingViewModel(
     val errorMsgResId = _errorMsgResId
     private val _imageUriList: MutableLiveData<List<Uri>> = MutableLiveData()
     val imageUriList: LiveData<List<Uri>> = _imageUriList
-    private val _isAdded: MutableLiveData<Boolean> = MutableLiveData()
-    val isAdded: LiveData<Boolean> = _isAdded
+    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isLoading: LiveData<Boolean> = _isLoading
     private val userUid = userPreferenceRepository.getUserUid()
 
     fun addImage(uri: Uri) {
@@ -72,7 +72,7 @@ class PostingViewModel(
 
     private fun addPost() {
         viewModelScope.launch {
-            _isAdded.value = true
+            _isLoading.value = true
             val imageLocations = addImageToStorage(_imageUriList.value?.toList() ?: emptyList())
             val post = Post(
                 userUid + getCurrentDateString(),
@@ -88,7 +88,7 @@ class PostingViewModel(
                 mutableListOf(userUid)
             )
             if (postRepository.addPost(post).isSuccessful) {
-                _isAdded.value = false
+                _isLoading.value = false
             }
             //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가
         }

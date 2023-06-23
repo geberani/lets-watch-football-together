@@ -83,7 +83,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         binding.btnAddPost.setOnClickListener {
             viewModel.complete()
         }
-        viewModel.isAdded.observe(viewLifecycleOwner) {
+        viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it == true) {
                 progressDialog.show(requireActivity().supportFragmentManager, null)
             } else {
