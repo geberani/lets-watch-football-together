@@ -115,7 +115,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     private fun chooseDate() {
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
-                .setTitleText("모임 날짜를 정해주세요")
+                .setTitleText(getString(R.string.title_set_date))
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
         datePicker.show(childFragmentManager, "날짜를 골라주세요")
