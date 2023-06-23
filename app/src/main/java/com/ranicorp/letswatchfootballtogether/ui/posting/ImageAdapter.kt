@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ranicorp.letswatchfootballtogether.databinding.ItemAttachedImageBinding
 
-class ImageAdapter(private val onDeleteClick: DeleteClickListener) :
+class ImageAdapter(private val deleteClickListener: DeleteClickListener) :
     ListAdapter<Uri, ImageAdapter.ImageViewHolder>(ImageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        return ImageViewHolder.from(parent, onDeleteClick)
+        return ImageViewHolder.from(parent, deleteClickListener)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
@@ -21,23 +21,23 @@ class ImageAdapter(private val onDeleteClick: DeleteClickListener) :
 
     class ImageViewHolder(
         private val binding: ItemAttachedImageBinding,
-        private val onDeleteClickListener: DeleteClickListener
+        private val deleteClickListener: DeleteClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(uri: Uri) {
             binding.imageUri = uri.toString()
-            binding.onDeleteClickListener = onDeleteClickListener
+            binding.deleteClickListener = deleteClickListener
         }
 
         companion object {
-            fun from(parent: ViewGroup, onDeleteClick: DeleteClickListener)
+            fun from(parent: ViewGroup, deleteClickListener: DeleteClickListener)
                     : ImageViewHolder {
                 return ImageViewHolder(
                     ItemAttachedImageBinding.inflate(
                         LayoutInflater.from(
                             parent.context
                         ), parent, false
-                    ), onDeleteClick
+                    ), deleteClickListener
                 )
             }
         }

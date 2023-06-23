@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ranicorp.letswatchfootballtogether.databinding.ItemImageHeaderBinding
 
-class HeaderAdapter(private val onHeaderClick: HeaderClickListener) :
+class HeaderAdapter(private val headerClickListener: HeaderClickListener) :
     RecyclerView.Adapter<HeaderAdapter.HeaderViewHolder>() {
 
     private var numberOfImage = ""
@@ -14,7 +14,7 @@ class HeaderAdapter(private val onHeaderClick: HeaderClickListener) :
         parent: ViewGroup,
         viewType: Int
     ): HeaderViewHolder {
-        return HeaderViewHolder.from(parent, onHeaderClick)
+        return HeaderViewHolder.from(parent, headerClickListener)
     }
 
     override fun onBindViewHolder(holder: HeaderViewHolder, position: Int) {
@@ -31,25 +31,25 @@ class HeaderAdapter(private val onHeaderClick: HeaderClickListener) :
 
     class HeaderViewHolder(
         private val binding: ItemImageHeaderBinding,
-        private val onHeaderClick: HeaderClickListener
+        private val headerClickListener: HeaderClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(numberOfImage: String) {
             binding.numberOfImage = numberOfImage
-            binding.headerClickListener = onHeaderClick
+            binding.headerClickListener = headerClickListener
         }
 
         companion object {
             fun from(
                 parent: ViewGroup,
-                onHeaderClick: HeaderClickListener
+                headerClickListener: HeaderClickListener
             ): HeaderViewHolder {
                 return HeaderViewHolder(
                     ItemImageHeaderBinding.inflate(
                         LayoutInflater.from(
                             parent.context
                         ), parent, false
-                    ), onHeaderClick
+                    ), headerClickListener
                 )
             }
         }
