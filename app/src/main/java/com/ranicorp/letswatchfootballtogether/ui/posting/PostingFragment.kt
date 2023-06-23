@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ConcatAdapter
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.FootballApplication
 import com.ranicorp.letswatchfootballtogether.R
@@ -19,6 +20,7 @@ import com.ranicorp.letswatchfootballtogether.data.source.repository.PostReposit
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.ProgressDialogFragment
+import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 
 class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
 
@@ -70,9 +72,30 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     }
 
     private fun setLayout() {
+        setAdapter()
+        setObservers()
+        setOnClickListeners()
+    }
+
+    private fun setOnClickListeners() {
+        binding.btnAddPost.setOnClickListener {
+            viewModel.complete()
+        }
+        binding.ivDate.setOnClickListener {
+            chooseDate()
+        }
+        binding.etDate.setOnClickListener {
+            chooseDate()
+        }
+    }
+
+    private fun setAdapter() {
         binding.imageRecyclerView.adapter =
             ConcatAdapter(attachedImageHeaderAdapter, attachedImageAdapter)
         attachedImageHeaderAdapter.submitList(getString(R.string.number_of_image_displayed, 0))
+    }
+
+    private fun setObservers() {
         viewModel.errorMsgResId.observe(viewLifecycleOwner) {
             Toast.makeText(
                 context,
@@ -80,15 +103,25 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
                 Toast.LENGTH_SHORT
             ).show()
         }
-        binding.btnAddPost.setOnClickListener {
-            viewModel.complete()
-        }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it == true) {
                 progressDialog.show(requireActivity().supportFragmentManager, null)
             } else {
                 progressDialog.dismiss()
             }
+        }
+    }
+
+    private fun chooseDate() {
+        val datePicker =
+            MaterialDatePicker.Builder.datePicker()
+                .setTitleText("모임 날짜를 정해주세요")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .build()
+        datePicker.show(childFragmentManager, "날짜를 골라주세요")
+        datePicker.addOnPositiveButtonClickListener {
+            datePicker.dismiss()
+            binding.etDate.setText(DateFormatText.longToDateString(it))
         }
     }
 
