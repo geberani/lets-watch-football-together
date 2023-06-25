@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- LocationInfoLayout-->
+    <declare-styleable name="LocationInfoLayout">
+        <attr name="locationInfoLabel" format="reference" />
+        <!--  standard attributes  -->
+        <attr name="android:paddingEnd" />
+    </declare-styleable>
+
+    <!-- DateTimeInfoLayout-->
+    <declare-styleable name="DateTimeInfoLayout">
+        <attr name="dateTimeInfoLabel" format="reference" />
+        <!--  standard attributes  -->
+        <attr name="android:paddingEnd" />
+    </declare-styleable>
+
+</resources>
