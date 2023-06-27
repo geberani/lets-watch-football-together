@@ -11,10 +11,9 @@
         <item name="android:background">@color/white</item>
     </style>
 
-    <style name="App.CustomToolbar.Extend" parent="Widget.MaterialComponents.Toolbar">
+    <style name="App.CustomToolbar.Extend">
         <item name="navigationIcon">@drawable/ic_back_arrow</item>
         <item name="titleCentered">true</item>
-        <item name="titleTextAppearance">@style/App.Title</item>
     </style>
 
     <style name="App.EditText" parent="Widget.AppCompat.EditText">
