@@ -43,4 +43,7 @@
     <string name="label_am_time">오전 %1$d : %2$d</string>
     <string name="label_pm_time">오후 %1$d : %2$d</string>
 
+    <!-- 홈 -->
+    <string name="title_lets_watch_football">같이 축구 볼 사람?</string>
+
 </resources>

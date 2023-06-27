@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/ivPostPreview"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvPostTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/tvPostTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/ivPostPreview"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="[첼시 vs 리버풀] 이번 시즌 마지막 경기입니다" />
+
+    <com.ranicorp.letswatchfootballtogether.ui.common.LocationInfoLayout
+        android:id="@+id/locationInfoLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/dateTimeInfoLayout"
+        app:layout_constraintStart_toEndOf="@id/ivPostPreview"
+        app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
+
+    <com.ranicorp.letswatchfootballtogether.ui.common.DateTimeInfoLayout
+        android:id="@+id/dateTimeInfoLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/locationInfoLayout"
+        app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

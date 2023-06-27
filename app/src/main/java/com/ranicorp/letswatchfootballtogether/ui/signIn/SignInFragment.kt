@@ -146,4 +146,9 @@ class SignInFragment : Fragment() {
                 Log.e("TAG", "legacySignIn: ", e)
             }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

@@ -154,6 +154,11 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onDeleteClick(uri: String) {
         viewModel.removeImage(uri.toUri())
         updateAdapterData()

@@ -79,4 +79,9 @@ class SettingFragment : Fragment() {
             else -> null
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
