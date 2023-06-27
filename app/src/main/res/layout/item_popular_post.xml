@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="180dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="13dp"
     android:padding="10dp">
@@ -21,6 +21,9 @@
         android:id="@+id/tvPostTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -31,9 +34,9 @@
 
     <com.ranicorp.letswatchfootballtogether.ui.common.LocationInfoLayout
         android:id="@+id/locationInfoLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingEnd="4dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintBottom_toTopOf="@id/dateTimeInfoLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,9 +44,9 @@
 
     <com.ranicorp.letswatchfootballtogether.ui.common.DateTimeInfoLayout
         android:id="@+id/dateTimeInfoLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingEnd="4dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
