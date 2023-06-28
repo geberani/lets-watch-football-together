@@ -90,7 +90,7 @@ class HomeAdapter(private val clickListener: PostClickListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: HomeHeader) {
-            binding.tvHomeHeader.text = item.header
+            binding.header = item.header
         }
 
         companion object {
