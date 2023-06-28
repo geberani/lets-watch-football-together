@@ -77,12 +77,13 @@ class PostingViewModel(
             val post = Post(
                 userUid + getCurrentDateString(),
                 userUid,
-                getCurrentDateString(),
+                System.currentTimeMillis(),
                 title.value!!,
                 location.value!!,
                 date.value!!,
                 time.value!!,
                 maxParticipants.value!!.toInt(),
+                1,
                 description.value!!,
                 imageLocations,
                 mutableListOf(userUid)
