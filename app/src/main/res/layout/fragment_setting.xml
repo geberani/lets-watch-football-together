@@ -37,7 +37,7 @@
             android:layout_height="140dp"
             android:layout_marginTop="30dp"
             android:contentDescription="@string/content_description_set_profile_picture"
-            android:src="@drawable/ic_profile"
+            android:src="@drawable/ic_select_profile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvSetProfile" />
