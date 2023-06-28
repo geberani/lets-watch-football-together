@@ -28,6 +28,9 @@ interface ApiClient {
     @POST("posts.json")
     suspend fun addPost(@Body post: Post): Response<Map<String, String>>
 
+    @GET("posts.json")
+    suspend fun getAllPosts(): Response<Map<String, Post>>
+
     companion object {
 
         private const val BASE_URL = BuildConfig.BASE_URL

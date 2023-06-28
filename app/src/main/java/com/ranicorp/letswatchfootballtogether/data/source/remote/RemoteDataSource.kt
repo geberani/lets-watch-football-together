@@ -21,4 +21,8 @@ class RemoteDataSource(private val apiClient: ApiClient) {
     suspend fun addPost(post: Post): Response<Map<String, String>> {
         return apiClient.addPost(post)
     }
+
+    suspend fun getAllPosts(): Response<Map<String, Post>> {
+        return apiClient.getAllPosts()
+    }
 }
