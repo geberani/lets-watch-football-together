@@ -45,5 +45,8 @@
 
     <!-- 홈 -->
     <string name="title_lets_watch_football">같이 축구 볼 사람?</string>
+    <string name="header_new_posts">신규 모임</string>
+    <string name="header_popular_posts">인기 많은 모임</string>
+    <string name="header_all_posts">전체 모임</string>
 
 </resources>
