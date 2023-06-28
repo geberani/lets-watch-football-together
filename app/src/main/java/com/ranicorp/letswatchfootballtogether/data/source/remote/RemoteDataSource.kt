@@ -14,7 +14,7 @@ class RemoteDataSource(private val apiClient: ApiClient) {
         return apiClient.addUserNickName(userNickName)
     }
 
-    suspend fun addUser(user: User): Response<Map<String, String>> {
+    suspend fun addUser(user: User): Response<Map<String, User>> {
         return apiClient.addUser(user)
     }
 

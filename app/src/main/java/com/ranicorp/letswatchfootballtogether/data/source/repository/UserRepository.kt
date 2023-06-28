@@ -10,7 +10,7 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
         return remoteDataSource.getUserNickNames()
     }
 
-    suspend fun addUser(user: User) : Response<Map<String, String>> {
+    suspend fun addUser(user: User) : Response<Map<String, User>> {
         return remoteDataSource.addUser(user)
     }
 
