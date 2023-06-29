@@ -60,6 +60,7 @@ class HomeFragment : Fragment(), PostClickListener {
                 getString(R.string.header_popular_posts),
                 getString(R.string.header_all_posts)
             )
+            binding.refreshLayout.isRefreshing = false
         }
     }
 
