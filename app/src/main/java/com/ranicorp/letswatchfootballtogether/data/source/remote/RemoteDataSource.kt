@@ -14,11 +14,15 @@ class RemoteDataSource(private val apiClient: ApiClient) {
         return apiClient.addUserNickName(userNickName)
     }
 
-    suspend fun addUser(user: User): Response<Map<String, String>> {
+    suspend fun addUser(user: User): Response<Map<String, User>> {
         return apiClient.addUser(user)
     }
 
     suspend fun addPost(post: Post): Response<Map<String, String>> {
         return apiClient.addPost(post)
+    }
+
+    suspend fun getAllPosts(): Response<Map<String, Post>> {
+        return apiClient.getAllPosts()
     }
 }

@@ -30,7 +30,11 @@
         android:id="@+id/homeFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.home.HomeFragment"
         android:label="@string/label_home_destination"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_postingFragment"
+            app:destination="@id/postingFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.chat.ChatFragment"
@@ -41,4 +45,21 @@
         android:name="com.ranicorp.letswatchfootballtogether.ui.profile.ProfileFragment"
         android:label="@string/label_profile_destination"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.ranicorp.letswatchfootballtogether.ui.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="postUid"
+            app:argType="string" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_detailFragment"
+        app:destination="@id/detailFragment" />
+    <fragment
+        android:id="@+id/postingFragment"
+        android:name="com.ranicorp.letswatchfootballtogether.ui.posting.PostingFragment"
+        android:label="PostingFragment" />
 </navigation>

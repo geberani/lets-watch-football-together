@@ -1,48 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp"
-    android:padding="5dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/ivPostPreview"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tvPostTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_launcher_background" />
+    <data>
 
-    <TextView
-        android:id="@+id/tvPostTitle"
-        android:layout_width="wrap_content"
+        <variable
+            name="post"
+            type="com.ranicorp.letswatchfootballtogether.data.model.Post" />
+
+        <variable
+            name="clickListener"
+            type="com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener" />
+
+        <variable
+            name="postUid"
+            type="String" />
+
+        <variable
+            name="previewImageUri"
+            type="String" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@id/ivPostPreview"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="[첼시 vs 리버풀] 이번 시즌 마지막 경기입니다" />
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/background_white_rounded_corners"
+        android:onClick="@{() -> clickListener.onPostClick(postUid)}"
+        android:padding="5dp">
 
-    <com.ranicorp.letswatchfootballtogether.ui.common.LocationInfoLayout
-        android:id="@+id/locationInfoLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/dateTimeInfoLayout"
-        app:layout_constraintStart_toEndOf="@id/ivPostPreview"
-        app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
+        <ImageView
+            android:id="@+id/ivPostPreview"
+            squareCropImageUri="@{previewImageUri}"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvPostTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_launcher_background" />
 
-    <com.ranicorp.letswatchfootballtogether.ui.common.DateTimeInfoLayout
-        android:id="@+id/dateTimeInfoLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/locationInfoLayout"
-        app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
+        <TextView
+            android:id="@+id/tvPostTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@{post.title}"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toEndOf="@id/ivPostPreview"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="[첼시 vs 리버풀] 이번 시즌 마지막 경기입니다" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.ranicorp.letswatchfootballtogether.ui.common.LocationInfoLayout
+            android:id="@+id/locationInfoLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/dateTimeInfoLayout"
+            app:layout_constraintStart_toEndOf="@id/ivPostPreview"
+            app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
+
+        <com.ranicorp.letswatchfootballtogether.ui.common.DateTimeInfoLayout
+            android:id="@+id/dateTimeInfoLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/locationInfoLayout"
+            app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

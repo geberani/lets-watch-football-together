@@ -23,10 +23,13 @@ interface ApiClient {
     suspend fun addUserNickName(@Body userNickName: String): Response<Map<String, String>>
 
     @POST("users.json")
-    suspend fun addUser(@Body user: User): Response<Map<String, String>>
+    suspend fun addUser(@Body user: User): Response<Map<String, User>>
 
     @POST("posts.json")
     suspend fun addPost(@Body post: Post): Response<Map<String, String>>
+
+    @GET("posts.json")
+    suspend fun getAllPosts(): Response<Map<String, Post>>
 
     companion object {
 

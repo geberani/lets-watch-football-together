@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.use
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.ViewDateTimeInfoBinding
 
@@ -14,15 +15,11 @@ class DateTimeInfoLayout(context: Context, attrs: AttributeSet?) :
 
     init {
         binding = ViewDateTimeInfoBinding.inflate(LayoutInflater.from(context), this)
-        context.obtainStyledAttributes(attrs, R.styleable.DateTimeInfoLayout)
-            .use { array ->
-                val labelResId =
-                    array.getResourceId(R.styleable.DateTimeInfoLayout_dateTimeInfoLabel, 0)
-                val paddingEnd =
-                    array.getResourceId(R.styleable.DateTimeInfoLayout_android_paddingEnd, 0)
-                setInfoLabel(labelResId)
-                setPaddingEnd(paddingEnd)
-            }
+        context.obtainStyledAttributes(attrs, R.styleable.DateTimeInfoLayout).use { array ->
+            val paddingEnd =
+                array.getResourceId(R.styleable.DateTimeInfoLayout_android_paddingEnd, 0)
+            setPaddingEnd(paddingEnd)
+        }
     }
 
     fun setInfo(dateTime: String) {
@@ -31,10 +28,6 @@ class DateTimeInfoLayout(context: Context, attrs: AttributeSet?) :
 
     fun getDateTimeInfo(): String {
         return binding.tvContent.text.toString()
-    }
-
-    private fun setInfoLabel(labelResId: Int) {
-        binding.tvContent.text = context.getString(labelResId)
     }
 
     private fun setPaddingEnd(paddingEnd: Int) {

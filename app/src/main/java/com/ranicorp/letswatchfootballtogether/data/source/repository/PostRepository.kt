@@ -9,4 +9,8 @@ class PostRepository(private val remoteDataSource: RemoteDataSource) {
     suspend fun addPost(post: Post): Response<Map<String, String>> {
         return remoteDataSource.addPost(post)
     }
+
+    suspend fun getAllPosts(): Response<Map<String, Post>> {
+        return remoteDataSource.getAllPosts()
+    }
 }

@@ -17,4 +17,9 @@ object DateFormatText {
         val format = SimpleDateFormat("yyyy년 MM월 dd일", SystemConfiguration.currentLocale)
         return format.format(date)
     }
+
+    fun longToDisplayDate(time: Long): String {
+        val format = SimpleDateFormat("MM.dd(E)", SystemConfiguration.currentLocale)
+        return format.format(time)
+    }
 }
