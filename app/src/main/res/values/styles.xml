@@ -12,7 +12,7 @@
     </style>
 
     <style name="App.CustomToolbar.Extend">
-        <item name="navigationIcon">@drawable/ic_back_arrow</item>
+        <item name="navigationIcon">@drawable/ic_arrow_filled</item>
         <item name="titleCentered">true</item>
     </style>
 
