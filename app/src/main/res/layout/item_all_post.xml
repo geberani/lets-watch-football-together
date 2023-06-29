@@ -24,7 +24,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:background="@drawable/background_white_rounded_corners"
@@ -68,6 +68,7 @@
             android:id="@+id/dateTimeInfoLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/locationInfoLayout"
             app:layout_constraintTop_toBottomOf="@id/tvPostTitle" />
