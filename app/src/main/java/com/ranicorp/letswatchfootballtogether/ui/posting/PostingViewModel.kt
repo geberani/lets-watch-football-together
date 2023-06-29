@@ -98,7 +98,7 @@ class PostingViewModel @Inject constructor(
 
     private suspend fun addImageToStorage(imageList: List<Uri>): List<String> = coroutineScope {
         imageList.map { imageUri ->
-            val location = "images/${imageUri}"
+            val location = "images/${imageUri}"+getCurrentDateString()
             val imageRef = firebaseStorage.getReference(location)
             imageRef.putFile(imageUri).await()
             location
