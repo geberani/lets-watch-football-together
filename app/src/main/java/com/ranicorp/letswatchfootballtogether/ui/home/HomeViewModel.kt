@@ -4,14 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
+class HomeViewModel(private val repository: PostRepository) : ViewModel() {
 
     private val _allPosts = MutableLiveData<List<Post>>()
     val allPosts: LiveData<List<Post>> = _allPosts
@@ -19,6 +18,14 @@ class HomeViewModel @Inject constructor(private val repository: PostRepository) 
     fun loadAllPosts() {
         viewModelScope.launch {
             _allPosts.value = repository.getAllPosts().body()?.values?.toList() ?: emptyList()
+        }
+    }
+
+    companion object {
+        fun provideFactory(repository: PostRepository) = viewModelFactory {
+            initializer {
+                HomeViewModel(repository)
+            }
         }
     }
 }

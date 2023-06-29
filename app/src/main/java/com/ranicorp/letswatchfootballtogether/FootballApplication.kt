@@ -1,7 +1,18 @@
 package com.ranicorp.letswatchfootballtogether
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.ranicorp.letswatchfootballtogether.data.source.PreferenceManager
 
-@HiltAndroidApp
-class FootballApplication: Application()
+class FootballApplication: Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        preferencesManager = PreferenceManager(this)
+        appContainer = AppContainer()
+    }
+
+    companion object {
+        lateinit var preferencesManager: PreferenceManager
+        lateinit var appContainer: AppContainer
+    }
+}

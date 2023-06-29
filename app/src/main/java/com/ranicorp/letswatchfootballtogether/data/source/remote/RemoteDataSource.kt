@@ -3,9 +3,8 @@ package com.ranicorp.letswatchfootballtogether.data.source.remote
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import retrofit2.Response
-import javax.inject.Inject
 
-class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
+class RemoteDataSource(private val apiClient: ApiClient) {
 
     suspend fun getUserNickNames(): Response<Map<String, String>> {
         return apiClient.getUserNickNames()

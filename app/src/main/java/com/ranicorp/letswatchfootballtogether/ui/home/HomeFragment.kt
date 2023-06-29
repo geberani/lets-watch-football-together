@@ -7,18 +7,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.ranicorp.letswatchfootballtogether.FootballApplication
 import com.ranicorp.letswatchfootballtogether.HomeGraphDirections
 import com.ranicorp.letswatchfootballtogether.R
+import com.ranicorp.letswatchfootballtogether.data.source.remote.RemoteDataSource
+import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentHomeBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class HomeFragment : Fragment(), PostClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel by viewModels<HomeViewModel> {
+        HomeViewModel.provideFactory(PostRepository(RemoteDataSource(FootballApplication.appContainer.provideApiClient())))
+    }
     private val homeAdapter = HomeAdapter(this)
 
     override fun onCreateView(
