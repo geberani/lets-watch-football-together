@@ -48,5 +48,8 @@
     <string name="header_new_posts">신규 모임</string>
     <string name="header_popular_posts">인기 많은 모임</string>
     <string name="header_all_posts">전체 모임</string>
+    <string name="label_home">홈</string>
+    <string name="label_chat">채팅</string>
+    <string name="label_profile">프로필</string>
 
 </resources>
