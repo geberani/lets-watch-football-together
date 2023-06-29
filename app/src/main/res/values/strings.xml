@@ -40,8 +40,8 @@
     <string name="guide_message_limit_max_images">사진은 10장까지 추가할 수 있습니다.</string>
     <string name="title_set_date">모임 날짜를 정해주세요.</string>
     <string name="title_set_time">모임 시간을 정해주세요</string>
-    <string name="label_am_time">오전 %1$d : %2$d</string>
-    <string name="label_pm_time">오후 %1$d : %2$d</string>
+    <string name="label_am_time">오전 %1$d:%2$d</string>
+    <string name="label_pm_time">오후 %1$d:%2$d</string>
 
     <!-- 홈 -->
     <string name="title_lets_watch_football">같이 축구 볼 사람?</string>
