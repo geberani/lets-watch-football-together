@@ -10,29 +10,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.firebase.storage.FirebaseStorage
-import com.ranicorp.letswatchfootballtogether.FootballApplication
+import androidx.navigation.fragment.findNavController
 import com.ranicorp.letswatchfootballtogether.R
-import com.ranicorp.letswatchfootballtogether.data.source.remote.RemoteDataSource
-import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
-import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentSettingBinding
 import com.ranicorp.letswatchfootballtogether.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingFragment : Fragment() {
 
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
-    private val viewModel by viewModels<SettingViewModel> {
-        SettingViewModel.provideFactory(
-            UserPreferenceRepository(), UserRepository(
-                RemoteDataSource(
-                    FootballApplication.appContainer.provideApiClient()
-                )
-            ), FirebaseStorage.getInstance()
-        )
-    }
+    private val viewModel: SettingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

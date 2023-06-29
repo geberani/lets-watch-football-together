@@ -1,8 +1,12 @@
 package com.ranicorp.letswatchfootballtogether.data.source
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PreferenceManager(context: Context) {
+@Singleton
+class PreferenceManager @Inject constructor(@ApplicationContext context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences(
         "com.ranicorp.letswatchfootballtogether.PREFERENCE_KEY",

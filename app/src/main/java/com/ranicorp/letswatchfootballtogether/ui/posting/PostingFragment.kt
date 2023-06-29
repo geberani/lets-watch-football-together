@@ -14,16 +14,13 @@ import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.google.firebase.storage.FirebaseStorage
-import com.ranicorp.letswatchfootballtogether.FootballApplication
 import com.ranicorp.letswatchfootballtogether.R
-import com.ranicorp.letswatchfootballtogether.data.source.remote.RemoteDataSource
-import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
-import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.ProgressDialogFragment
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
 
     private var _binding: FragmentPostingBinding? = null
@@ -37,13 +34,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         }
     private val attachedImageAdapter = ImageAdapter(this)
     private val attachedImageHeaderAdapter = HeaderAdapter(this)
-    private val viewModel by viewModels<PostingViewModel> {
-        PostingViewModel.provideFactory(
-            PostRepository(RemoteDataSource(FootballApplication.appContainer.provideApiClient())),
-            UserPreferenceRepository(),
-            FirebaseStorage.getInstance()
-        )
-    }
+    private val viewModel: PostingViewModel by viewModels()
     private val progressDialog = ProgressDialogFragment()
 
     override fun onCreateView(
@@ -145,7 +136,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
             var hour = timePicker.hour
             val minute = timePicker.minute
 
-            if (hour<=12) {
+            if (hour <= 12) {
                 binding.etTime.setText(getString(R.string.label_am_time, hour, minute))
             } else {
                 hour -= 12
