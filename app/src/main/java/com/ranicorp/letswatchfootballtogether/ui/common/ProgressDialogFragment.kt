@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentProgressDialogBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProgressDialogFragment : DialogFragment() {
 
     override fun onCreateView(

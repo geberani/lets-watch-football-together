@@ -5,19 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText.getCurrentDateString
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class PostingViewModel(
+@HiltViewModel
+class PostingViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
     private val firebaseStorage: FirebaseStorage
@@ -101,18 +102,6 @@ class PostingViewModel(
             val imageRef = firebaseStorage.getReference(location)
             imageRef.putFile(imageUri).await()
             location
-        }
-    }
-
-    companion object {
-        fun provideFactory(
-            postRepository: PostRepository,
-            userPreferenceRepository: UserPreferenceRepository,
-            firebaseStorage: FirebaseStorage
-        ) = viewModelFactory {
-            initializer {
-                PostingViewModel(postRepository, userPreferenceRepository, firebaseStorage)
-            }
         }
     }
 }

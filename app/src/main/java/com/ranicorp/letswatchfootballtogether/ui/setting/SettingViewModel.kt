@@ -5,18 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
 import com.ranicorp.letswatchfootballtogether.util.Constants
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class SettingViewModel(
+@HiltViewModel
+class SettingViewModel @Inject constructor(
     private val userPreferenceRepository: UserPreferenceRepository,
     private val userRepository: UserRepository,
     private val firebaseStorage: FirebaseStorage
@@ -94,17 +95,5 @@ class SettingViewModel(
         val imageRef = firebaseStorage.getReference(location)
         imageRef.putFile(profileUri.toUri()).await()
         location
-    }
-
-    companion object {
-        fun provideFactory(
-            userPreferenceRepository: UserPreferenceRepository,
-            userRepository: UserRepository,
-            firebaseStorage: FirebaseStorage
-        ) = viewModelFactory {
-            initializer {
-                SettingViewModel(userPreferenceRepository, userRepository, firebaseStorage)
-            }
-        }
     }
 }
