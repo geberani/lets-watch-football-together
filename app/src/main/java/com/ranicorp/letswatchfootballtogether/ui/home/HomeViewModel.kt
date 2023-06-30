@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: PostRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(private val postRepository: PostRepository) : ViewModel() {
 
     private val _allPosts = MutableLiveData<List<Post>>()
     val allPosts: LiveData<List<Post>> = _allPosts
 
     fun loadAllPosts() {
         viewModelScope.launch {
-            _allPosts.value = repository.getAllPosts().body()?.values?.toList() ?: emptyList()
+            _allPosts.value = postRepository.getAllPosts().body()?.values?.toList() ?: emptyList()
         }
     }
 }
