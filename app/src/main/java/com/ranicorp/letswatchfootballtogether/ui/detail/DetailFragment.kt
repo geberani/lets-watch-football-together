@@ -26,6 +26,10 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setLayout()
+    }
+
+    private fun setLayout() {
         binding.rvParticipantsList.adapter = ParticipantsAdapter()
         binding.imageViewPager.adapter = BannerAdapter()
         TabLayoutMediator(binding.indicator, binding.imageViewPager) { tab, position ->
