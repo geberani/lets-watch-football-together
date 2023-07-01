@@ -2,8 +2,9 @@ package com.ranicorp.letswatchfootballtogether.ui.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.databinding.ItemViewpagerBannerBinding
 
 class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
@@ -25,14 +26,19 @@ class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
     }
 
     fun submitBannersList(bannersList: List<String>) {
+        banners.clear()
         banners.addAll(bannersList)
+        notifyDataSetChanged()
     }
 
     class BannerViewHolder(private val binding: ItemViewpagerBannerBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(uri: String) {
-            binding.ivBannerImage.setImageURI(uri.toUri())
+        fun bind(location: String) {
+            val imageRef = FirebaseStorage.getInstance().reference.child(location)
+            imageRef.downloadUrl.addOnSuccessListener {
+                binding.ivBannerImage.load(it)
+            }
         }
     }
 }

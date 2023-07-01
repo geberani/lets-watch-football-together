@@ -26,4 +26,8 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
     suspend fun getAllPosts(): Response<Map<String, Post>> {
         return apiClient.getAllPosts()
     }
+
+    suspend fun getAllUsers(): Response<Map<String, User>> {
+        return apiClient.getAllUsers()
+    }
 }

@@ -23,4 +23,7 @@ interface ApiClient {
 
     @GET("posts.json")
     suspend fun getAllPosts(): Response<Map<String, Post>>
+
+    @GET("users.json")
+    suspend fun getAllUsers(): Response<Map<String, User>>
 }
