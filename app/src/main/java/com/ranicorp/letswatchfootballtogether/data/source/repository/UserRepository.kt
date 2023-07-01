@@ -7,15 +7,15 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(private val remoteDataSource: RemoteDataSource) {
 
-    suspend fun getUserNickNames() : Response<Map<String, String>> {
+    suspend fun getUserNickNames(): Response<Map<String, String>> {
         return remoteDataSource.getUserNickNames()
     }
 
-    suspend fun addUser(user: User) : Response<Map<String, User>> {
+    suspend fun addUser(user: User): Response<Map<String, User>> {
         return remoteDataSource.addUser(user)
     }
 
-    suspend fun addUserNickName(nickName: String) : Response<Map<String, String>> {
+    suspend fun addUserNickName(nickName: String): Response<Map<String, String>> {
         return remoteDataSource.addUserNickName(nickName)
     }
 }
