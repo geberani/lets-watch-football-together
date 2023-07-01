@@ -20,7 +20,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/homeToolBar"
                 style="@style/App.CustomToolbar"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@id/rvHome"
                 app:layout_constraintEnd_toEndOf="parent"
