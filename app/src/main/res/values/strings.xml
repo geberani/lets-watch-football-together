@@ -52,4 +52,9 @@
     <string name="label_chat">채팅</string>
     <string name="label_profile">프로필</string>
 
+    <!-- 상세 화면 -->
+    <string name="label_number_of_participants">참여 인원 (%1$d/%2$d명)</string>
+    <string name="label_participate">참여하기</string>
+    <string name="label_chat_room">채팅방</string>
+
 </resources>
