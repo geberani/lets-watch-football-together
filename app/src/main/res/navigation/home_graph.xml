@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_settingFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <argument
+            android:name="googleUid"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"

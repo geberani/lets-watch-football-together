@@ -11,7 +11,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
@@ -35,7 +34,6 @@ class SignInFragment : Fragment() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var auth: FirebaseAuth
-    private val viewModel: SignInViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,8 +115,7 @@ class SignInFragment : Fragment() {
                 if (task.isSuccessful) {
                     val googleUid = auth.currentUser?.uid
                     if (googleUid != null) {
-                        viewModel.saveUserInfo(googleUid)
-                        findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingFragment())
+                        findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingFragment(googleUid))
                     }
                 } else {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)

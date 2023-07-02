@@ -69,7 +69,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun addUser() {
+    fun addUser(googleUid: String) {
         if (profileUri.value.isNullOrEmpty() || nickName.value.isNullOrEmpty()) {
             //TODO 프로필 또는 닉네임을 설정하지 않았을 때에 대한 처리
             return
@@ -79,7 +79,7 @@ class SettingViewModel @Inject constructor(
             val imageLocations = addImageToStorage(profileUri.value!!)
             val user =
                 User(
-                    userPreferenceRepository.getUserUid(),
+                    googleUid,
                     nickName.value!!,
                     imageLocations,
                     emptyList()
@@ -87,6 +87,7 @@ class SettingViewModel @Inject constructor(
             userRepository.addUser(googleUid, user)
             userRepository.addUserNickName(nickName.value!!)
         }
+        userPreferenceRepository.saveUserInfo(googleUid)
         userPreferenceRepository.saveUserNickName(nickName.value!!)
     }
 
