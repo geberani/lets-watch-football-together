@@ -22,4 +22,8 @@ class UserRepository @Inject constructor(private val remoteDataSource: RemoteDat
     suspend fun getAllUsers(): Response<Map<String, Map<String, User>>> {
         return remoteDataSource.getAllUsers()
     }
+
+    suspend fun updateUser(uid: String, user: User): Response<Map<String, Map<String, User>>> {
+        return remoteDataSource.updateUser(uid, user)
+    }
 }

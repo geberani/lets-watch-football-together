@@ -14,4 +14,8 @@ class PostRepository @Inject constructor(private val remoteDataSource: RemoteDat
     suspend fun getAllPosts(): Response<Map<String, Map<String, Post>>> {
         return remoteDataSource.getAllPosts()
     }
+
+    suspend fun updatePost(postUid: String, post: Post): Response<Map<String, Map<String, Post>>> {
+        return remoteDataSource.updatePost(postUid, post)
+    }
 }

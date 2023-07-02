@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -44,6 +45,28 @@ class DetailFragment : Fragment() {
 
         }.attach()
         setPostDetail()
+        binding.btnParticipate.setOnClickListener {
+            if (viewModel.isParticipated.value == true) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.guide_message_already_participated),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (viewModel.selectedPost.value?.maxParticipants == viewModel.selectedPost.value?.participantsUidList?.size) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.guide_message_exceed_maximum_participants),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                viewModel.participate()
+                Toast.makeText(
+                    context,
+                    "참여 완료되었습니다",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun setPostDetail() {

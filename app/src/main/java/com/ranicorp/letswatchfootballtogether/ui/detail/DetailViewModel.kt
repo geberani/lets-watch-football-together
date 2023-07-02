@@ -27,13 +27,14 @@ class DetailViewModel @Inject constructor(
     val participantsInfo: LiveData<List<User>> = _participantsInfo
     private val _isParticipated = MutableLiveData<Boolean>()
     val isParticipated: LiveData<Boolean> = _isParticipated
+    private val userUid = userPreferenceRepository.getUserUid()
 
     fun getPostDetail(postUid: String) {
         viewModelScope.launch {
             _selectedPost.value = postRepository.getAllPosts().body()?.values?.flatMap { it.values }?.find { post ->
                 post.postUid == postUid
-            } ?: TODO()
-            participantsUidList.addAll(selectedPost.value?.participantsUidList ?: TODO())
+            }
+            participantsUidList.addAll(selectedPost.value?.participantsUidList ?: emptyList())
             getParticipantsDetail()
             isUserParticipated()
         }
@@ -49,6 +50,21 @@ class DetailViewModel @Inject constructor(
 
     private fun isUserParticipated() {
         _isParticipated.value =
-            participantsUidList.contains(userPreferenceRepository.getUserUid())
+            participantsUidList.contains(userUid)
+    }
+
+    fun participate() {
+        viewModelScope.launch {
+            val post = _selectedPost.value
+            post?.participantsUidList?.add(userUid)
+            postRepository.updatePost(selectedPost.value?.postUid ?: TODO(), post ?: TODO())
+
+            val user = userRepository.getAllUsers().body()?.values?.flatMap { it.values }?.find {
+                it.uid == userUid
+            }
+            user?.participatingEvent?.add(post.postUid)
+            userRepository.updateUser(userUid, user ?: TODO())
+        }
+
     }
 }
