@@ -82,7 +82,7 @@ class SettingViewModel @Inject constructor(
                     googleUid,
                     nickName.value!!,
                     imageLocations,
-                    emptyList()
+                    mutableListOf()
                 )
             userRepository.addUser(googleUid, user)
             userRepository.addUserNickName(nickName.value!!)
