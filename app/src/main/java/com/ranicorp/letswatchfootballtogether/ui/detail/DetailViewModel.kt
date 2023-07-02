@@ -30,8 +30,7 @@ class DetailViewModel @Inject constructor(
 
     fun getPostDetail(postUid: String) {
         viewModelScope.launch {
-            val allPosts = postRepository.getAllPosts().body()?.values?.toList() ?: emptyList()
-            _selectedPost.value = allPosts.find { post ->
+            _selectedPost.value = postRepository.getAllPosts().body()?.values?.flatMap { it.values }?.find { post ->
                 post.postUid == postUid
             } ?: TODO()
             participantsUidList.addAll(selectedPost.value?.participantsUidList ?: TODO())
@@ -42,9 +41,8 @@ class DetailViewModel @Inject constructor(
 
     private fun getParticipantsDetail() {
         viewModelScope.launch {
-            val allUsers = userRepository.getAllUsers().body()?.values?.toList() ?: emptyList()
-            _participantsInfo.value = allUsers.filter { user ->
-                user.uid in (selectedPost.value?.participantsUidList ?: TODO())
+            _participantsInfo.value = userRepository.getAllUsers().body()?.values?.flatMap { it.values }?.filter { user ->
+                user.uid in (selectedPost.value?.participantsUidList ?: emptyList<User>())
             }
         }
     }
