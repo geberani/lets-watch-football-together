@@ -84,7 +84,6 @@ class PostingViewModel @Inject constructor(
                 date.value!!,
                 time.value!!,
                 maxParticipants.value!!.toInt(),
-                1,
                 description.value!!,
                 imageLocations,
                 mutableListOf(userUid)

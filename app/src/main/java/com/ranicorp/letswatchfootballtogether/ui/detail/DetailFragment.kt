@@ -52,7 +52,7 @@ class DetailFragment : Fragment() {
             binding.post = it
             binding.tvNumberOfParticipants.text = getString(
                 R.string.label_number_of_participants,
-                it.currentParticipants,
+                it.participantsUidList.size,
                 it.maxParticipants
             )
             binding.locationInfoLayout.setInfo(it.location)
