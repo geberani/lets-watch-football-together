@@ -62,6 +62,9 @@ class SettingFragment : Fragment() {
                 setErrorMsg(errorMsg)
             }
         }
+        viewModel.settingComplete.observe(viewLifecycleOwner) {
+            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
+        }
     }
 
     private fun setErrorMsg(errorMsg: String?) {
