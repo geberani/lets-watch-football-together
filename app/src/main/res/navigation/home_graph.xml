@@ -39,10 +39,10 @@
             app:destination="@id/postingFragment" />
     </fragment>
     <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.ranicorp.letswatchfootballtogether.ui.chat.ChatFragment"
+        android:id="@+id/chatRoomFragment"
+        android:name="com.ranicorp.letswatchfootballtogether.ui.chatroom.ChatRoomFragment"
         android:label="@string/label_chat_destination"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat_room" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.profile.ProfileFragment"
