@@ -12,5 +12,6 @@
     <color name="blue_500">#F7FAFE</color>
     <color name="white_50">#80FFFFFF</color>
     <color name="grey_50">#8E8E8E</color>
+    <color name="grey_100">#D8D8D8</color>
 
 </resources>
