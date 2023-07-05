@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
+import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
 import com.ranicorp.letswatchfootballtogether.data.model.SentMessage
 import com.ranicorp.letswatchfootballtogether.databinding.ItemReceivedMessageBinding
@@ -45,6 +46,18 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             is SentMessage -> VIEW_TYPE_SENT_MESSAGE
             is ReceivedMessage ->  VIEW_TYPE_RECEIVED_MESSAGE
         }
+    }
+
+    fun submitList(messageList: List<Message>, userUid: String) {
+        for (item in messageList) {
+            if (item.senderUid == userUid) {
+                items.add(SentMessage(item))
+            } else {
+                items.add(ReceivedMessage(item))
+            }
+        }
+        notifyItemInserted(itemCount-1)
+        TODO()
     }
 
     class SentMessageViewHolder(private val binding: ItemSentMessageBinding) :

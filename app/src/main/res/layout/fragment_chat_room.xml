@@ -47,6 +47,7 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/background_grey_rounded_corners"
         android:hint="@string/hint_write_message"
+        android:imeOptions="actionDone"
         android:importantForAutofill="no"
         android:inputType="text"
         android:paddingStart="8dp"
