@@ -11,6 +11,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentSettingBinding
 import com.ranicorp.letswatchfootballtogether.util.Constants
@@ -23,6 +24,7 @@ class SettingFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
     private val viewModel: SettingViewModel by viewModels()
+    private val args: SettingFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,7 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        binding.googleUid = args.googleUid
         binding.ivProfile.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -58,6 +61,9 @@ class SettingFragment : Fragment() {
             viewModel.errorMsg.observe(viewLifecycleOwner) { errorMsg ->
                 setErrorMsg(errorMsg)
             }
+        }
+        viewModel.settingComplete.observe(viewLifecycleOwner) {
+            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
         }
     }
 

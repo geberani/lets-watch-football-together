@@ -30,6 +30,8 @@ class SettingViewModel @Inject constructor(
     private val isValidProfileUri: MutableLiveData<Boolean> = MutableLiveData()
     private val isValidNickName: MutableLiveData<Boolean> = MutableLiveData()
     private val existingNickName: MutableLiveData<Collection<String>> = MutableLiveData()
+    private val _settingCompleted = MutableLiveData<Boolean>()
+    val settingComplete: LiveData<Boolean> = _settingCompleted
 
     fun setProfileUri(uri: String) {
         profileUri.value = uri
@@ -69,7 +71,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun addUser() {
+    fun addUser(googleUid: String) {
         if (profileUri.value.isNullOrEmpty() || nickName.value.isNullOrEmpty()) {
             //TODO 프로필 또는 닉네임을 설정하지 않았을 때에 대한 처리
             return
@@ -79,14 +81,20 @@ class SettingViewModel @Inject constructor(
             val imageLocations = addImageToStorage(profileUri.value!!)
             val user =
                 User(
-                    userPreferenceRepository.getUserUid(),
+                    googleUid,
                     nickName.value!!,
                     imageLocations,
-                    emptyList()
+                    mutableListOf()
                 )
-            userRepository.addUser(user)
-            userRepository.addUserNickName(nickName.value!!)
+            if (userRepository.addUser(
+                    googleUid,
+                    user
+                ).isSuccessful && userRepository.addUserNickName(nickName.value!!).isSuccessful
+            ) {
+                _settingCompleted.value = true
+            }
         }
+        userPreferenceRepository.saveUserInfo(googleUid)
         userPreferenceRepository.saveUserNickName(nickName.value!!)
     }
 

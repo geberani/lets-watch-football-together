@@ -1,14 +1,15 @@
 package com.ranicorp.letswatchfootballtogether.ui.detail
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.databinding.ItemViewpagerBannerBinding
 
 class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
 
-    private val banners = mutableListOf<Uri>()
+    private val banners = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
         val binding =
@@ -24,15 +25,20 @@ class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
         holder.bind(banners[position])
     }
 
-    fun submitBannersList(bannersList: List<Uri>) {
+    fun submitBannersList(bannersList: List<String>) {
+        banners.clear()
         banners.addAll(bannersList)
+        notifyDataSetChanged()
     }
 
     class BannerViewHolder(private val binding: ItemViewpagerBannerBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(uri: Uri) {
-            binding.ivBannerImage.setImageURI(uri)
+        fun bind(location: String) {
+            val imageRef = FirebaseStorage.getInstance().reference.child(location)
+            imageRef.downloadUrl.addOnSuccessListener {
+                binding.ivBannerImage.load(it)
+            }
         }
     }
 }
