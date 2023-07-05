@@ -45,6 +45,27 @@ class DetailFragment : Fragment() {
 
         }.attach()
         setPostDetail()
+        setParticipateBtn()
+    }
+
+    private fun setPostDetail() {
+        viewModel.getPostDetail(args.postUid)
+        viewModel.selectedPost.observe(viewLifecycleOwner) {
+            binding.post = it
+            binding.tvNumberOfParticipants.text = getString(
+                R.string.label_number_of_participants,
+                it.participantsUidList.size,
+                it.maxParticipants
+            )
+            binding.locationInfoLayout.setInfo(it.location)
+            bannerAdapter.submitBannersList(it.imageLocations)
+        }
+        viewModel.participantsInfo.observe(viewLifecycleOwner) {
+            participantsAdapter.submitParticipantsList(it)
+        }
+    }
+
+    private fun setParticipateBtn() {
         binding.btnParticipate.setOnClickListener {
             if (viewModel.isParticipated.value == true) {
                 Toast.makeText(
@@ -66,23 +87,6 @@ class DetailFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
-    }
-
-    private fun setPostDetail() {
-        viewModel.getPostDetail(args.postUid)
-        viewModel.selectedPost.observe(viewLifecycleOwner) {
-            binding.post = it
-            binding.tvNumberOfParticipants.text = getString(
-                R.string.label_number_of_participants,
-                it.participantsUidList.size,
-                it.maxParticipants
-            )
-            binding.locationInfoLayout.setInfo(it.location)
-            bannerAdapter.submitBannersList(it.imageLocations)
-        }
-        viewModel.participantsInfo.observe(viewLifecycleOwner) {
-            participantsAdapter.submitParticipantsList(it)
         }
     }
 
