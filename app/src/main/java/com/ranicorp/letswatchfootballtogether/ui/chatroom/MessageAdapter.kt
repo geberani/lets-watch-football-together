@@ -2,6 +2,8 @@ package com.ranicorp.letswatchfootballtogether.ui.chatroom
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
@@ -12,7 +14,7 @@ import com.ranicorp.letswatchfootballtogether.databinding.ItemSentMessageBinding
 private const val VIEW_TYPE_SENT_MESSAGE = 0
 private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 
-class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDiffCallback()) {
 
     private val items = mutableListOf<ChatItem>()
 
@@ -41,9 +43,9 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(items[position]) {
+        return when (items[position]) {
             is SentMessage -> VIEW_TYPE_SENT_MESSAGE
-            is ReceivedMessage ->  VIEW_TYPE_RECEIVED_MESSAGE
+            is ReceivedMessage -> VIEW_TYPE_RECEIVED_MESSAGE
         }
     }
 
@@ -89,5 +91,16 @@ class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 )
             }
         }
+    }
+
+    class MessageDiffCallback : DiffUtil.ItemCallback<ChatItem>() {
+        override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }
