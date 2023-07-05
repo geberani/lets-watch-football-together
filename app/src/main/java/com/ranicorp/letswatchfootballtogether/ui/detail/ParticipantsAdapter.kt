@@ -2,13 +2,16 @@ package com.ranicorp.letswatchfootballtogether.ui.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import com.ranicorp.letswatchfootballtogether.databinding.ItemParticipantsBinding
 
-class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.ParticipantsViewHolder>() {
+class ParticipantsAdapter :
+    ListAdapter<User, ParticipantsAdapter.ParticipantsViewHolder>(ParticipantDiffUtil()) {
 
     private val participants = mutableListOf<User>()
 
@@ -32,10 +35,10 @@ class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.Participant
         return participants.size
     }
 
-    fun submitParticipantsList(participantsList: List<User>) {
+    override fun submitList(participantsList: MutableList<User>?) {
+        super.submitList(participantsList)
         participants.clear()
-        participants.addAll(participantsList)
-        notifyDataSetChanged()
+        participants.addAll(participantsList?.toList() ?: emptyList())
     }
 
     class ParticipantsViewHolder(private val binding: ItemParticipantsBinding) :
@@ -48,5 +51,16 @@ class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.Participant
             }
             binding.tvNickName.text = participant.nickName
         }
+    }
+
+    class ParticipantDiffUtil : DiffUtil.ItemCallback<User>() {
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.uid == newItem.uid
+        }
+
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }
