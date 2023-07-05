@@ -59,9 +59,7 @@ class DetailViewModel @Inject constructor(
             post?.participantsUidList?.add(userUid)
             postRepository.updatePost(selectedPost.value?.postUid ?: TODO(), post ?: TODO())
 
-            val user = userRepository.getAllUsers().body()?.values?.flatMap { it.values }?.find {
-                it.uid == userUid
-            }
+            val user = userRepository.getUserInfo(userUid)
             user?.participatingEvent?.add(post.postUid)
             userRepository.updateUser(userUid, user ?: TODO())
         }

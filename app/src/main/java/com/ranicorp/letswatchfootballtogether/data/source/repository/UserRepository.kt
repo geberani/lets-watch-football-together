@@ -26,4 +26,11 @@ class UserRepository @Inject constructor(private val remoteDataSource: RemoteDat
     suspend fun updateUser(uid: String, user: User): Response<Map<String, Map<String, User>>> {
         return remoteDataSource.updateUser(uid, user)
     }
+
+    suspend fun getUserInfo(userUid: String): User? {
+        val user = getAllUsers().body()?.values?.flatMap { it.values }?.find {
+            it.uid == userUid
+        }
+        return user
+    }
 }
