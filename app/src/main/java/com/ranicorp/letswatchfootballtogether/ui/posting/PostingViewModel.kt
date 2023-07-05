@@ -10,6 +10,7 @@ import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
+import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText.getCurrentDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class PostingViewModel @Inject constructor(
     private val postRepository: PostRepository,
     private val userPreferenceRepository: UserPreferenceRepository,
+    private val userRepository: UserRepository,
     private val firebaseStorage: FirebaseStorage
 ) : ViewModel() {
 
@@ -89,6 +91,9 @@ class PostingViewModel @Inject constructor(
                 mutableListOf(userUid)
             )
             if (postRepository.addPost(userUid + getCurrentDateString(), post).isSuccessful) {
+                val user = userRepository.getUserInfo(userUid)
+                user?.participatingEvent?.add(post.postUid)
+                userRepository.updateUser(userUid, user ?: TODO())
                 _isLoading.value = false
             }
             //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가
