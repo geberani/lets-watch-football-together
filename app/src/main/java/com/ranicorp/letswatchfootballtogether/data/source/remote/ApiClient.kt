@@ -1,5 +1,6 @@
 package com.ranicorp.letswatchfootballtogether.data.source.remote
 
+import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import retrofit2.Response
@@ -30,4 +31,10 @@ interface ApiClient {
 
     @PATCH("users/{uid}.json")
     suspend fun updateUser(@Path("uid") uid: String, @Body user: User): Response<Map<String, Map<String, User>>>
+
+    @POST("chat/{postUid}.json")
+    suspend fun addChat(@Path("postUid") postUid: String, @Body message: Message): Response<Map<String, Map<String, Message>>>
+
+    @GET("chat/{postUid}.json")
+    suspend fun getAllChat(@Path("postUid") postUid: String): Response<Map<String, Map<String, Message>>>
 }

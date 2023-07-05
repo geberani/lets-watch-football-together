@@ -1,5 +1,6 @@
 package com.ranicorp.letswatchfootballtogether.data.source.remote
 
+import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import retrofit2.Response
@@ -37,5 +38,13 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
 
     suspend fun updateUser(uid: String, user: User): Response<Map<String, Map<String, User>>> {
         return apiClient.updateUser(uid, user)
+    }
+
+    suspend fun addChat(postUid: String, message: Message): Response<Map<String, Map<String, Message>>> {
+        return apiClient.addChat(postUid, message)
+    }
+
+    suspend fun getAllChat(postUid:String): Response<Map<String, Map<String, Message>>> {
+        return apiClient.getAllChat(postUid)
     }
 }
