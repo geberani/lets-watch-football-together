@@ -46,6 +46,7 @@ class DetailFragment : Fragment() {
         }.attach()
         setPostDetail()
         setParticipateBtn()
+        setJoinChatBtn()
     }
 
     private fun setPostDetail() {
@@ -86,6 +87,21 @@ class DetailFragment : Fragment() {
                     getString(R.string.guide_message_participate_succeeded),
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        }
+    }
+
+    private fun setJoinChatBtn() {
+        binding.btnJoinChat.setOnClickListener {
+            if (viewModel.isParticipated.value == true) {
+                TODO("채팅방으로 이동")
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.guide_message_join_restricted),
+                    Toast.LENGTH_SHORT
+                ).show()
+
             }
         }
     }
