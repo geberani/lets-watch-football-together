@@ -84,12 +84,11 @@ class PostingViewModel @Inject constructor(
                 date.value!!,
                 time.value!!,
                 maxParticipants.value!!.toInt(),
-                1,
                 description.value!!,
                 imageLocations,
                 mutableListOf(userUid)
             )
-            if (postRepository.addPost(post).isSuccessful) {
+            if (postRepository.addPost(userUid + getCurrentDateString(), post).isSuccessful) {
                 _isLoading.value = false
             }
             //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가

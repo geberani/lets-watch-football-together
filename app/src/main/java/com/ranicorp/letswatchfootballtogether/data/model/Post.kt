@@ -12,7 +12,6 @@ data class Post(
     val date: String,
     val time: String,
     val maxParticipants: Int,
-    val currentParticipants: Int,
     val description: String,
     val imageLocations: List<String>,
     val participantsUidList: MutableList<String>

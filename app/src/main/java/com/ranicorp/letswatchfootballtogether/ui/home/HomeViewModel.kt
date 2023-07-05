@@ -18,7 +18,7 @@ class HomeViewModel @Inject constructor(private val postRepository: PostReposito
 
     fun loadAllPosts() {
         viewModelScope.launch {
-            _allPosts.value = postRepository.getAllPosts().body()?.values?.toList() ?: emptyList()
+            _allPosts.value = postRepository.getAllPosts().body()?.values?.flatMap { it.values }
         }
     }
 }

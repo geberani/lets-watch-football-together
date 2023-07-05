@@ -11,15 +11,19 @@ class UserRepository @Inject constructor(private val remoteDataSource: RemoteDat
         return remoteDataSource.getUserNickNames()
     }
 
-    suspend fun addUser(user: User): Response<Map<String, User>> {
-        return remoteDataSource.addUser(user)
+    suspend fun addUser(uid: String, user: User): Response<Map<String, Map<String, User>>> {
+        return remoteDataSource.addUser(uid, user)
     }
 
     suspend fun addUserNickName(nickName: String): Response<Map<String, String>> {
         return remoteDataSource.addUserNickName(nickName)
     }
 
-    suspend fun getAllUsers(): Response<Map<String, User>> {
+    suspend fun getAllUsers(): Response<Map<String, Map<String, User>>> {
         return remoteDataSource.getAllUsers()
+    }
+
+    suspend fun updateUser(uid: String, firebaseUid: String, user: User): Response<User> {
+        return remoteDataSource.updateUser(uid, firebaseUid, user)
     }
 }
