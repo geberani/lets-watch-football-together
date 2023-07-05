@@ -7,5 +7,5 @@ data class User(
     val uid: String,
     val nickName: String,
     val profileUri: String,
-    var participatingEvent: List<String>?
+    val participatingEvent: MutableList<String>?
 )

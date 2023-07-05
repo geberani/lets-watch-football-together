@@ -62,7 +62,7 @@ class DetailFragment : Fragment() {
             bannerAdapter.submitBannersList(it.imageLocations)
         }
         viewModel.participantsInfo.observe(viewLifecycleOwner) {
-            participantsAdapter.submitParticipantsList(it)
+            participantsAdapter.submitList(it)
         }
     }
 
@@ -101,7 +101,6 @@ class DetailFragment : Fragment() {
                     getString(R.string.guide_message_join_restricted),
                     Toast.LENGTH_SHORT
                 ).show()
-
             }
         }
     }
