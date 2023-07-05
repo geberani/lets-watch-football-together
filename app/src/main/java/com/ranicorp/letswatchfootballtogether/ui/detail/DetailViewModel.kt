@@ -63,8 +63,7 @@ class DetailViewModel @Inject constructor(
             val user = userRepository.getAllUsers().body()?.values?.flatMap { it.values }?.find {
                 it.uid == userUid
             }
-            val existingParticipantsList = user?.participatingEvent ?: emptyList()
-            user?.participatingEvent = existingParticipantsList.plus(post.postUid)
+            user?.participatingEvent?.add(post.postUid)
             userRepository.updateUser(userUid, firebaseUid, user ?: TODO())
 
             participantsUidList.add(userUid)
