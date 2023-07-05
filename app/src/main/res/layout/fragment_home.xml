@@ -35,7 +35,7 @@
                 android:background="@color/blue_500"
                 android:paddingStart="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@id/homeBottomNavigationView"
+                app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/homeToolBar"
@@ -49,17 +49,8 @@
                 android:backgroundTint="@color/blue"
                 android:foreground="@drawable/ic_add"
                 app:borderWidth="0dp"
-                app:layout_constraintBottom_toTopOf="@id/homeBottomNavigationView"
+                app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/homeBottomNavigationView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:menu="@menu/home_navigation_menu" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
