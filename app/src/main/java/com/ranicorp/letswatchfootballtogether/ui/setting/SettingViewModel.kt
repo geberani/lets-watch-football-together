@@ -30,6 +30,8 @@ class SettingViewModel @Inject constructor(
     private val isValidProfileUri: MutableLiveData<Boolean> = MutableLiveData()
     private val isValidNickName: MutableLiveData<Boolean> = MutableLiveData()
     private val existingNickName: MutableLiveData<Collection<String>> = MutableLiveData()
+    private val _settingCompleted = MutableLiveData<Boolean>()
+    val settingComplete: LiveData<Boolean> = _settingCompleted
 
     fun setProfileUri(uri: String) {
         profileUri.value = uri
@@ -84,8 +86,13 @@ class SettingViewModel @Inject constructor(
                     imageLocations,
                     mutableListOf()
                 )
-            userRepository.addUser(googleUid, user)
-            userRepository.addUserNickName(nickName.value!!)
+            if (userRepository.addUser(
+                    googleUid,
+                    user
+                ).isSuccessful && userRepository.addUserNickName(nickName.value!!).isSuccessful
+            ) {
+                _settingCompleted.value = true
+            }
         }
         userPreferenceRepository.saveUserInfo(googleUid)
         userPreferenceRepository.saveUserNickName(nickName.value!!)

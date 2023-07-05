@@ -45,6 +45,28 @@ class DetailFragment : Fragment() {
 
         }.attach()
         setPostDetail()
+        setParticipateBtn()
+        setJoinChatBtn()
+    }
+
+    private fun setPostDetail() {
+        viewModel.getPostDetail(args.postUid)
+        viewModel.selectedPost.observe(viewLifecycleOwner) {
+            binding.post = it
+            binding.tvNumberOfParticipants.text = getString(
+                R.string.label_number_of_participants,
+                it.participantsUidList.size,
+                it.maxParticipants
+            )
+            binding.locationInfoLayout.setInfo(it.location)
+            bannerAdapter.submitBannersList(it.imageLocations)
+        }
+        viewModel.participantsInfo.observe(viewLifecycleOwner) {
+            participantsAdapter.submitParticipantsList(it)
+        }
+    }
+
+    private fun setParticipateBtn() {
         binding.btnParticipate.setOnClickListener {
             if (viewModel.isParticipated.value == true) {
                 Toast.makeText(
@@ -62,27 +84,25 @@ class DetailFragment : Fragment() {
                 viewModel.participate()
                 Toast.makeText(
                     context,
-                    "참여 완료되었습니다",
+                    getString(R.string.guide_message_participate_succeeded),
                     Toast.LENGTH_SHORT
                 ).show()
             }
         }
     }
 
-    private fun setPostDetail() {
-        viewModel.getPostDetail(args.postUid)
-        viewModel.selectedPost.observe(viewLifecycleOwner) {
-            binding.post = it
-            binding.tvNumberOfParticipants.text = getString(
-                R.string.label_number_of_participants,
-                it.participantsUidList.size,
-                it.maxParticipants
-            )
-            binding.locationInfoLayout.setInfo(it.location)
-            bannerAdapter.submitBannersList(it.imageLocations)
-        }
-        viewModel.participantsInfo.observe(viewLifecycleOwner) {
-            participantsAdapter.submitParticipantsList(it)
+    private fun setJoinChatBtn() {
+        binding.btnJoinChat.setOnClickListener {
+            if (viewModel.isParticipated.value == true) {
+                TODO("채팅방으로 이동")
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.guide_message_join_restricted),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
         }
     }
 

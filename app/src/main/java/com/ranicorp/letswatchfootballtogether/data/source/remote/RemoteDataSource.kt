@@ -32,12 +32,20 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
         return apiClient.getAllUsers()
     }
 
-    suspend fun updatePost(postUid: String, post: Post): Response<Map<String, Map<String, Post>>> {
-        return apiClient.updatePost(postUid, post)
+    suspend fun updatePost(postUid: String, firebaseUid: String, post: Post): Response<Post> {
+        return apiClient.updatePost(postUid, firebaseUid, post)
     }
 
-    suspend fun updateUser(uid: String, user: User): Response<Map<String, Map<String, User>>> {
-        return apiClient.updateUser(uid, user)
+    suspend fun updateUser(uid: String, firebaseUid: String, user: User): Response<User> {
+        return apiClient.updateUser(uid, firebaseUid, user)
+    }
+
+    suspend fun getPost(postUid: String, firebaseUid: String): Response<Post> {
+        return apiClient.getPost(postUid, firebaseUid)
+    }
+
+    suspend fun getPostNoFirebaseUid(postUid: String): Response<Map<String, Post>> {
+        return apiClient.getPostNoFirebaseUid(postUid)
     }
 
     suspend fun addChat(postUid: String, message: Message): Response<Map<String, Map<String, Message>>> {
