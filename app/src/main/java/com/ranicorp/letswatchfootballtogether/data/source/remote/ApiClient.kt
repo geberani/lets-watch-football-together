@@ -25,9 +25,15 @@ interface ApiClient {
     @GET("users.json")
     suspend fun getAllUsers(): Response<Map<String, Map<String, User>>>
 
-    @PATCH("posts/{postUid}.json")
-    suspend fun updatePost(@Path("postUid") postUid: String, @Body post: Post): Response<Map<String, Map<String, Post>>>
+    @PUT("posts/{postUid}/{firebaseUid}.json")
+    suspend fun updatePost(@Path("postUid") postUid: String, @Path("firebaseUid") firebaseUid: String, @Body post: Post): Response<Post>
 
-    @PATCH("users/{uid}.json")
-    suspend fun updateUser(@Path("uid") uid: String, @Body user: User): Response<Map<String, Map<String, User>>>
+    @PUT("users/{uid}/{firebaseUid}.json")
+    suspend fun updateUser(@Path("uid") uid: String, @Path("firebaseUid") firebaseUid: String, @Body user: User): Response<User>
+
+    @GET("posts/{postUid}/{firebaseUid}.json")
+    suspend fun getPost(@Path("postUid") postUid: String, @Path("firebaseUid") firebaseUid: String): Response<Post>
+
+    @GET("posts/{postUid}.json")
+    suspend fun getPostNoFirebaseUid(@Path("postUid") postUid: String): Response<Map<String, Post>>
 }
