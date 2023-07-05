@@ -62,7 +62,7 @@ class DetailFragment : Fragment() {
             bannerAdapter.submitBannersList(it.imageLocations)
         }
         viewModel.participantsInfo.observe(viewLifecycleOwner) {
-            participantsAdapter.submitParticipantsList(it)
+            participantsAdapter.submitList(it)
         }
     }
 
