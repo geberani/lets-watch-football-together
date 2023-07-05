@@ -58,5 +58,6 @@
     <string name="label_chat_room">채팅방</string>
     <string name="guide_message_already_participated">이미 참여 중인 모임입니다.</string>
     <string name="guide_message_exceed_maximum_participants">모집 최대 인원을 초과하였습니다.</string>
+    <string name="guide_message_participate_succeeded">참여 완료되었습니다.</string>
 
 </resources>

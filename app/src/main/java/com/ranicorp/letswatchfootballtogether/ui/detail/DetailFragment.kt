@@ -83,7 +83,7 @@ class DetailFragment : Fragment() {
                 viewModel.participate()
                 Toast.makeText(
                     context,
-                    "참여 완료되었습니다",
+                    getString(R.string.guide_message_participate_succeeded),
                     Toast.LENGTH_SHORT
                 ).show()
             }
