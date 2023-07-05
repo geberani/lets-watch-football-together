@@ -5,7 +5,7 @@
         android:icon="@drawable/selector_home_menu"
         android:title="@string/label_home" />
     <item
-        android:id="@+id/chatFragment"
+        android:id="@+id/chatRoomFragment"
         android:icon="@drawable/selector_chat_menu"
         android:title="@string/label_chat" />
     <item

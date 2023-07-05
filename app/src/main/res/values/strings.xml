@@ -61,4 +61,7 @@
     <string name="guide_message_participate_succeeded">참여 완료되었습니다.</string>
     <string name="guide_message_join_restricted">모임에 참여한 사람만 채팅방에 입장할 수 있습니다.</string>
 
+    <!-- 채팅방-->
+    <string name="hint_write_message">메세지를 입력해주세요.</string>
+
 </resources>
