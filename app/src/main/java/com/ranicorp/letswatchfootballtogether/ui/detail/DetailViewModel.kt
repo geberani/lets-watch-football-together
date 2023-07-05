@@ -66,6 +66,10 @@ class DetailViewModel @Inject constructor(
             val existingParticipantsList = user?.participatingEvent ?: emptyList()
             user?.participatingEvent = existingParticipantsList.plus(post.postUid)
             userRepository.updateUser(userUid, firebaseUid, user ?: TODO())
+
+            participantsUidList.add(userUid)
+            _participantsInfo.value = _participantsInfo.value?.plus(user)
+            _isParticipated.value = true
         }
     }
 }
