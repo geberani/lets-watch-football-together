@@ -48,7 +48,7 @@
         android:background="@drawable/background_grey_rounded_corners"
         android:hint="@string/hint_write_message"
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:paddingStart="8dp"
         android:textColorHint="@color/black"
         android:textSize="16sp"
