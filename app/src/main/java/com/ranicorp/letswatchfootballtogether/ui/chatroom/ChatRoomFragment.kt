@@ -32,8 +32,7 @@ class ChatRoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel.setPostUid(args.postUid)
-        viewModel.setPostUid("sample")
+        viewModel.setPostUid(args.postUid)
         setLayout()
     }
 
