@@ -39,10 +39,14 @@
             app:destination="@id/postingFragment" />
     </fragment>
     <fragment
-        android:id="@+id/chatFragment"
-        android:name="com.ranicorp.letswatchfootballtogether.ui.chat.ChatFragment"
+        android:id="@+id/chatRoomFragment"
+        android:name="com.ranicorp.letswatchfootballtogether.ui.chatroom.ChatRoomFragment"
         android:label="@string/label_chat_destination"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat_room" >
+        <argument
+            android:name="postUid"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.profile.ProfileFragment"
@@ -65,4 +69,13 @@
         android:id="@+id/postingFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.posting.PostingFragment"
         android:label="PostingFragment" />
+    <fragment
+        android:id="@+id/chatRoomListFragment"
+        android:name="com.ranicorp.letswatchfootballtogether.ui.chatroomlist.ChatRoomListFragment"
+        android:label="fragment_chat_room_list"
+        tools:layout="@layout/fragment_chat_room_list" >
+        <action
+            android:id="@+id/action_chatRoomListFragment_to_chatRoomFragment"
+            app:destination="@id/chatRoomFragment" />
+    </fragment>
 </navigation>
