@@ -50,16 +50,20 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         }
     }
 
+    override fun submitList(list: MutableList<ChatItem>?) {
+        super.submitList(list)
+    }
+
     fun submitList(messageList: List<Message>, userUid: String) {
+        val result = mutableListOf<ChatItem>()
         for (item in messageList) {
             if (item.senderUid == userUid) {
-                items.add(SentMessage(item))
+                result.add(SentMessage(item))
             } else {
-                items.add(ReceivedMessage(item))
+                result.add(ReceivedMessage(item))
             }
         }
-        notifyItemInserted(itemCount-1)
-        TODO()
+        submitList(result)
     }
 
     class SentMessageViewHolder(private val binding: ItemSentMessageBinding) :
