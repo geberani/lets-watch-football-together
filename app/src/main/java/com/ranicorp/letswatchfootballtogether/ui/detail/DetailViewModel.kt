@@ -33,8 +33,8 @@ class DetailViewModel @Inject constructor(
     fun getPostDetail(postUid: String) {
         viewModelScope.launch {
             val postResponse = postRepository.getPostNoFirebaseUid(postUid).body()
-            firebaseUid = postResponse?.keys?.first() ?: TODO()
-            _selectedPost.value = postResponse.values.first()
+            firebaseUid = postResponse?.keys?.first().toString()
+            _selectedPost.value = postResponse?.values?.first()
             participantsUidList.addAll(selectedPost.value?.participantsUidList ?: emptyList())
             getParticipantsDetail()
             isUserParticipated()
@@ -43,10 +43,15 @@ class DetailViewModel @Inject constructor(
 
     private fun getParticipantsDetail() {
         viewModelScope.launch {
-            val participantsList = userRepository.getAllUsers().body()?.values?.flatMap { it.values }?.filter { user ->
-                user.uid in (selectedPost.value?.participantsUidList ?: emptyList<User>())
+            val participantsUidList = selectedPost.value?.participantsUidList
+            val participantsList = mutableListOf<User>()
+            participantsUidList?.forEach { participantUid ->
+                participantsList.add(
+                    userRepository.getUserNoFirebaseUid(participantUid).body()?.values?.first()
+                        ?: TODO()
+                )
             }
-            _participantsInfo.value?.addAll(participantsList ?: emptyList())
+            _participantsInfo.value = mutableListOf<User>().apply { addAll(participantsList) }
         }
     }
 
