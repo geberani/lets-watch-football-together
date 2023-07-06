@@ -17,8 +17,6 @@ private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 
 class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDiffCallback()) {
 
-    private val items = mutableListOf<ChatItem>()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_SENT_MESSAGE -> SentMessageViewHolder.from(parent)
@@ -29,22 +27,18 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is SentMessageViewHolder -> {
-                val item = items[position] as SentMessage
+                val item = getItem(position) as SentMessage
                 holder.bind(item)
             }
             is ReceivedMessageViewHolder -> {
-                val item = items[position] as ReceivedMessage
+                val item = getItem(position) as ReceivedMessage
                 holder.bind(item)
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
+        return when (getItem(position)) {
             is SentMessage -> VIEW_TYPE_SENT_MESSAGE
             is ReceivedMessage -> VIEW_TYPE_RECEIVED_MESSAGE
         }
