@@ -11,7 +11,7 @@ class UserRepository @Inject constructor(private val remoteDataSource: RemoteDat
         return remoteDataSource.getUserNickNames()
     }
 
-    suspend fun addUser(uid: String, user: User): Response<Map<String, Map<String, User>>> {
+    suspend fun addUser(uid: String, user: User): Response<Map<String, String>> {
         return remoteDataSource.addUser(uid, user)
     }
 
@@ -32,5 +32,13 @@ class UserRepository @Inject constructor(private val remoteDataSource: RemoteDat
             it.uid == userUid
         }
         return user
+    }
+
+    suspend fun getUser(userUid: String, firebaseUid: String): Response<User> {
+        return remoteDataSource.getUser(userUid, firebaseUid)
+    }
+
+    suspend fun getUserNoFirebaseUid(userUid: String): Response<Map<String, User>> {
+        return remoteDataSource.getUserNoFirebaseUid(userUid)
     }
 }

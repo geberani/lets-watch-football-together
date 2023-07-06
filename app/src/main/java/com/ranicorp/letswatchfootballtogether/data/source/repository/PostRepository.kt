@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class PostRepository @Inject constructor(private val remoteDataSource: RemoteDataSource) {
 
-    suspend fun addPost(postUid: String, post: Post): Response<Map<String, Map<String, Post>>> {
+    suspend fun addPost(postUid: String, post: Post): Response<Map<String, String>> {
         return remoteDataSource.addPost(postUid, post)
     }
 
