@@ -77,8 +77,9 @@ class PostingViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             val imageLocations = addImageToStorage(_imageUriList.value?.toList() ?: emptyList())
+            val postUid = userUid + userUid + System.currentTimeMillis()
             val post = Post(
-                userUid + getCurrentDateString(),
+                postUid,
                 userUid,
                 System.currentTimeMillis(),
                 title.value!!,
@@ -90,10 +91,13 @@ class PostingViewModel @Inject constructor(
                 imageLocations,
                 mutableListOf(userUid)
             )
-            if (postRepository.addPost(userUid + getCurrentDateString(), post).isSuccessful) {
-                val user = userRepository.getUserInfo(userUid)
-                user?.participatingEvent?.add(post.postUid)
-                userRepository.updateUser(userUid, user ?: TODO())
+            if (postRepository.addPost(postUid, post).isSuccessful) {
+                val userResponse = userRepository.getUserNoFirebaseUid(userUid)
+                val firebaseUid = userResponse.body()?.keys?.first() ?: ""
+                val user = userResponse.body()?.values?.first()
+                user?.participatingEvent =
+                    user?.participatingEvent ?: mutableListOf<String>().apply { add(post.postUid) }
+                userRepository.updateUser(userUid, firebaseUid, user ?: TODO())
                 _isLoading.value = false
             }
             //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가
@@ -102,7 +106,7 @@ class PostingViewModel @Inject constructor(
 
     private suspend fun addImageToStorage(imageList: List<Uri>): List<String> = coroutineScope {
         imageList.map { imageUri ->
-            val location = "images/${imageUri}"+getCurrentDateString()
+            val location = "images/${imageUri}" + getCurrentDateString()
             val imageRef = firebaseStorage.getReference(location)
             imageRef.putFile(imageUri).await()
             location
