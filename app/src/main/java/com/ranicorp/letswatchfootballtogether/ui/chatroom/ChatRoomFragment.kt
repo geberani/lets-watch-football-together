@@ -53,4 +53,9 @@ class ChatRoomFragment : Fragment() {
             false
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
