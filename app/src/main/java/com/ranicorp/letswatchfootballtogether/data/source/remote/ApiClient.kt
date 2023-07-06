@@ -39,10 +39,10 @@ interface ApiClient {
     suspend fun getPostNoFirebaseUid(@Path("postUid") postUid: String): Response<Map<String, Post>>
 
     @POST("chat/{postUid}.json")
-    suspend fun addChat(@Path("postUid") postUid: String, @Body message: Message): Response<Map<String, Map<String, Message>>>
+    suspend fun addChat(@Path("postUid") postUid: String, @Body message: Message): Response<Map<String, String>>
 
     @GET("chat/{postUid}.json")
-    suspend fun getAllChat(@Path("postUid") postUid: String): Response<Map<String, Map<String, Message>>>
+    suspend fun getAllChat(@Path("postUid") postUid: String): Response<Map<String, Message>>
 
     @GET("users/{userUid}/{firebaseUid}.json")
     suspend fun getUser(@Path("userUid") userUid: String, @Path("firebaseUid") firebaseUid: String): Response<User>

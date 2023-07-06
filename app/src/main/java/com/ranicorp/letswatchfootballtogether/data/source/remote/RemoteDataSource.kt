@@ -51,11 +51,11 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
     suspend fun addChat(
         postUid: String,
         message: Message
-    ): Response<Map<String, Map<String, Message>>> {
+    ): Response<Map<String, String>> {
         return apiClient.addChat(postUid, message)
     }
 
-    suspend fun getAllChat(postUid: String): Response<Map<String, Map<String, Message>>> {
+    suspend fun getAllChat(postUid: String): Response<Map<String, Message>> {
         return apiClient.getAllChat(postUid)
     }
 

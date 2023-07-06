@@ -39,7 +39,7 @@ class ChatRoomViewModel @Inject constructor(
     fun getAllChat() {
         viewModelScope.launch {
             _allChat.value =
-                chatRepository.getAllChat(postUid).body()?.values?.flatMap { it.values }
+                chatRepository.getAllChat(postUid).body()?.values?.toList()
                     ?: emptyList()
         }
     }

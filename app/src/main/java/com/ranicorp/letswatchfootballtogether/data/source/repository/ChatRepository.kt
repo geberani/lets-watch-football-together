@@ -7,11 +7,11 @@ import javax.inject.Inject
 
 class ChatRepository @Inject constructor(private val remoteDataSource: RemoteDataSource) {
 
-    suspend fun addChat(postUid: String, message: Message): Response<Map<String, Map<String, Message>>> {
+    suspend fun addChat(postUid: String, message: Message): Response<Map<String, String>> {
         return remoteDataSource.addChat(postUid, message)
     }
 
-    suspend fun getAllChat(postUid:String): Response<Map<String, Map<String, Message>>> {
+    suspend fun getAllChat(postUid:String): Response<Map<String, Message>> {
         return remoteDataSource.getAllChat(postUid)
     }
 }
