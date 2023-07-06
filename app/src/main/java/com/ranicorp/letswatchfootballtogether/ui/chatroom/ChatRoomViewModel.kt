@@ -8,9 +8,11 @@ import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.source.repository.ChatRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class ChatRoomViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val preferenceRepository: UserPreferenceRepository,
