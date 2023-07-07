@@ -5,8 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import coil.transform.RoundedCornersTransformation
+import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
 import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
@@ -66,9 +65,7 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SentMessage) {
-            binding.tvSentText.text = item.message.content
-            binding.tvSentTime.text = item.message.sentTimeMillis.toString()
-            //TODO 시간 형식 변경
+            binding.message = item.message
         }
 
         companion object {
@@ -88,13 +85,11 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReceivedMessage) {
-            binding.tvReceivedText.text = item.message.content
-            binding.tvReceivedTime.text = item.message.sentTimeMillis.toString()
-            binding.tvNickName.text = item.message.senderNickname
-            binding.ivProfile.load(item.message.senderProfileLocation) {
-                transformations(RoundedCornersTransformation(8f))
+            binding.message = item.message
+            val imageRef = FirebaseStorage.getInstance().reference.child(item.message.senderProfileLocation)
+            imageRef.downloadUrl.addOnSuccessListener {
+                binding.imageUri = it.toString()
             }
-            //TODO 시간 형식 변경
         }
 
         companion object {

@@ -32,6 +32,8 @@ class ChatRoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.title = args.postTitle
         viewModel.setPostUid(args.postUid)
         setLayout()
     }
