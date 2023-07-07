@@ -95,8 +95,7 @@ class PostingViewModel @Inject constructor(
                 val userResponse = userRepository.getUserNoFirebaseUid(userUid)
                 val firebaseUid = userResponse.body()?.keys?.first() ?: ""
                 val user = userResponse.body()?.values?.first()
-                user?.participatingEvent =
-                    user?.participatingEvent ?: mutableListOf<String>().apply { add(post.postUid) }
+                user?.participatingEvent?.add(post.postUid)
                 userRepository.updateUser(userUid, firebaseUid, user ?: TODO())
                 _isLoading.value = false
             }

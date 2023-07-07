@@ -69,8 +69,7 @@ class DetailViewModel @Inject constructor(
             val userResponse = userRepository.getUserNoFirebaseUid(userUid)
             val userFirebaseUid = userResponse.body()?.keys?.first() ?: ""
             val user = userResponse.body()?.values?.first()
-            user?.participatingEvent =
-                user?.participatingEvent ?: mutableListOf<String>().apply { add(post.postUid) }
+            user?.participatingEvent?.add(post.postUid)
             userRepository.updateUser(userUid, userFirebaseUid, user ?: TODO())
 
             getPostDetail(post.postUid)
