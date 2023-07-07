@@ -46,6 +46,9 @@
         <argument
             android:name="postUid"
             app:argType="string" />
+        <argument
+            android:name="postTitle"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
