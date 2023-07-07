@@ -13,8 +13,6 @@ import com.ranicorp.letswatchfootballtogether.databinding.ItemParticipantsBindin
 class ParticipantsAdapter :
     ListAdapter<User, ParticipantsAdapter.ParticipantsViewHolder>(ParticipantDiffUtil()) {
 
-    private val participants = mutableListOf<User>()
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -28,17 +26,7 @@ class ParticipantsAdapter :
         holder: ParticipantsViewHolder,
         position: Int
     ) {
-        holder.bind(participants[position])
-    }
-
-    override fun getItemCount(): Int {
-        return participants.size
-    }
-
-    override fun submitList(participantsList: MutableList<User>?) {
-        super.submitList(participantsList)
-        participants.clear()
-        participants.addAll(participantsList?.toList() ?: emptyList())
+        holder.bind(getItem(position))
     }
 
     class ParticipantsViewHolder(private val binding: ItemParticipantsBinding) :

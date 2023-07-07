@@ -61,7 +61,7 @@
 
         <com.ranicorp.letswatchfootballtogether.ui.common.LocationInfoLayout
             android:id="@+id/locationInfoLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             app:layout_constraintBottom_toTopOf="@id/dateTimeInfoLayout"
@@ -70,7 +70,7 @@
 
         <com.ranicorp.letswatchfootballtogether.ui.common.DateTimeInfoLayout
             android:id="@+id/dateTimeInfoLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             app:layout_constraintBottom_toBottomOf="parent"

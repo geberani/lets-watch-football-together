@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
 import com.ranicorp.letswatchfootballtogether.data.model.SentMessage
@@ -16,8 +17,6 @@ private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 
 class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDiffCallback()) {
 
-    private val items = mutableListOf<ChatItem>()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_SENT_MESSAGE -> SentMessageViewHolder.from(parent)
@@ -28,22 +27,18 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is SentMessageViewHolder -> {
-                val item = items[position] as SentMessage
+                val item = getItem(position) as SentMessage
                 holder.bind(item)
             }
             is ReceivedMessageViewHolder -> {
-                val item = items[position] as ReceivedMessage
+                val item = getItem(position) as ReceivedMessage
                 holder.bind(item)
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
+        return when (getItem(position)) {
             is SentMessage -> VIEW_TYPE_SENT_MESSAGE
             is ReceivedMessage -> VIEW_TYPE_RECEIVED_MESSAGE
         }
@@ -53,9 +48,7 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SentMessage) {
-            binding.tvSentText.text = item.message.content
-            binding.tvSentTime.text = item.message.sentTimeMillis.toString()
-            //TODO 시간 형식 변경
+            binding.message = item.message
         }
 
         companion object {
@@ -75,9 +68,11 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReceivedMessage) {
-            binding.tvReceivedText.text = item.message.content
-            binding.tvReceivedTime.text = item.message.sentTimeMillis.toString()
-            //TODO 시간 형식 변경
+            binding.message = item.message
+            val imageRef = FirebaseStorage.getInstance().reference.child(item.message.senderProfileLocation)
+            imageRef.downloadUrl.addOnSuccessListener {
+                binding.imageUri = it.toString()
+            }
         }
 
         companion object {

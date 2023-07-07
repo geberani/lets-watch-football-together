@@ -22,4 +22,9 @@ object DateFormatText {
         val format = SimpleDateFormat("MM.dd(E)", SystemConfiguration.currentLocale)
         return format.format(time)
     }
+
+    fun longToHourMin(time: Long): String {
+        val format = SimpleDateFormat("HH:mm", SystemConfiguration.currentLocale)
+        return format.format(Date(time))
+    }
 }
