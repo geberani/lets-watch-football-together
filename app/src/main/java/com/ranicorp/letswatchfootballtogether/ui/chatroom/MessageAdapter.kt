@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
-import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
 import com.ranicorp.letswatchfootballtogether.data.model.SentMessage
 import com.ranicorp.letswatchfootballtogether.databinding.ItemReceivedMessageBinding
@@ -44,29 +44,11 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         }
     }
 
-    override fun submitList(list: MutableList<ChatItem>?) {
-        super.submitList(list)
-    }
-
-    fun submitList(messageList: List<Message>, userUid: String) {
-        val result = mutableListOf<ChatItem>()
-        for (item in messageList) {
-            if (item.senderUid == userUid) {
-                result.add(SentMessage(item))
-            } else {
-                result.add(ReceivedMessage(item))
-            }
-        }
-        submitList(result)
-    }
-
     class SentMessageViewHolder(private val binding: ItemSentMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SentMessage) {
-            binding.tvSentText.text = item.message.content
-            binding.tvSentTime.text = item.message.sentTimeMillis.toString()
-            //TODO 시간 형식 변경
+            binding.message = item.message
         }
 
         companion object {
@@ -86,9 +68,11 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReceivedMessage) {
-            binding.tvReceivedText.text = item.message.content
-            binding.tvReceivedTime.text = item.message.sentTimeMillis.toString()
-            //TODO 시간 형식 변경
+            binding.message = item.message
+            val imageRef = FirebaseStorage.getInstance().reference.child(item.message.senderProfileLocation)
+            imageRef.downloadUrl.addOnSuccessListener {
+                binding.imageUri = it.toString()
+            }
         }
 
         companion object {
