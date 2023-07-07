@@ -9,6 +9,9 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
+import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
+import com.ranicorp.letswatchfootballtogether.data.model.SentMessage
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentChatRoomBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,9 +44,6 @@ class ChatRoomFragment : Fragment() {
     private fun setLayout() {
         binding.rvChat.adapter = messageAdapter
         viewModel.getAllChat()
-        viewModel.allChat.observe(viewLifecycleOwner) {
-            messageAdapter.submitList(it, viewModel.userUid)
-        }
         binding.etWriteText.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                 (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
@@ -52,6 +52,21 @@ class ChatRoomFragment : Fragment() {
                 return@setOnEditorActionListener true
             }
             false
+        }
+        submitData()
+    }
+
+    private fun submitData() {
+        viewModel.allChat.observe(viewLifecycleOwner) { messageList ->
+            val chatItemList = mutableListOf<ChatItem>()
+            for (item in messageList) {
+                if (item.senderUid == viewModel.userUid) {
+                    chatItemList.add(SentMessage(item))
+                } else {
+                    chatItemList.add(ReceivedMessage(item))
+                }
+            }
+            messageAdapter.submitList(chatItemList)
         }
     }
 

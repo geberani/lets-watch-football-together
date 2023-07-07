@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
-import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
 import com.ranicorp.letswatchfootballtogether.data.model.SentMessage
 import com.ranicorp.letswatchfootballtogether.databinding.ItemReceivedMessageBinding
@@ -43,22 +42,6 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
             is SentMessage -> VIEW_TYPE_SENT_MESSAGE
             is ReceivedMessage -> VIEW_TYPE_RECEIVED_MESSAGE
         }
-    }
-
-    override fun submitList(list: MutableList<ChatItem>?) {
-        super.submitList(list)
-    }
-
-    fun submitList(messageList: List<Message>, userUid: String) {
-        val result = mutableListOf<ChatItem>()
-        for (item in messageList) {
-            if (item.senderUid == userUid) {
-                result.add(SentMessage(item))
-            } else {
-                result.add(ReceivedMessage(item))
-            }
-        }
-        submitList(result)
     }
 
     class SentMessageViewHolder(private val binding: ItemSentMessageBinding) :
