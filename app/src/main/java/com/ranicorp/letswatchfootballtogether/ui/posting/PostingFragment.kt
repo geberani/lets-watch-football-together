@@ -111,6 +111,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
                 progressDialog.show(requireActivity().supportFragmentManager, null)
             } else {
                 progressDialog.dismiss()
+                findNavController().navigateUp()
             }
         }
     }
