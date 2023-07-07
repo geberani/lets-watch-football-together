@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -85,6 +86,9 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         }
         binding.etTime.setOnClickListener {
             chooseTime()
+        }
+        binding.postingToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
