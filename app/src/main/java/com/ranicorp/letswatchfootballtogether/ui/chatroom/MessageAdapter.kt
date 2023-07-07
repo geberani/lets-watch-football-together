@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
 import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
@@ -88,6 +90,10 @@ class MessageAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(MessageDif
         fun bind(item: ReceivedMessage) {
             binding.tvReceivedText.text = item.message.content
             binding.tvReceivedTime.text = item.message.sentTimeMillis.toString()
+            binding.tvNickName.text = item.message.senderNickname
+            binding.ivProfile.load(item.message.senderProfileLocation) {
+                transformations(RoundedCornersTransformation(8f))
+            }
             //TODO 시간 형식 변경
         }
 
