@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/background_blue_rounded_corners"
         android:gravity="fill_vertical"
+        android:maxWidth="300dp"
         android:paddingHorizontal="3dp"
         android:textColor="@color/black"
         android:textSize="14sp"
