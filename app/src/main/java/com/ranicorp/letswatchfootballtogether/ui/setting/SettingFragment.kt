@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentSettingBinding
+import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -58,13 +59,15 @@ class SettingFragment : Fragment() {
         binding.etNickname.doAfterTextChanged {
             viewModel.setNickName(it.toString())
             viewModel.validateNickName(it.toString())
-            viewModel.errorMsg.observe(viewLifecycleOwner) { errorMsg ->
+            viewModel.errorMsg.observe(viewLifecycleOwner, EventObserver { errorMsg ->
                 setErrorMsg(errorMsg)
+            })
+        }
+        viewModel.isSettingComplete.observe(viewLifecycleOwner, EventObserver {
+            if (it) {
+                findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
             }
-        }
-        viewModel.settingComplete.observe(viewLifecycleOwner) {
-            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
-        }
+        })
     }
 
     private fun setErrorMsg(errorMsg: String?) {

@@ -26,7 +26,6 @@ class BannerAdapter : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
     }
 
     fun submitBannersList(bannersList: List<String>) {
-        banners.clear()
         banners.addAll(bannersList)
         notifyDataSetChanged()
     }
