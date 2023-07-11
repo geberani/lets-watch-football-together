@@ -2,6 +2,7 @@ package com.ranicorp.letswatchfootballtogether.data.source.remote
 
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.BuildConfig
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -46,6 +47,7 @@ object NetworkModule {
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(ApiCallAdapterFactory.create())
             .build()
     }
 
