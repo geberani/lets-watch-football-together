@@ -12,6 +12,8 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentDetailBinding
+import com.ranicorp.letswatchfootballtogether.ui.common.Event
+import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,6 +51,24 @@ class DetailFragment : Fragment() {
             findNavController().navigateUp()
         }
         setPostDetail()
+        viewModel.isLoaded.observe(viewLifecycleOwner, EventObserver {
+            if (!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_not_loaded),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+        viewModel.isParticipateCompleted.observe(viewLifecycleOwner, EventObserver {
+            if (!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_participate_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
         setParticipateBtn()
         setJoinChatBtn()
     }
@@ -66,13 +86,13 @@ class DetailFragment : Fragment() {
             bannerAdapter.submitBannersList(it.imageLocations)
         }
         viewModel.participantsInfo.observe(viewLifecycleOwner) {
-            participantsAdapter.submitList(it)
+            participantsAdapter.submitList(it.content)
         }
     }
 
     private fun setParticipateBtn() {
         binding.btnParticipate.setOnClickListener {
-            if (viewModel.isParticipated.value == true) {
+            if (viewModel.isParticipated.value == Event(true)) {
                 Toast.makeText(
                     context,
                     getString(R.string.guide_message_already_participated),
@@ -97,7 +117,7 @@ class DetailFragment : Fragment() {
 
     private fun setJoinChatBtn() {
         binding.btnJoinChat.setOnClickListener {
-            if (viewModel.isParticipated.value == true) {
+            if (viewModel.isParticipated.value == Event(true)) {
                 TODO("채팅방으로 이동")
             } else {
                 Toast.makeText(

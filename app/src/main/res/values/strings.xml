@@ -18,6 +18,8 @@
     <string name="error_message_empty_nick_name">닉네임을 입력해주세요.</string>
     <string name="error_message_max_length">20자 이내로 입력해주세요.</string>
     <string name="error_message_duplicate_nick_name">중복된 닉네임입니다.</string>
+    <string name="error_message_setting_failed">프로필 설정 실패하였습니다. 잠시후 다시 시도해주세요.</string>
+    <string name="error_message_setting_not_available">프로필 설정할 수 없습니다. 잠시후 다시 시도해주세요.</string>
 
     <!-- 글쓰기 -->
     <string name="title_write_post">모집 글쓰기</string>
@@ -42,6 +44,7 @@
     <string name="title_set_time">모임 시간을 정해주세요</string>
     <string name="label_am_time">오전 %1$d:%2$d</string>
     <string name="label_pm_time">오후 %1$d:%2$d</string>
+    <string name="error_message_post_failed">게시물 등록에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
 
     <!-- 홈 -->
     <string name="title_lets_watch_football">같이 축구 볼 사람?</string>
@@ -51,6 +54,7 @@
     <string name="label_home">홈</string>
     <string name="label_chat">채팅</string>
     <string name="label_profile">프로필</string>
+    <string name="error_message_loading_failed">게시물 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
 
     <!-- 상세 화면 -->
     <string name="label_number_of_participants">참여 인원 (%1$d/%2$d명)</string>
@@ -60,8 +64,11 @@
     <string name="guide_message_exceed_maximum_participants">모집 최대 인원을 초과하였습니다.</string>
     <string name="guide_message_participate_succeeded">참여 완료되었습니다.</string>
     <string name="guide_message_join_restricted">모임에 참여한 사람만 채팅방에 입장할 수 있습니다.</string>
+    <string name="error_message_not_loaded">상세화면 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
+    <string name="error_message_participate_failed">모임에 참여 실패하였습니다. 잠시후 다시 시도해주세요.</string>
 
     <!-- 채팅방-->
     <string name="hint_write_message">메세지를 입력해주세요.</string>
+    <string name="error_message_chat_room_loading_failed">채팅방 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
 
 </resources>

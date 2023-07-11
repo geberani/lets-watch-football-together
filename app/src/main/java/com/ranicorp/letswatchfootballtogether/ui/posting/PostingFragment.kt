@@ -73,6 +73,12 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         viewModel.isComplete.observe(viewLifecycleOwner, EventObserver {
             if (it) {
                 findNavController().navigateUp()
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_post_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
@@ -99,7 +105,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     }
 
     private fun setAdapter() {
-        binding.imageRecyclerView.adapter =
+        binding.rvImage.adapter =
             ConcatAdapter(attachedImageHeaderAdapter, attachedImageAdapter)
         attachedImageHeaderAdapter.submitList(getString(R.string.number_of_image_displayed, 0))
     }

@@ -1,6 +1,7 @@
 package com.ranicorp.letswatchfootballtogether.ui.posting
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.data.model.Post
+import com.ranicorp.letswatchfootballtogether.data.model.User
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultError
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultException
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultSuccess
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
@@ -37,9 +42,10 @@ class PostingViewModel @Inject constructor(
     val errorMsgResId: LiveData<Event<Int>> = _errorMsgResId
     private val _imageUriList: MutableLiveData<Event<MutableList<Uri>>> = MutableLiveData()
     val imageUriList: LiveData<Event<MutableList<Uri>>> = _imageUriList
+    private val isPostAdded = MutableLiveData(Event(false))
     private val _isLoading = MutableLiveData(Event(false))
     val isLoading: LiveData<Event<Boolean>> = _isLoading
-    private val _isComplete = MutableLiveData(Event(false))
+    private val _isComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isComplete: LiveData<Event<Boolean>> = _isComplete
     private val userUid = userPreferenceRepository.getUserUid()
 
@@ -93,16 +99,85 @@ class PostingViewModel @Inject constructor(
                 imageLocations,
                 mutableListOf(userUid)
             )
-            if (postRepository.addPost(postUid, post).isSuccessful) {
-                val userResponse = userRepository.getUserNoFirebaseUid(userUid)
-                val firebaseUid = userResponse.body()?.keys?.first() ?: ""
-                val user = userResponse.body()?.values?.first()
-                user?.participatingEvent?.add(post.postUid)
-                userRepository.updateUser(userUid, firebaseUid, user ?: TODO())
+            addPostCall(postUid, post)
+            if (isPostAdded.value?.content != true) {
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(false)
+                return@launch
+            }
+            val userInfo = getUserInfoCall()
+            if (userInfo.isNullOrEmpty()) {
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(false)
+                return@launch
+            }
+            updateUserCall(userInfo, postUid)
+            //TODO() 해당 게시물 채팅방 생성
+        }
+    }
+
+    private suspend fun getUserInfoCall(): Map<String, User>? {
+        val callResponse = userRepository.getUserNoFirebaseUid(userUid)
+        when (callResponse) {
+            is ApiResultSuccess -> {
+                return callResponse.data
+            }
+            is ApiResultError -> {
+                Log.d(
+                    "PostingViewModel",
+                    "Error code: ${callResponse.code}, message: ${callResponse.message}"
+                )
+                return null
+            }
+            is ApiResultException -> {
+                Log.d("PostingViewModel", "Exception: ${callResponse.throwable}")
+                return null
+            }
+        }
+    }
+
+    private suspend fun updateUserCall(userInfo: Map<String, User>, postUid: String) {
+        val firebaseUid = userInfo.keys.first()
+        val user = userInfo.values.first()
+        user.participatingEvent.add(postUid)
+        val updateUserResult = userRepository.updateUser(userUid, firebaseUid, user)
+        when (updateUserResult) {
+            is ApiResultSuccess -> {
                 _isLoading.value = Event(false)
                 _isComplete.value = Event(true)
             }
-            //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가
+            is ApiResultError -> {
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(false)
+                Log.d(
+                    "PostingViewModel",
+                    "Error code: ${updateUserResult.code}, message: ${updateUserResult.message}"
+                )
+            }
+            is ApiResultException -> {
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(false)
+                Log.d("PostingViewModel", "Exception: ${updateUserResult.throwable}")
+            }
+        }
+    }
+
+
+    private suspend fun addPostCall(postUid: String, post: Post) {
+        val addPostResult = postRepository.addPost(postUid, post)
+        when (addPostResult) {
+            is ApiResultSuccess -> {
+                isPostAdded.value = Event(true)
+            }
+            is ApiResultError -> {
+                Log.d(
+                    "PostingViewModel",
+                    "Error code: ${addPostResult.code}, message: ${addPostResult.message}"
+                )
+            }
+            is ApiResultException -> {
+                Log.d("PostingViewModel", "Exception: ${addPostResult.throwable}")
+            }
         }
     }
 
