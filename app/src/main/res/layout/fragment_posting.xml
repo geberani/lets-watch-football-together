@@ -24,7 +24,7 @@
                 style="@style/App.CustomToolbar.Extend"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/imageRecyclerView"
+                app:layout_constraintBottom_toTopOf="@id/rvImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +43,7 @@
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/imageRecyclerView"
+                    android:id="@+id/rvImage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -68,7 +68,7 @@
                     app:layout_constraintBottom_toTopOf="@id/etLocation"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/imageRecyclerView" />
+                    app:layout_constraintTop_toBottomOf="@id/rvImage" />
 
                 <ImageView
                     android:id="@+id/ivLocationPin"
@@ -157,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:hint="@string/hint_post_recruit_number"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:text="@={viewModel.maxParticipants}"
                     app:layout_constraintBottom_toTopOf="@id/etDescription"
                     app:layout_constraintEnd_toEndOf="parent"
