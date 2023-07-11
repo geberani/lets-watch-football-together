@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.ChildEventListener
 import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.source.repository.ChatRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
@@ -26,6 +27,7 @@ class ChatRoomViewModel @Inject constructor(
     val userUid = preferenceRepository.getUserUid()
     private val _isSent = MutableLiveData<Event<Boolean>>()
     val isSent: LiveData<Event<Boolean>> = _isSent
+    private var chatEventListener: ChildEventListener? = null
 
     fun addChat(messageText: String) {
         viewModelScope.launch {
@@ -54,5 +56,18 @@ class ChatRoomViewModel @Inject constructor(
 
     fun setPostUid(postUid: String) {
         _postUid = postUid
+    }
+
+    fun addChatEventListener() {
+        chatEventListener = chatRepository.addChatEventListener(_postUid) { chatItem ->
+            val currentList = _allChat.value?.content ?: emptyList()
+            val newList = currentList.toMutableList().apply { add(chatItem) }
+            _allChat.value = Event(newList)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        chatEventListener = null
     }
 }

@@ -45,24 +45,31 @@ class ChatRoomFragment : Fragment() {
     private fun setLayout() {
         binding.rvChat.adapter = messageAdapter
         viewModel.getAllChat()
-        viewModel.isSent.observe(viewLifecycleOwner, EventObserver {
-            if (it) {
-                binding.etWriteText.text.clear()
-            }
-        })
+        sendText()
+        setData()
+        viewModel.addChatEventListener()
+    }
+
+    private fun sendText() {
         binding.etWriteText.setOnEditorActionListener { _, actionId, event ->
+            val enteredText = binding.etWriteText.text.toString()
+            if (enteredText.isBlank()) return@setOnEditorActionListener true
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
-                val enteredText = binding.etWriteText.text.toString()
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
                 viewModel.addChat(enteredText)
                 return@setOnEditorActionListener true
             }
             false
         }
-        submitData()
+        viewModel.isSent.observe(viewLifecycleOwner, EventObserver {
+            if (it) {
+                binding.etWriteText.text.clear()
+            }
+        })
     }
 
-    private fun submitData() {
+    private fun setData() {
         viewModel.allChat.observe(viewLifecycleOwner, EventObserver { messageList ->
             val chatItemList = mutableListOf<ChatItem>()
             for (item in messageList) {
@@ -73,6 +80,7 @@ class ChatRoomFragment : Fragment() {
                 }
             }
             messageAdapter.submitList(chatItemList)
+            binding.rvChat.scrollToPosition(messageAdapter.itemCount - 1)
         })
     }
 

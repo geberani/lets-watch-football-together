@@ -9,4 +9,6 @@ data class Message(
     val senderProfileLocation: String,
     val sentTimeMillis: Long,
     val content: String
-)
+) {
+    constructor() : this("", "", "", 0, "")
+}
