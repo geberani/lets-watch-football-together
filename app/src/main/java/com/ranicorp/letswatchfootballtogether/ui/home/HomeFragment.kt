@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.ranicorp.letswatchfootballtogether.HomeGraphDirections
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentHomeBinding
+import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,7 +51,7 @@ class HomeFragment : Fragment(), PostClickListener {
 
     private fun updateData() {
         viewModel.loadAllPosts()
-        viewModel.allPosts.observe(viewLifecycleOwner) { allPosts ->
+        viewModel.allPosts.observe(viewLifecycleOwner, EventObserver { allPosts ->
             homeAdapter.submitAllPostList(
                 allPosts,
                 getString(R.string.header_new_posts),
@@ -58,7 +59,7 @@ class HomeFragment : Fragment(), PostClickListener {
                 getString(R.string.header_all_posts)
             )
             binding.refreshLayout.isRefreshing = false
-        }
+        })
     }
 
     override fun onDestroyView() {

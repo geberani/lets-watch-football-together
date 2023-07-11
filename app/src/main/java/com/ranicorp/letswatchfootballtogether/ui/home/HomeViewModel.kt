@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
+import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,12 +14,14 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val postRepository: PostRepository) : ViewModel() {
 
-    private val _allPosts = MutableLiveData<List<Post>>()
-    val allPosts: LiveData<List<Post>> = _allPosts
+    private val _allPosts = MutableLiveData<Event<List<Post>>>()
+    val allPosts: LiveData<Event<List<Post>>> = _allPosts
 
     fun loadAllPosts() {
         viewModelScope.launch {
-            _allPosts.value = postRepository.getAllPosts().body()?.values?.flatMap { it.values }
+            _allPosts.value =
+                Event(postRepository.getAllPosts().body()?.values?.flatMap { it.values }
+                    ?: emptyList())
         }
     }
 }

@@ -1,5 +1,10 @@
 package com.ranicorp.letswatchfootballtogether.data.source.remote
 
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
@@ -66,4 +71,30 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
     suspend fun getUserNoFirebaseUid(userUid: String): Response<Map<String, User>> {
         return apiClient.getUserNoFirebaseUid(userUid)
     }
+
+    fun addChatEventListener(chatRoomUid: String, onChatItemAdded: (Message) -> Unit): ChildEventListener {
+        val chatEventListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatItem = snapshot.getValue(Message::class.java)
+                chatItem?.let { onChatItemAdded(it) }
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        }
+        val database = Firebase.database(com.ranicorp.letswatchfootballtogether.BuildConfig.BASE_URL
+        ).reference
+        database.child("chat").child(chatRoomUid).addChildEventListener(chatEventListener)
+        return chatEventListener
+    }
+
 }

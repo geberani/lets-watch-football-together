@@ -11,6 +11,7 @@ import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
+import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText.getCurrentDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
@@ -32,21 +33,22 @@ class PostingViewModel @Inject constructor(
     val time = MutableLiveData<String>()
     val maxParticipants = MutableLiveData<String>()
     val description = MutableLiveData<String>()
-    private val _errorMsgResId = MutableLiveData<Int>()
-    val errorMsgResId = _errorMsgResId
-    private val _imageUriList: MutableLiveData<List<Uri>> = MutableLiveData()
-    val imageUriList: LiveData<List<Uri>> = _imageUriList
-    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _errorMsgResId = MutableLiveData<Event<Int>>()
+    val errorMsgResId: LiveData<Event<Int>> = _errorMsgResId
+    private val _imageUriList: MutableLiveData<Event<MutableList<Uri>>> = MutableLiveData()
+    val imageUriList: LiveData<Event<MutableList<Uri>>> = _imageUriList
+    private val _isLoading = MutableLiveData(Event(false))
+    val isLoading: LiveData<Event<Boolean>> = _isLoading
+    private val _isComplete = MutableLiveData(Event(false))
+    val isComplete: LiveData<Event<Boolean>> = _isComplete
     private val userUid = userPreferenceRepository.getUserUid()
 
     fun addImage(uri: Uri) {
-        val currentList = _imageUriList.value ?: emptyList()
-        _imageUriList.value = currentList.plus(uri)
+        _imageUriList.value?.content?.add(uri)
     }
 
     fun removeImage(uri: Uri) {
-        _imageUriList.value = _imageUriList.value?.minus(uri)
+        _imageUriList.value?.content?.minus(uri)
     }
 
     fun complete() {
@@ -67,7 +69,7 @@ class PostingViewModel @Inject constructor(
 
     private fun isNotValidInfo(text: String?, messageResId: Int): Boolean {
         if (text.isNullOrBlank() || text == "null") {
-            _errorMsgResId.value = messageResId
+            _errorMsgResId.value = Event(messageResId)
             return true
         }
         return false
@@ -75,8 +77,8 @@ class PostingViewModel @Inject constructor(
 
     private fun addPost() {
         viewModelScope.launch {
-            _isLoading.value = true
-            val imageLocations = addImageToStorage(_imageUriList.value?.toList() ?: emptyList())
+            _isLoading.value = Event(true)
+            val imageLocations = addImageToStorage(_imageUriList.value?.content ?: emptyList())
             val postUid = userUid + userUid + System.currentTimeMillis()
             val post = Post(
                 postUid,
@@ -97,7 +99,8 @@ class PostingViewModel @Inject constructor(
                 val user = userResponse.body()?.values?.first()
                 user?.participatingEvent?.add(post.postUid)
                 userRepository.updateUser(userUid, firebaseUid, user ?: TODO())
-                _isLoading.value = false
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(true)
             }
             //TODO 해당 게시물 채팅방 생성, User의 ParticipatingEvent List에 위 이벤트 추가
         }

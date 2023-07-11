@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
+import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import com.ranicorp.letswatchfootballtogether.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
@@ -25,13 +26,13 @@ class SettingViewModel @Inject constructor(
 
     val profileUri: MutableLiveData<String> = MutableLiveData()
     val nickName: MutableLiveData<String> = MutableLiveData()
-    private val _errorType: MutableLiveData<String?> = MutableLiveData()
-    val errorMsg: LiveData<String?> = _errorType
+    private val _errorType: MutableLiveData<Event<String?>> = MutableLiveData()
+    val errorMsg: LiveData<Event<String?>> = _errorType
     private val isValidProfileUri: MutableLiveData<Boolean> = MutableLiveData()
     private val isValidNickName: MutableLiveData<Boolean> = MutableLiveData()
     private val existingNickName: MutableLiveData<Collection<String>> = MutableLiveData()
-    private val _settingCompleted = MutableLiveData<Boolean>()
-    val settingComplete: LiveData<Boolean> = _settingCompleted
+    private val _isSettingComplete = MutableLiveData(Event(false))
+    val isSettingComplete: LiveData<Event<Boolean>> = _isSettingComplete
 
     fun setProfileUri(uri: String) {
         profileUri.value = uri
@@ -44,9 +45,9 @@ class SettingViewModel @Inject constructor(
 
     fun validateNickName(nickName: String) {
         if (this.nickName.value.isNullOrBlank()) {
-            _errorType.value = Constants.ERROR_EMPTY_NICK_NAME
+            _errorType.value = Event(Constants.ERROR_EMPTY_NICK_NAME)
         } else if (this.nickName.value!!.length > 20) {
-            _errorType.value = Constants.ERROR_MAX_LENGTH
+            _errorType.value = Event(Constants.ERROR_MAX_LENGTH)
         } else {
             viewModelScope.launch {
                 verifyDuplicateNickName(nickName)
@@ -57,10 +58,10 @@ class SettingViewModel @Inject constructor(
     private fun verifyDuplicateNickName(nickName: String) {
         if (existingNickName.value?.contains(nickName) == false) {
             isValidNickName.value = true
-            _errorType.value = null
+            _errorType.value = Event(null)
         } else {
             isValidNickName.value = false
-            _errorType.value = Constants.ERROR_DUPLICATE_NICK_NAME
+            _errorType.value = Event(Constants.ERROR_DUPLICATE_NICK_NAME)
         }
     }
 
@@ -73,7 +74,6 @@ class SettingViewModel @Inject constructor(
 
     fun addUser(googleUid: String) {
         if (profileUri.value.isNullOrEmpty() || nickName.value.isNullOrEmpty()) {
-            //TODO 프로필 또는 닉네임을 설정하지 않았을 때에 대한 처리
             return
         }
 
@@ -91,7 +91,7 @@ class SettingViewModel @Inject constructor(
                     user
                 ).isSuccessful && userRepository.addUserNickName(nickName.value!!).isSuccessful
             ) {
-                _settingCompleted.value = true
+                _isSettingComplete.value = Event(true)
             }
         }
         userPreferenceRepository.saveUserInfo(googleUid)

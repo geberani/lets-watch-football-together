@@ -17,6 +17,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
+import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.ui.common.ProgressDialogFragment
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,11 +56,11 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     }
 
     private fun updateAdapterData() {
-        attachedImageAdapter.submitList(viewModel.imageUriList.value)
+        attachedImageAdapter.submitList(viewModel.imageUriList.value?.content)
         attachedImageHeaderAdapter.submitList(
             getString(
                 R.string.number_of_image_displayed,
-                viewModel.imageUriList.value?.size
+                viewModel.imageUriList.value?.content?.size
             )
         )
         attachedImageHeaderAdapter.notifyDataSetChanged()
@@ -69,6 +70,11 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         setAdapter()
         setObservers()
         setOnClickListeners()
+        viewModel.isComplete.observe(viewLifecycleOwner, EventObserver {
+            if (it) {
+                findNavController().navigateUp()
+            }
+        })
     }
 
     private fun setOnClickListeners() {
@@ -99,21 +105,20 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     }
 
     private fun setObservers() {
-        viewModel.errorMsgResId.observe(viewLifecycleOwner) {
+        viewModel.errorMsgResId.observe(viewLifecycleOwner, EventObserver {
             Toast.makeText(
                 context,
                 getString(it),
                 Toast.LENGTH_SHORT
             ).show()
-        }
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            if (it == true) {
+        })
+        viewModel.isLoading.observe(viewLifecycleOwner, EventObserver {
+            if (it) {
                 progressDialog.show(requireActivity().supportFragmentManager, null)
             } else {
                 progressDialog.dismiss()
-                findNavController().navigateUp()
             }
-        }
+        })
     }
 
     private fun chooseDate() {
@@ -161,7 +166,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     }
 
     override fun onHeaderClick() {
-        if (viewModel.imageUriList.value?.size == 10) {
+        if (viewModel.imageUriList.value?.content?.size == 10) {
             Toast.makeText(
                 context,
                 getString(R.string.guide_message_limit_max_images),
