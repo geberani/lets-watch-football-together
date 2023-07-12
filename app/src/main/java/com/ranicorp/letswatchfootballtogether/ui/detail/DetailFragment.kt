@@ -12,7 +12,6 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentDetailBinding
-import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -92,7 +91,7 @@ class DetailFragment : Fragment() {
 
     private fun setParticipateBtn() {
         binding.btnParticipate.setOnClickListener {
-            if (viewModel.isParticipated.value == Event(true)) {
+            if (viewModel.isParticipated.value == true) {
                 Toast.makeText(
                     context,
                     getString(R.string.guide_message_already_participated),
@@ -117,7 +116,7 @@ class DetailFragment : Fragment() {
 
     private fun setJoinChatBtn() {
         binding.btnJoinChat.setOnClickListener {
-            if (viewModel.isParticipated.value == Event(true)) {
+            if (viewModel.isParticipated.value == true) {
                 TODO("채팅방으로 이동")
             } else {
                 Toast.makeText(

@@ -32,19 +32,20 @@ class DetailViewModel @Inject constructor(
     val participantsInfo: LiveData<Event<MutableList<User>>> = _participantsInfo
     private val _isLoaded = MutableLiveData<Event<Boolean>>()
     val isLoaded: LiveData<Event<Boolean>> = _isLoaded
-    private val _isParticipated = MutableLiveData<Event<Boolean>>()
-    val isParticipated: LiveData<Event<Boolean>> = _isParticipated
+    private val _isParticipated = MutableLiveData<Boolean>()
+    val isParticipated: LiveData<Boolean> = _isParticipated
     private val _isParticipateCompleted = MutableLiveData<Event<Boolean>>()
     val isParticipateCompleted: LiveData<Event<Boolean>> = _isParticipateCompleted
     private val userUid = userPreferenceRepository.getUserUid()
-    private var firebaseUid = ""
+    private var postFirebaseUid = ""
+    private var userInfo: Map<String, User>? = emptyMap()
 
     fun getPostDetail(postUid: String) {
         viewModelScope.launch {
             val postResponse = postRepository.getPostNoFirebaseUid(postUid)
             when (postResponse) {
                 is ApiResultSuccess -> {
-                    firebaseUid = postResponse.data.keys.first()
+                    postFirebaseUid = postResponse.data.keys.first()
                     _selectedPost.value = postResponse.data.values.first()
                     participantsUidList.addAll(
                         selectedPost.value?.participantsUidList ?: emptyList()
@@ -98,23 +99,21 @@ class DetailViewModel @Inject constructor(
 
     private fun isUserParticipated() {
         _isParticipated.value =
-            Event(participantsUidList.contains(userUid))
+           participantsUidList.contains(userUid)
     }
 
     fun participate() {
         viewModelScope.launch {
-            val userInfo = getUserInfo() ?: return@launch
-
             val post = _selectedPost.value
             post?.participantsUidList?.add(userUid)
             val updatePostResponse = postRepository.updatePost(
                 selectedPost.value?.postUid ?: "",
-                firebaseUid,
+                postFirebaseUid,
                 post ?: TODO()
             )
             when (updatePostResponse) {
                 is ApiResultSuccess -> {
-                    updateUser(userInfo, post.postUid)
+                    getUserInfo()
                 }
                 is ApiResultError -> {
                     _isParticipateCompleted.value = Event(false)
@@ -131,16 +130,16 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun updateUser(userInfo: Map<String, User>, postUid: String) {
+    private fun updateUser(postUid: String) {
         viewModelScope.launch {
-            val userFirebaseUid = userInfo.keys.first()
-            val user = userInfo.values.first()
-            user.participatingEvent.add(postUid)
-            val updateUserCall = userRepository.updateUser(userUid, userFirebaseUid, user)
+            val userFirebaseUid = userInfo?.keys?.first() ?: ""
+            val user = userInfo?.values?.first()
+            user?.participatingEvent?.add(postUid)
+            val updateUserCall = userRepository.updateUser(userUid, userFirebaseUid, user ?: TODO())
             when (updateUserCall) {
                 is ApiResultSuccess -> {
                     getPostDetail(postUid)
-                    _isParticipated.value = Event(true)
+                    _isParticipated.value = true
                     _isParticipateCompleted.value = Event(true)
                 }
                 is ApiResultError -> {
@@ -158,13 +157,13 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun getUserInfo(): Map<String, User>? {
-        var userInfo: Map<String, User>? = emptyMap()
+    private fun getUserInfo() {
         viewModelScope.launch {
             val userResponse = userRepository.getUserNoFirebaseUid(userUid)
             when (userResponse) {
                 is ApiResultSuccess -> {
                     userInfo = userResponse.data
+                    updateUser(selectedPost.value?.postUid ?: "")
                 }
                 is ApiResultError -> {
                     _isParticipateCompleted.value = Event(false)
@@ -181,6 +180,5 @@ class DetailViewModel @Inject constructor(
                 }
             }
         }
-        return userInfo
     }
 }
