@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:background="@drawable/background_white_rounded_corners"
+    android:padding="5dp">
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/ivPostPreview"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/tvPostTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivPostPreview"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="[첼시 vs 리버풀] 이번 시즌 마지막 경기입니다!!! 다들 커몽커몽 ~" />
+
+    <TextView
+        android:id="@+id/tvLastMsg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvSentTime"
+        app:layout_constraintStart_toEndOf="@id/ivPostPreview"
+        app:layout_constraintTop_toBottomOf="@id/tvPostTitle"
+        tools:text="다음주에 뵙겠습니다~~" />
+
+    <TextView
+        android:id="@+id/tvSentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPostTitle"
+        tools:text="4월 28일" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
