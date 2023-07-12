@@ -41,7 +41,8 @@ class SettingViewModel @Inject constructor(
     val isInputComplete: LiveData<Event<Boolean>> = _isInputComplete
     private val isAddUserComplete = MutableLiveData(false)
     private val isAddNickNameComplete = MutableLiveData(false)
-    val hasAllNickName: MutableLiveData<Boolean> = MutableLiveData()
+    private val _hasAllNickName: MutableLiveData<Boolean> = MutableLiveData()
+    val hasAllNickName: LiveData<Boolean> = _hasAllNickName
 
     fun setProfileUri(uri: String) {
         profileUri.value = uri
@@ -81,17 +82,17 @@ class SettingViewModel @Inject constructor(
             when (networkResult) {
                 is ApiResultSuccess -> {
                     existingNickName.value = networkResult.data.values.toList()
-                    hasAllNickName.value = true
+                    _hasAllNickName.value = true
                 }
                 is ApiResultError -> {
-                    hasAllNickName.value = false
+                    _hasAllNickName.value = false
                     Log.d(
                         "SettingViewModel",
                         "Error code: ${networkResult.code}, message: ${networkResult.message}"
                     )
                 }
                 is ApiResultException -> {
-                    hasAllNickName.value = false
+                    _hasAllNickName.value = false
                     Log.d("SettingViewModel", "Exception: ${networkResult.throwable}")
                 }
             }
