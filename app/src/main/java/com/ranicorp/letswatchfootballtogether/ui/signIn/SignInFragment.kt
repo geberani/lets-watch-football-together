@@ -61,6 +61,15 @@ class SignInFragment : Fragment() {
         binding.btnSignInWithGoogle.setOnClickListener {
             onClick()
         }
+        viewModel.hasAllUsers.observe(viewLifecycleOwner) {
+            if (it == false) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_sign_in_not_available),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun setActivityResultLauncher(signInClient: SignInClient): ActivityResultLauncher<IntentSenderRequest> {
