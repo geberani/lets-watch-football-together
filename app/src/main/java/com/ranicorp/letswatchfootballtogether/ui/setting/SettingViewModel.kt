@@ -35,8 +35,10 @@ class SettingViewModel @Inject constructor(
     private val isValidProfileUri: MutableLiveData<Boolean> = MutableLiveData()
     private val isValidNickName: MutableLiveData<Boolean> = MutableLiveData()
     private val existingNickName: MutableLiveData<List<String>> = MutableLiveData()
-    private val _isSettingComplete = MutableLiveData(Event(false))
+    private val _isSettingComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isSettingComplete: LiveData<Event<Boolean>> = _isSettingComplete
+    private val _isInputComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    val isInputComplete: LiveData<Event<Boolean>> = _isInputComplete
     private val isAddUserComplete = MutableLiveData(false)
     private val isAddNickNameComplete = MutableLiveData(false)
     val hasAllNickName: MutableLiveData<Boolean> = MutableLiveData()
@@ -97,11 +99,14 @@ class SettingViewModel @Inject constructor(
     }
 
     fun addUser(googleUid: String) {
-        if (profileUri.value.isNullOrEmpty() || nickName.value.isNullOrEmpty()) {
+        val validInput = isValidProfileUri.value == true && isValidNickName.value == true
+        if (!validInput) {
+            _isInputComplete.value = Event(false)
             return
         }
 
         viewModelScope.launch {
+            _isInputComplete.value = Event(true)
             val imageLocations = addImageToStorage(profileUri.value!!)
             val user =
                 User(

@@ -20,6 +20,7 @@
     <string name="error_message_duplicate_nick_name">중복된 닉네임입니다.</string>
     <string name="error_message_setting_failed">프로필 설정 실패하였습니다. 잠시후 다시 시도해주세요.</string>
     <string name="error_message_setting_not_available">프로필 설정할 수 없습니다. 잠시후 다시 시도해주세요.</string>
+    <string name="error_message_setting_input_not_complete">프로필 사진, 닉네임을 모두 설정해주세요.</string>
 
     <!-- 글쓰기 -->
     <string name="title_write_post">모집 글쓰기</string>

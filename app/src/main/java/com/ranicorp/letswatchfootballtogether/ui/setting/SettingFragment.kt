@@ -64,6 +64,15 @@ class SettingFragment : Fragment() {
                 setErrorMsg(errorMsg)
             })
         }
+        viewModel.isInputComplete.observe(viewLifecycleOwner, EventObserver {
+            if(!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_setting_input_not_complete),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
         viewModel.isSettingComplete.observe(viewLifecycleOwner, EventObserver {
             if (it) {
                 findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
