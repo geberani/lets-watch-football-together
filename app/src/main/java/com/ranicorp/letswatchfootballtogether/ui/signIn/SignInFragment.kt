@@ -7,10 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
@@ -22,6 +24,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.ranicorp.letswatchfootballtogether.BuildConfig
+import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentSignInBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,6 +37,7 @@ class SignInFragment : Fragment() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var auth: FirebaseAuth
+    private val viewModel: SignInViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,15 @@ class SignInFragment : Fragment() {
         setSignInRequest()
         binding.btnSignInWithGoogle.setOnClickListener {
             onClick()
+        }
+        viewModel.hasAllUsers.observe(viewLifecycleOwner) {
+            if (it == false) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_sign_in_not_available),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -114,8 +127,22 @@ class SignInFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val googleUid = auth.currentUser?.uid
-                    if (googleUid != null) {
-                        findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingFragment(googleUid))
+                    if (googleUid == null) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_message_no_google_uid),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@addOnCompleteListener
+                    }
+                    viewModel.confirmExistingUid(googleUid)
+                    viewModel.hasJoined.observe(viewLifecycleOwner) {
+                        if (it) {
+                            findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToHomeFragment())
+                        } else {
+                            findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingFragment(googleUid)
+                            )
+                        }
                     }
                 } else {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)

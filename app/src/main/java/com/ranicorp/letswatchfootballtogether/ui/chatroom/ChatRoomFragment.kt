@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
 import com.ranicorp.letswatchfootballtogether.data.model.ReceivedMessage
 import com.ranicorp.letswatchfootballtogether.data.model.SentMessage
@@ -48,6 +50,15 @@ class ChatRoomFragment : Fragment() {
         sendText()
         setData()
         viewModel.addChatEventListener()
+        viewModel.isLoaded.observe(viewLifecycleOwner, EventObserver {
+            if (!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_chat_room_loading_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
     }
 
     private fun sendText() {
@@ -57,12 +68,12 @@ class ChatRoomFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                 (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
             ) {
-                viewModel.addChat(enteredText)
+                viewModel.sendChat(enteredText)
                 return@setOnEditorActionListener true
             }
             false
         }
-        viewModel.isSent.observe(viewLifecycleOwner, EventObserver {
+        viewModel.isSendingComplete.observe(viewLifecycleOwner, EventObserver {
             if (it) {
                 binding.etWriteText.text.clear()
             }

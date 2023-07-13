@@ -3,54 +3,66 @@ package com.ranicorp.letswatchfootballtogether.ui.posting
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ranicorp.letswatchfootballtogether.data.model.ImageContent
 import com.ranicorp.letswatchfootballtogether.databinding.ItemAttachedImageBinding
 
-class ImageAdapter(private val deleteClickListener: DeleteClickListener) :
-    ListAdapter<Uri, ImageAdapter.ImageViewHolder>(ImageDiffCallback()) {
+class ImageAdapter(private val limit: Int, private val listener: ImageUpdateListener) :
+    RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+
+    private val items = mutableListOf<ImageContent>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        return ImageViewHolder.from(parent, deleteClickListener)
+        return ImageViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(position, items[position], listener)
     }
 
-    class ImageViewHolder(
-        private val binding: ItemAttachedImageBinding,
-        private val deleteClickListener: DeleteClickListener
-    ) : RecyclerView.ViewHolder(binding.root) {
+    override fun getItemCount(): Int {
+        return items.size
+    }
 
-        fun bind(uri: Uri) {
-            binding.imageUri = uri.toString()
-            binding.deleteClickListener = deleteClickListener
+    fun getItems(): List<ImageContent> {
+        return items
+    }
+
+    fun addImage(uri: Uri) {
+        val position = items.size
+        if (position < limit) {
+            items.add(ImageContent(uri))
+            notifyItemInserted(position)
+        }
+    }
+
+    fun removeImage(position: Int) {
+        items.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    class ImageViewHolder(private val binding: ItemAttachedImageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(pos: Int, item: ImageContent, updateListener: ImageUpdateListener) {
+            with(binding) {
+                position = pos
+                imageContent = item
+                listener = updateListener
+            }
         }
 
         companion object {
-            fun from(parent: ViewGroup, deleteClickListener: DeleteClickListener)
-                    : ImageViewHolder {
+            fun from(parent: ViewGroup): ImageViewHolder {
                 return ImageViewHolder(
                     ItemAttachedImageBinding.inflate(
-                        LayoutInflater.from(
-                            parent.context
-                        ), parent, false
-                    ), deleteClickListener
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 )
             }
         }
-    }
-}
-
-class ImageDiffCallback : DiffUtil.ItemCallback<Uri>() {
-    override fun areItemsTheSame(oldItem: Uri, newItem: Uri): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: Uri, newItem: Uri): Boolean {
-        return oldItem == newItem
     }
 }
 

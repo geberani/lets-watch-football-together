@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -63,11 +64,35 @@ class SettingFragment : Fragment() {
                 setErrorMsg(errorMsg)
             })
         }
+        viewModel.isInputComplete.observe(viewLifecycleOwner, EventObserver {
+            if(!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_setting_input_not_complete),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
         viewModel.isSettingComplete.observe(viewLifecycleOwner, EventObserver {
             if (it) {
                 findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_setting_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
+        viewModel.hasAllNickName.observe(viewLifecycleOwner) {
+            if (!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_setting_not_available),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun setErrorMsg(errorMsg: String?) {

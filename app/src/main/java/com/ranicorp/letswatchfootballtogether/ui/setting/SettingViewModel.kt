@@ -1,5 +1,6 @@
 package com.ranicorp.letswatchfootballtogether.ui.setting
 
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.User
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultError
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultException
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultSuccess
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
 import com.ranicorp.letswatchfootballtogether.ui.common.Event
@@ -30,9 +34,15 @@ class SettingViewModel @Inject constructor(
     val errorMsg: LiveData<Event<String?>> = _errorType
     private val isValidProfileUri: MutableLiveData<Boolean> = MutableLiveData()
     private val isValidNickName: MutableLiveData<Boolean> = MutableLiveData()
-    private val existingNickName: MutableLiveData<Collection<String>> = MutableLiveData()
-    private val _isSettingComplete = MutableLiveData(Event(false))
+    private val existingNickName: MutableLiveData<List<String>> = MutableLiveData()
+    private val _isSettingComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isSettingComplete: LiveData<Event<Boolean>> = _isSettingComplete
+    private val _isInputComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    val isInputComplete: LiveData<Event<Boolean>> = _isInputComplete
+    private val isAddUserComplete = MutableLiveData(false)
+    private val isAddNickNameComplete = MutableLiveData(false)
+    private val _hasAllNickName: MutableLiveData<Boolean> = MutableLiveData()
+    val hasAllNickName: LiveData<Boolean> = _hasAllNickName
 
     fun setProfileUri(uri: String) {
         profileUri.value = uri
@@ -56,6 +66,7 @@ class SettingViewModel @Inject constructor(
     }
 
     private fun verifyDuplicateNickName(nickName: String) {
+        if (hasAllNickName.value == false) return
         if (existingNickName.value?.contains(nickName) == false) {
             isValidNickName.value = true
             _errorType.value = Event(null)
@@ -67,17 +78,36 @@ class SettingViewModel @Inject constructor(
 
     fun updateExistingNickNameList() {
         viewModelScope.launch {
-            existingNickName.value =
-                userRepository.getUserNickNames().body()?.values ?: emptyList()
+            val networkResult = userRepository.getUserNickNames()
+            when (networkResult) {
+                is ApiResultSuccess -> {
+                    existingNickName.value = networkResult.data.values.toList()
+                    _hasAllNickName.value = true
+                }
+                is ApiResultError -> {
+                    _hasAllNickName.value = false
+                    Log.d(
+                        "SettingViewModel",
+                        "Error code: ${networkResult.code}, message: ${networkResult.message}"
+                    )
+                }
+                is ApiResultException -> {
+                    _hasAllNickName.value = false
+                    Log.d("SettingViewModel", "Exception: ${networkResult.throwable}")
+                }
+            }
         }
     }
 
     fun addUser(googleUid: String) {
-        if (profileUri.value.isNullOrEmpty() || nickName.value.isNullOrEmpty()) {
+        val validInput = isValidProfileUri.value == true && isValidNickName.value == true
+        if (!validInput) {
+            _isInputComplete.value = Event(false)
             return
         }
 
         viewModelScope.launch {
+            _isInputComplete.value = Event(true)
             val imageLocations = addImageToStorage(profileUri.value!!)
             val user =
                 User(
@@ -86,16 +116,60 @@ class SettingViewModel @Inject constructor(
                     imageLocations,
                     mutableListOf()
                 )
-            if (userRepository.addUser(
-                    googleUid,
-                    user
-                ).isSuccessful && userRepository.addUserNickName(nickName.value!!).isSuccessful
-            ) {
+
+            addUserCall(googleUid, user)
+            addNickNameCall()
+            if (isAddNickNameComplete.value == true && isAddUserComplete.value == true) {
                 _isSettingComplete.value = Event(true)
+                userPreferenceRepository.saveUserInfo(googleUid)
+                userPreferenceRepository.saveUserNickName(nickName.value!!)
+            } else {
+                _isSettingComplete.value = Event(false)
             }
         }
-        userPreferenceRepository.saveUserInfo(googleUid)
-        userPreferenceRepository.saveUserNickName(nickName.value!!)
+    }
+
+    private suspend fun addNickNameCall() {
+        val addUserNickNameResult = userRepository.addUserNickName(nickName.value!!)
+        when (addUserNickNameResult) {
+            is ApiResultSuccess -> {
+                isAddNickNameComplete.value = true
+            }
+            is ApiResultError -> {
+                isAddNickNameComplete.value = false
+                Log.d(
+                    "SettingViewModel",
+                    "Error code: ${addUserNickNameResult.code}, message: ${addUserNickNameResult.message}"
+                )
+            }
+            is ApiResultException -> {
+                isAddNickNameComplete.value = false
+                Log.d("SettingViewModel", "Exception: ${addUserNickNameResult.throwable}")
+            }
+        }
+    }
+
+    private suspend fun addUserCall(googleUid: String, user: User) {
+        val addUserResult = userRepository.addUser(
+            googleUid,
+            user
+        )
+        when (addUserResult) {
+            is ApiResultSuccess -> {
+                isAddUserComplete.value = true
+            }
+            is ApiResultError -> {
+                isAddUserComplete.value = false
+                Log.d(
+                    "SettingViewModel",
+                    "Error code: ${addUserResult.code}, message: ${addUserResult.message}"
+                )
+            }
+            is ApiResultException -> {
+                isAddUserComplete.value = false
+                Log.d("SettingViewModel", "Exception: ${addUserResult.throwable}")
+            }
+        }
     }
 
     private suspend fun addImageToStorage(profileUri: String): String = coroutineScope {

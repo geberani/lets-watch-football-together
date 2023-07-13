@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,26 +17,22 @@ import com.google.android.material.timepicker.TimeFormat
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
-import com.ranicorp.letswatchfootballtogether.ui.common.ProgressDialogFragment
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
+class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
 
     private var _binding: FragmentPostingBinding? = null
     private val binding get() = _binding!!
-    private val getContent =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            if (uri != null) {
-                viewModel.addImage(uri)
-                updateAdapterData()
-            }
+    private val getMultipleContents =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) {
+            addImageList(it)
         }
-    private val attachedImageAdapter = ImageAdapter(this)
-    private val attachedImageHeaderAdapter = HeaderAdapter(this)
+    private val imageCountLimit = 10
+    private val imageListAdapter = ImageAdapter(imageCountLimit, this)
+    private val imageHeaderAdapter = HeaderAdapter(this)
     private val viewModel: PostingViewModel by viewModels()
-    private val progressDialog = ProgressDialogFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,24 +50,40 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         setLayout()
     }
 
-    private fun updateAdapterData() {
-        attachedImageAdapter.submitList(viewModel.imageUriList.value?.content)
-        attachedImageHeaderAdapter.submitList(
-            getString(
-                R.string.number_of_image_displayed,
-                viewModel.imageUriList.value?.content?.size
-            )
-        )
-        attachedImageHeaderAdapter.notifyDataSetChanged()
-    }
-
     private fun setLayout() {
-        setAdapter()
+        setImageList()
         setObservers()
         setOnClickListeners()
         viewModel.isComplete.observe(viewLifecycleOwner, EventObserver {
             if (it) {
                 findNavController().navigateUp()
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_post_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+    }
+
+    private fun setImageList() {
+        imageHeaderAdapter.setImageHeader(imageCountLimit)
+        binding.rvImage.adapter =
+            ConcatAdapter(imageHeaderAdapter, imageListAdapter)
+    }
+
+    private fun setObservers() {
+        viewModel.errorMsgResId.observe(viewLifecycleOwner, EventObserver {
+            Toast.makeText(
+                context,
+                getString(it),
+                Toast.LENGTH_SHORT
+            ).show()
+        })
+        viewModel.isLoading.observe(viewLifecycleOwner, EventObserver {
+            if (it) {
+                findNavController().navigate(PostingFragmentDirections.actionPostingFragmentToProgressDialogFragment())
             }
         })
     }
@@ -96,29 +107,6 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         binding.postingToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-    }
-
-    private fun setAdapter() {
-        binding.imageRecyclerView.adapter =
-            ConcatAdapter(attachedImageHeaderAdapter, attachedImageAdapter)
-        attachedImageHeaderAdapter.submitList(getString(R.string.number_of_image_displayed, 0))
-    }
-
-    private fun setObservers() {
-        viewModel.errorMsgResId.observe(viewLifecycleOwner, EventObserver {
-            Toast.makeText(
-                context,
-                getString(it),
-                Toast.LENGTH_SHORT
-            ).show()
-        })
-        viewModel.isLoading.observe(viewLifecycleOwner, EventObserver {
-            if (it) {
-                progressDialog.show(requireActivity().supportFragmentManager, null)
-            } else {
-                progressDialog.dismiss()
-            }
-        })
     }
 
     private fun chooseDate() {
@@ -160,20 +148,28 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         _binding = null
     }
 
-    override fun onDeleteClick(uri: String) {
-        viewModel.removeImage(uri.toUri())
-        updateAdapterData()
+    private fun addImageList(uriList: List<Uri>) {
+        for (uri in uriList) {
+            imageListAdapter.addImage(uri)
+        }
+        imageHeaderAdapter.updateImageHeader(imageListAdapter.itemCount)
+        viewModel.updateImageList(imageListAdapter.getItems())
     }
 
-    override fun onHeaderClick() {
-        if (viewModel.imageUriList.value?.content?.size == 10) {
+    override fun onImageContentRequest() {
+        if (imageListAdapter.itemCount == 10) {
             Toast.makeText(
                 context,
                 getString(R.string.guide_message_limit_max_images),
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            getContent.launch("image/*")
+            getMultipleContents.launch("image/*")
         }
+    }
+
+    override fun removeImage(position: Int) {
+        imageListAdapter.removeImage(position)
+        imageHeaderAdapter.removeImage()
     }
 }
