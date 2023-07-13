@@ -36,7 +36,7 @@
     <string name="label_complete">완료</string>
     <string name="hint_posting_date">날짜</string>
     <string name="guide_message_please_wait">잠시 기다려주세요.</string>
-    <string name="number_of_image_displayed">%1$d/10</string>
+    <string name="number_of_image_displayed">/%d</string>
     <string name="guide_message_set_image">이미지를 추가해주세요.</string>
     <string name="guide_message_set_title">모집명을 작성해주세요.</string>
     <string name="guide_message_set_location">장소를 추가해주세요.</string>

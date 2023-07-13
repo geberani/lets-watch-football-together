@@ -74,7 +74,11 @@
     <fragment
         android:id="@+id/postingFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.posting.PostingFragment"
-        android:label="PostingFragment" />
+        android:label="PostingFragment" >
+        <action
+            android:id="@+id/action_postingFragment_to_progressDialogFragment"
+            app:destination="@id/progressDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chatRoomListFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.chatroomlist.ChatRoomListFragment"
@@ -84,4 +88,9 @@
             android:id="@+id/action_chatRoomListFragment_to_chatRoomFragment"
             app:destination="@id/chatRoomFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/progressDialogFragment"
+        android:name="com.ranicorp.letswatchfootballtogether.ui.common.ProgressDialogFragment"
+        android:label="fragment_progress_dialog"
+        tools:layout="@layout/fragment_progress_dialog" />
 </navigation>

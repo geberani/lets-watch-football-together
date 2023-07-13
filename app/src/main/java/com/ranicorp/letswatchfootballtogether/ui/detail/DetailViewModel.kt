@@ -104,16 +104,39 @@ class DetailViewModel @Inject constructor(
 
     fun participate() {
         viewModelScope.launch {
+            val userResponse = userRepository.getUserNoFirebaseUid(userUid)
+            when (userResponse) {
+                is ApiResultSuccess -> {
+                    userInfo = userResponse.data
+                    updatePost()
+                }
+                is ApiResultError -> {
+                    _isParticipateCompleted.value = Event(false)
+                    Log.d(
+                        "DetailViewModel",
+                        "Error code: ${userResponse.code}, message: ${userResponse.message}"
+                    )
+                }
+                is ApiResultException -> {
+                    _isParticipateCompleted.value = Event(false)
+                    Log.d("DetailViewModel", "Exception: ${userResponse.throwable}")
+                }
+            }
+        }
+    }
+
+    private fun updatePost() {
+        viewModelScope.launch {
             val post = _selectedPost.value
             post?.participantsUidList?.add(userUid)
             val updatePostResponse = postRepository.updatePost(
-                selectedPost.value?.postUid ?: "",
+                post?.postUid ?: "",
                 postFirebaseUid,
                 post ?: TODO()
             )
             when (updatePostResponse) {
                 is ApiResultSuccess -> {
-                    getUserInfo()
+                    updateUser(selectedPost.value?.postUid ?: "")
                 }
                 is ApiResultError -> {
                     _isParticipateCompleted.value = Event(false)
@@ -152,31 +175,6 @@ class DetailViewModel @Inject constructor(
                 is ApiResultException -> {
                     _isParticipateCompleted.value = Event(false)
                     Log.d("DetailViewModel", "Exception: ${updateUserCall.throwable}")
-                }
-            }
-        }
-    }
-
-    private fun getUserInfo() {
-        viewModelScope.launch {
-            val userResponse = userRepository.getUserNoFirebaseUid(userUid)
-            when (userResponse) {
-                is ApiResultSuccess -> {
-                    userInfo = userResponse.data
-                    updateUser(selectedPost.value?.postUid ?: "")
-                }
-                is ApiResultError -> {
-                    _isParticipateCompleted.value = Event(false)
-                    Log.d(
-                        "DetailViewModel",
-                        "Error code: ${userResponse.code}, message: ${userResponse.message}"
-                    )
-                    userInfo = null
-                }
-                is ApiResultException -> {
-                    _isParticipateCompleted.value = Event(false)
-                    Log.d("DetailViewModel", "Exception: ${userResponse.throwable}")
-                    userInfo = null
                 }
             }
         }

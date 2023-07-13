@@ -51,11 +51,13 @@ class ChatRoomFragment : Fragment() {
         setData()
         viewModel.addChatEventListener()
         viewModel.isLoaded.observe(viewLifecycleOwner, EventObserver {
-            Toast.makeText(
-                context,
-                getString(R.string.error_message_chat_room_loading_failed),
-                Toast.LENGTH_SHORT
-            ).show()
+            if (!it) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.error_message_chat_room_loading_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         })
     }
 

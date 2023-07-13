@@ -34,10 +34,10 @@ class ChatRoomViewModel @Inject constructor(
     private val _isLoaded = MutableLiveData<Event<Boolean>>()
     val isLoaded: LiveData<Event<Boolean>> = _isLoaded
     private var chatEventListener: ChildEventListener? = null
+    private var profileUri = ""
 
     fun sendChat(messageText: String) {
         viewModelScope.launch {
-            var profileUri = ""
             if (profileUri.isEmpty()) {
                 val userInfoCall = userRepository.getUserNoFirebaseUid(userUid)
                 when (userInfoCall) {
@@ -59,14 +59,16 @@ class ChatRoomViewModel @Inject constructor(
                 }
             }
 
-            val message = Message(
-                userUid,
-                preferenceRepository.getUserNickName(),
-                profileUri,
-                System.currentTimeMillis(),
-                messageText
-            )
-            addChat(message)
+            if (profileUri.isNotEmpty()) {
+                val message = Message(
+                    userUid,
+                    preferenceRepository.getUserNickName(),
+                    profileUri,
+                    System.currentTimeMillis(),
+                    messageText
+                )
+                addChat(message)
+            }
         }
     }
 
