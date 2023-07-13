@@ -43,7 +43,7 @@ class PostingViewModel @Inject constructor(
     private val _imageUriList: MutableLiveData<Event<MutableList<Uri>>> = MutableLiveData()
     val imageUriList: LiveData<Event<MutableList<Uri>>> = _imageUriList
     private val isPostAdded = MutableLiveData(Event(false))
-    private val _isLoading = MutableLiveData(Event(false))
+    private val _isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isLoading: LiveData<Event<Boolean>> = _isLoading
     private val _isComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isComplete: LiveData<Event<Boolean>> = _isComplete

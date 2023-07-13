@@ -18,7 +18,6 @@ import com.google.android.material.timepicker.TimeFormat
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
-import com.ranicorp.letswatchfootballtogether.ui.common.ProgressDialogFragment
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,7 +36,6 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
     private val attachedImageAdapter = ImageAdapter(this)
     private val attachedImageHeaderAdapter = HeaderAdapter(this)
     private val viewModel: PostingViewModel by viewModels()
-    private val progressDialog = ProgressDialogFragment()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -120,9 +118,7 @@ class PostingFragment : Fragment(), DeleteClickListener, HeaderClickListener {
         })
         viewModel.isLoading.observe(viewLifecycleOwner, EventObserver {
             if (it) {
-                progressDialog.show(requireActivity().supportFragmentManager, null)
-            } else {
-                progressDialog.dismiss()
+                findNavController().navigate(PostingFragmentDirections.actionPostingFragmentToProgressDialogFragment())
             }
         })
     }
