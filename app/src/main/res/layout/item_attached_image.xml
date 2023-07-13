@@ -6,12 +6,16 @@
     <data>
 
         <variable
-            name="imageUri"
-            type="String" />
+            name="position"
+            type="int" />
 
         <variable
-            name="deleteClickListener"
-            type="com.ranicorp.letswatchfootballtogether.ui.posting.DeleteClickListener" />
+            name="listener"
+            type="com.ranicorp.letswatchfootballtogether.ui.posting.ImageUpdateListener" />
+
+        <variable
+            name="imageContent"
+            type="com.ranicorp.letswatchfootballtogether.data.model.ImageContent" />
 
     </data>
 
@@ -21,7 +25,7 @@
 
         <ImageView
             android:id="@+id/ivPreview"
-            squareCropImageUri="@{imageUri}"
+            squareCropImageUri="@{imageContent.uri.toString()}"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginTop="10dp"
@@ -39,7 +43,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="54dp"
-            android:onClick="@{() -> deleteClickListener.onDeleteClick(imageUri)}"
+            android:onClick="@{() -> listener.removeImage(position)}"
             android:src="@drawable/ic_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

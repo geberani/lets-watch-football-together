@@ -6,12 +6,12 @@
     <data>
 
         <variable
-            name="numberOfImage"
-            type="String" />
+            name="header"
+            type="com.ranicorp.letswatchfootballtogether.data.model.ImageContentHeader" />
 
         <variable
-            name="headerClickListener"
-            type="com.ranicorp.letswatchfootballtogether.ui.posting.HeaderClickListener" />
+            name="imageRequestListener"
+            type="com.ranicorp.letswatchfootballtogether.ui.posting.ImageRequestListener" />
 
     </data>
 
@@ -25,7 +25,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@drawable/background_attached_image_header"
-            android:onClick="@{() -> headerClickListener.onHeaderClick()}"
+            android:onClick="@{() -> imageRequestListener.onImageContentRequest()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,25 +37,41 @@
             android:layout_height="24dp"
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_camera_filled"
-            app:layout_constraintBottom_toTopOf="@id/tvNumberOfAttachedImages"
+            app:layout_constraintBottom_toTopOf="@id/tvSelectedImageSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvNumberOfAttachedImages"
+            android:id="@+id/tvSelectedImageSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@{numberOfImage}"
-            android:textColor="@color/black"
+            android:gravity="center"
+            android:text="@{String.valueOf(header.size)}"
+            android:textColor="@color/blue"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tvSelectedImageLimit"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivCameraIcon"
-            tools:text="4/10" />
+            tools:text="4" />
+
+        <TextView
+            android:id="@+id/tvSelectedImageLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@{@string/number_of_image_displayed(header.limit)}"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvSelectedImageSize"
+            app:layout_constraintTop_toBottomOf="@id/ivCameraIcon"
+            tools:text="/10" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

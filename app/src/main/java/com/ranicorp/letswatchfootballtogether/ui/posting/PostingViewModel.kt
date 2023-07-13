@@ -1,6 +1,5 @@
 package com.ranicorp.letswatchfootballtogether.ui.posting
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.R
+import com.ranicorp.letswatchfootballtogether.data.model.ImageContent
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
 import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultError
@@ -40,8 +40,7 @@ class PostingViewModel @Inject constructor(
     val description = MutableLiveData<String>()
     private val _errorMsgResId = MutableLiveData<Event<Int>>()
     val errorMsgResId: LiveData<Event<Int>> = _errorMsgResId
-    private val _imageUriList: MutableLiveData<Event<MutableList<Uri>>> = MutableLiveData()
-    val imageUriList: LiveData<Event<MutableList<Uri>>> = _imageUriList
+    private var imageList: List<ImageContent> = emptyList()
     private val isPostAdded = MutableLiveData(Event(false))
     private val _isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isLoading: LiveData<Event<Boolean>> = _isLoading
@@ -50,16 +49,12 @@ class PostingViewModel @Inject constructor(
     private val userUid = userPreferenceRepository.getUserUid()
     private var userInfo: Map<String, User> = emptyMap()
 
-    fun addImage(uri: Uri) {
-        _imageUriList.value?.content?.add(uri)
-    }
-
-    fun removeImage(uri: Uri) {
-        _imageUriList.value?.content?.minus(uri)
+    fun updateImageList(items: List<ImageContent>) {
+        imageList = items
     }
 
     fun complete() {
-        if (isNotValidInfo(imageUriList.value.toString(), R.string.guide_message_set_image)) return
+        if (isNotValidInfo(imageList.toString(), R.string.guide_message_set_image)) return
         if (isNotValidInfo(title.value, R.string.guide_message_set_title)) return
         if (isNotValidInfo(location.value, R.string.guide_message_set_location)) return
         if (isNotValidInfo(date.value, R.string.guide_message_set_date)) return
@@ -136,7 +131,7 @@ class PostingViewModel @Inject constructor(
 
 
     private suspend fun addPostCall() {
-        val imageLocations = addImageToStorage(_imageUriList.value?.content ?: emptyList())
+        val imageLocations = addImageToStorage(imageList)
         val postUid = userUid + userUid + System.currentTimeMillis()
         val post = Post(
             postUid,
@@ -173,12 +168,13 @@ class PostingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun addImageToStorage(imageList: List<Uri>): List<String> = coroutineScope {
-        imageList.map { imageUri ->
-            val location = "images/${imageUri}" + getCurrentDateString()
-            val imageRef = firebaseStorage.getReference(location)
-            imageRef.putFile(imageUri).await()
-            location
+    private suspend fun addImageToStorage(imageList: List<ImageContent>): List<String> =
+        coroutineScope {
+            imageList.map { imageUri ->
+                val location = "images/${imageUri}" + getCurrentDateString()
+                val imageRef = firebaseStorage.getReference(location)
+                imageRef.putFile(imageUri.uri).await()
+                location
+            }
         }
-    }
 }
