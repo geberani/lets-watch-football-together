@@ -48,6 +48,7 @@ class PostingViewModel @Inject constructor(
     private val _isComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isComplete: LiveData<Event<Boolean>> = _isComplete
     private val userUid = userPreferenceRepository.getUserUid()
+    private var userInfo: Map<String, User> = emptyMap()
 
     fun addImage(uri: Uri) {
         _imageUriList.value?.content?.add(uri)
@@ -84,59 +85,30 @@ class PostingViewModel @Inject constructor(
     private fun addPost() {
         viewModelScope.launch {
             _isLoading.value = Event(true)
-            val imageLocations = addImageToStorage(_imageUriList.value?.content ?: emptyList())
-            val postUid = userUid + userUid + System.currentTimeMillis()
-            val post = Post(
-                postUid,
-                userUid,
-                System.currentTimeMillis(),
-                title.value!!,
-                location.value!!,
-                date.value!!,
-                time.value!!,
-                maxParticipants.value!!.toInt(),
-                description.value!!,
-                imageLocations,
-                mutableListOf(userUid)
-            )
-            addPostCall(postUid, post)
-            if (isPostAdded.value?.content != true) {
-                _isLoading.value = Event(false)
-                _isComplete.value = Event(false)
-                return@launch
-            }
-            val userInfo = getUserInfoCall()
-            if (userInfo.isNullOrEmpty()) {
-                _isLoading.value = Event(false)
-                _isComplete.value = Event(false)
-                return@launch
-            }
-            updateUserCall(userInfo, postUid)
-            //TODO() 해당 게시물 채팅방 생성
-        }
-    }
-
-    private suspend fun getUserInfoCall(): Map<String, User>? {
-        val callResponse = userRepository.getUserNoFirebaseUid(userUid)
-        when (callResponse) {
-            is ApiResultSuccess -> {
-                return callResponse.data
-            }
-            is ApiResultError -> {
-                Log.d(
-                    "PostingViewModel",
-                    "Error code: ${callResponse.code}, message: ${callResponse.message}"
-                )
-                return null
-            }
-            is ApiResultException -> {
-                Log.d("PostingViewModel", "Exception: ${callResponse.throwable}")
-                return null
+            val callResponse = userRepository.getUserNoFirebaseUid(userUid)
+            when (callResponse) {
+                is ApiResultSuccess -> {
+                    userInfo = callResponse.data
+                    addPostCall()
+                }
+                is ApiResultError -> {
+                    _isLoading.value = Event(false)
+                    _isComplete.value = Event(false)
+                    Log.d(
+                        "PostingViewModel",
+                        "Error code: ${callResponse.code}, message: ${callResponse.message}"
+                    )
+                }
+                is ApiResultException -> {
+                    _isLoading.value = Event(false)
+                    _isComplete.value = Event(false)
+                    Log.d("PostingViewModel", "Exception: ${callResponse.throwable}")
+                }
             }
         }
     }
 
-    private suspend fun updateUserCall(userInfo: Map<String, User>, postUid: String) {
+    private suspend fun updateUserCall(postUid: String) {
         val firebaseUid = userInfo.keys.first()
         val user = userInfo.values.first()
         user.participatingEvent.add(postUid)
@@ -163,19 +135,39 @@ class PostingViewModel @Inject constructor(
     }
 
 
-    private suspend fun addPostCall(postUid: String, post: Post) {
+    private suspend fun addPostCall() {
+        val imageLocations = addImageToStorage(_imageUriList.value?.content ?: emptyList())
+        val postUid = userUid + userUid + System.currentTimeMillis()
+        val post = Post(
+            postUid,
+            userUid,
+            System.currentTimeMillis(),
+            title.value!!,
+            location.value!!,
+            date.value!!,
+            time.value!!,
+            maxParticipants.value!!.toInt(),
+            description.value!!,
+            imageLocations,
+            mutableListOf(userUid)
+        )
         val addPostResult = postRepository.addPost(postUid, post)
         when (addPostResult) {
             is ApiResultSuccess -> {
                 isPostAdded.value = Event(true)
+                updateUserCall(postUid)
             }
             is ApiResultError -> {
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(false)
                 Log.d(
                     "PostingViewModel",
                     "Error code: ${addPostResult.code}, message: ${addPostResult.message}"
                 )
             }
             is ApiResultException -> {
+                _isLoading.value = Event(false)
+                _isComplete.value = Event(false)
                 Log.d("PostingViewModel", "Exception: ${addPostResult.throwable}")
             }
         }
