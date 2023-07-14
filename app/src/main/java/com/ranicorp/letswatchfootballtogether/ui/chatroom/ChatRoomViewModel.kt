@@ -129,7 +129,7 @@ class ChatRoomViewModel @Inject constructor(
     private fun addLatestChat() {
         viewModelScope.launch {
             val chatRoomInfo =
-                ChatRoomInfo(userUid, postTitle, messageText, sentTime, postImageLocation)
+                ChatRoomInfo(postUid, postTitle, messageText, sentTime, postImageLocation)
             val addLatestChatCall = latestChatRepository.addLatestChat(postUid, chatRoomInfo)
             when (addLatestChatCall) {
                 is ApiResultSuccess -> {
