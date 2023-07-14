@@ -78,5 +78,6 @@
 
     <!-- 채팅 목록 -->
     <string name="title_chat_room_list">채팅</string>
+    <string name="error_message_chat_room_list_loading_failed">채팅목록 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
 
 </resources>

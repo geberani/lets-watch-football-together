@@ -7,6 +7,7 @@ import coil.load
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.databinding.ItemChatRoomBinding
+import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 
 class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>() {
 
@@ -27,6 +28,12 @@ class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>
         return chatRooms.size
     }
 
+    fun submitList(list: List<ChatRoomInfo>) {
+        chatRooms.clear()
+        chatRooms.addAll(list)
+        notifyDataSetChanged()
+    }
+
     class ChatRoomViewHolder(private val binding: ItemChatRoomBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -37,7 +44,12 @@ class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>
             }
             binding.tvLastMsg.text = chatRoomInfo.lastMsg
             binding.tvPostTitle.text = chatRoomInfo.title
-            binding.tvSentTime.text = chatRoomInfo.lastSentTime
+            if (chatRoomInfo.lastSentTime.toInt() == 0) {
+                binding.tvSentTime.text = ""
+            } else {
+                binding.tvSentTime.text =
+                    DateFormatText.longToLastSentDate(chatRoomInfo.lastSentTime)
+            }
         }
 
         companion object {

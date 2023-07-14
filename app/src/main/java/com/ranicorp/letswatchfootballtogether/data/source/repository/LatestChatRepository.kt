@@ -10,4 +10,8 @@ class LatestChatRepository @Inject constructor(private val remoteDataSource: Rem
     suspend fun addLatestChat(postUid: String, chatRoomInfo: ChatRoomInfo): ApiResponse<ChatRoomInfo> {
         return remoteDataSource.addLatestChat(postUid, chatRoomInfo)
     }
+
+    suspend fun getLatestChat(postUid: String): ApiResponse<ChatRoomInfo> {
+        return remoteDataSource.getLatestChat(postUid)
+    }
 }

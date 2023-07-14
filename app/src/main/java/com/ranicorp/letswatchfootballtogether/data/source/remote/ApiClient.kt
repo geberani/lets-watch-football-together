@@ -53,4 +53,7 @@ interface ApiClient {
 
     @PUT("latestChat/{postUid}.json")
     suspend fun addLatestChat(@Path("postUid") postUid: String, @Body chatRoomInfo: ChatRoomInfo): ApiResponse<ChatRoomInfo>
+
+    @GET("latestChat/{postUid}.json")
+    suspend fun getLatestChat(@Path("postUid") postUid: String): ApiResponse<ChatRoomInfo>
 }

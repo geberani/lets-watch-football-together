@@ -1,5 +1,7 @@
 package com.ranicorp.letswatchfootballtogether.util
 
+import android.text.format.DateUtils
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,5 +28,19 @@ object DateFormatText {
     fun longToHourMin(time: Long): String {
         val format = SimpleDateFormat("HH:mm", SystemConfiguration.currentLocale)
         return format.format(Date(time))
+    }
+
+    fun longToLastSentDate(time: Long): String? {
+        return try {
+            val date = Date(time)
+            val newFormat = if (DateUtils.isToday(date.time)) {
+                SimpleDateFormat("HH:mm", SystemConfiguration.currentLocale)
+            } else {
+                SimpleDateFormat("MM월 dd일", SystemConfiguration.currentLocale)
+            }
+            newFormat.format(date)
+        } catch (e: ParseException) {
+            null
+        }
     }
 }

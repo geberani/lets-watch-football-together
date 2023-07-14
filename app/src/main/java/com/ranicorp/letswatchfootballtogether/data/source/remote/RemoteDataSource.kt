@@ -77,6 +77,10 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
         return apiClient.addLatestChat(postUid, chatRoomInfo)
     }
 
+    suspend fun getLatestChat(postUid: String): ApiResponse<ChatRoomInfo> {
+        return apiClient.getLatestChat(postUid)
+    }
+
     fun addChatEventListener(
         chatRoomUid: String,
         onChatItemAdded: (Message) -> Unit
