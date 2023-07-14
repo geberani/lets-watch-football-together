@@ -9,7 +9,8 @@ import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.databinding.ItemChatRoomBinding
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 
-class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>() {
+class ChatRoomAdapter(private val clickListener: ChatRoomClickListener) :
+    RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>() {
 
     private val chatRooms = mutableListOf<ChatRoomInfo>()
 
@@ -21,7 +22,7 @@ class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>
     }
 
     override fun onBindViewHolder(holder: ChatRoomViewHolder, position: Int) {
-        holder.bind(chatRooms[position])
+        holder.bind(chatRooms[position], clickListener)
     }
 
     override fun getItemCount(): Int {
@@ -37,7 +38,10 @@ class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>
     class ChatRoomViewHolder(private val binding: ItemChatRoomBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(chatRoomInfo: ChatRoomInfo) {
+        fun bind(chatRoomInfo: ChatRoomInfo, clickListener: ChatRoomClickListener) {
+            binding.root.setOnClickListener {
+                clickListener.onChatRoomClick(chatRoomInfo.uid, chatRoomInfo.title)
+            }
             val imageRef = FirebaseStorage.getInstance().reference.child(chatRoomInfo.imageLocation)
             imageRef.downloadUrl.addOnSuccessListener {
                 binding.ivPostPreview.load(it)

@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentChatRoomListBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ChatRoomListFragment : Fragment() {
+class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
 
     private var _binding: FragmentChatRoomListBinding? = null
     private val binding get() = _binding!!
-    private val chatRoomAdapter = ChatRoomAdapter()
+    private val chatRoomAdapter = ChatRoomAdapter(this)
     private val viewModel: ChatRoomListViewModel by viewModels()
 
     override fun onCreateView(
@@ -53,5 +54,10 @@ class ChatRoomListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onChatRoomClick(postUid: String, postTitle: String) {
+        val action = ChatRoomListFragmentDirections.actionChatRoomListFragmentToChatRoomFragment(postUid, postTitle)
+        findNavController().navigate(action)
     }
 }
