@@ -1,5 +1,6 @@
 package com.ranicorp.letswatchfootballtogether.data.source.remote
 
+import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
@@ -49,4 +50,7 @@ interface ApiClient {
 
     @GET("users/{userUid}.json")
     suspend fun getUserNoFirebaseUid(@Path("userUid") userUid: String): ApiResponse<Map<String, User>>
+
+    @PUT("latestChat/{postUid}.json")
+    suspend fun addLatestChat(@Path("postUid") postUid: String, @Body chatRoomInfo: ChatRoomInfo): ApiResponse<ChatRoomInfo>
 }
