@@ -30,16 +30,16 @@ class SignInViewModel @Inject constructor(
             val networkResult = userRepository.getAllUsers()
             when (networkResult) {
                 is ApiResultSuccess -> {
-                    val allUsersList = networkResult.data.values.flatMap { it.values }
-                    val allUsersFirebaseUidList = networkResult.data.keys.toList()
+                    val allUsersList = networkResult.data?.values?.flatMap { it.values }
+                    val allUsersFirebaseUidList = networkResult.data?.keys?.toList()
                     _hasAllUsers.value = true
-                    _hasJoined.value = allUsersFirebaseUidList.contains(userFirebaseUid)
+                    _hasJoined.value = allUsersFirebaseUidList?.contains(userFirebaseUid)
                     if (_hasJoined.value == true) {
-                        val userInfo = allUsersList.filter {
+                        val userInfo = allUsersList?.filter {
                             it.uid == userFirebaseUid
-                        }.first()
+                        }?.first()
                         userPreferenceRepository.saveUserInfo(userFirebaseUid)
-                        userPreferenceRepository.saveUserNickName(userInfo.nickName)
+                        userPreferenceRepository.saveUserNickName(userInfo?.nickName ?: "")
                     }
                 }
                 is ApiResultError -> {

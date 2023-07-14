@@ -83,7 +83,7 @@ class PostingViewModel @Inject constructor(
             val callResponse = userRepository.getUserNoFirebaseUid(userUid)
             when (callResponse) {
                 is ApiResultSuccess -> {
-                    userInfo = callResponse.data
+                    userInfo = callResponse.data ?: mapOf()
                     addPostCall()
                 }
                 is ApiResultError -> {

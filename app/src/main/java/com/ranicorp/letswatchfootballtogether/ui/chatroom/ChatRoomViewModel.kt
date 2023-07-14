@@ -48,8 +48,8 @@ class ChatRoomViewModel @Inject constructor(
                 val userInfoCall = userRepository.getUserNoFirebaseUid(userUid)
                 when (userInfoCall) {
                     is ApiResultSuccess -> {
-                        val user = userInfoCall.data.values.first()
-                        profileUri = user.profileUri
+                        val user = userInfoCall.data?.values?.first()
+                        profileUri = user?.profileUri ?: ""
                     }
                     is ApiResultError -> {
                         _isSendingComplete.value = Event(false)
@@ -106,8 +106,9 @@ class ChatRoomViewModel @Inject constructor(
             val getPostCall = postRepository.getPostNoFirebaseUid(postUid)
             when (getPostCall) {
                 is ApiResultSuccess -> {
-                    postTitle = getPostCall.data.values.first().title
-                    postImageLocation = getPostCall.data.values.first().imageLocations.first()
+                    postTitle = getPostCall.data?.values?.first()?.title ?: ""
+                    postImageLocation =
+                        getPostCall.data?.values?.first()?.imageLocations?.first() ?: ""
                     addLatestChat()
                 }
                 is ApiResultError -> {

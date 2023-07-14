@@ -13,7 +13,7 @@ class ApiCall<T : Any>(private val call: Call<T>) : Call<ApiResponse<T>> {
             override fun onResponse(call: Call<T>, response: Response<T>) {
                 val networkResult = try {
                     val body = response.body()
-                    if (response.isSuccessful && body != null) {
+                    if (response.isSuccessful) {
                         ApiResultSuccess(body)
                     } else {
                         ApiResultError(code = response.code(), message = response.message())
