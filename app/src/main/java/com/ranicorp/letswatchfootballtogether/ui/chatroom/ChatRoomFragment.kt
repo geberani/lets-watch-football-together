@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.data.model.ChatItem
@@ -45,6 +46,9 @@ class ChatRoomFragment : Fragment() {
     }
 
     private fun setLayout() {
+        binding.chatRoomToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
         binding.rvChat.adapter = messageAdapter
         viewModel.getAllChat()
         sendText()
