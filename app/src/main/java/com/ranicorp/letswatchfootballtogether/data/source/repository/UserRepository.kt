@@ -34,4 +34,8 @@ class UserRepository @Inject constructor(private val remoteDataSource: RemoteDat
     suspend fun getUserNoFirebaseUid(userUid: String): ApiResponse<Map<String, User>> {
         return remoteDataSource.getUserNoFirebaseUid(userUid)
     }
+
+    suspend fun deleteUserNoFirebaseUid(userUid: String): ApiResponse<Map<String, User>> {
+        return remoteDataSource.deleteUserNoFirebaseUid(userUid)
+    }
 }

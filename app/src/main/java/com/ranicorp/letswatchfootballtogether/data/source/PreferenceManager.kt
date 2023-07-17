@@ -23,4 +23,8 @@ class PreferenceManager @Inject constructor(@ApplicationContext context: Context
     fun getString(key: String, defValue: String): String {
         return sharedPreferences.getString(key, defValue) ?: defValue
     }
+
+    fun deleteUser() {
+        sharedPreferences.all.clear()
+    }
 }

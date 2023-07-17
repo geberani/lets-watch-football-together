@@ -29,4 +29,10 @@ class UserPreferenceRepository @Inject constructor(private val preferencesManage
             getString(Constants.KEY_FIREBASE_NICK_NAME, "")
         }
     }
+
+    fun deleteUser() {
+        with(preferencesManager) {
+            deleteUser()
+        }
+    }
 }

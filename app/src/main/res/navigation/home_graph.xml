@@ -57,7 +57,11 @@
         android:id="@+id/profileFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.profile.ProfileFragment"
         android:label="@string/label_profile_destination"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.ranicorp.letswatchfootballtogether.ui.detail.DetailFragment"
