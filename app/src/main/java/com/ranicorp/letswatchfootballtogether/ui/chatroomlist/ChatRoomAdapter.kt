@@ -39,6 +39,7 @@ class ChatRoomAdapter(private val clickListener: ChatRoomClickListener) :
 
         fun bind(chatRoomInfo: ChatRoomInfo, clickListener: ChatRoomClickListener) {
             binding.clickListener = clickListener
+            binding.chatRoomInfo = chatRoomInfo
             val imageRef = FirebaseStorage.getInstance().reference.child(chatRoomInfo.imageLocation)
             imageRef.downloadUrl.addOnSuccessListener {
                 binding.imageUri = it.toString()
