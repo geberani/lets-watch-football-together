@@ -3,7 +3,6 @@ package com.ranicorp.letswatchfootballtogether.ui.chatroomlist
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.databinding.ItemChatRoomBinding
@@ -39,20 +38,15 @@ class ChatRoomAdapter(private val clickListener: ChatRoomClickListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(chatRoomInfo: ChatRoomInfo, clickListener: ChatRoomClickListener) {
-            binding.root.setOnClickListener {
-                clickListener.onChatRoomClick(chatRoomInfo.uid, chatRoomInfo.title)
-            }
+            binding.clickListener = clickListener
             val imageRef = FirebaseStorage.getInstance().reference.child(chatRoomInfo.imageLocation)
             imageRef.downloadUrl.addOnSuccessListener {
-                binding.ivPostPreview.load(it)
+                binding.imageUri = it.toString()
             }
-            binding.tvLastMsg.text = chatRoomInfo.lastMsg
-            binding.tvPostTitle.text = chatRoomInfo.title
-            if (chatRoomInfo.lastSentTime.toInt() == 0) {
-                binding.tvSentTime.text = ""
+            binding.sentTime = if (chatRoomInfo.lastSentTime.toInt() == 0) {
+                ""
             } else {
-                binding.tvSentTime.text =
-                    DateFormatText.longToLastSentDate(chatRoomInfo.lastSentTime)
+                DateFormatText.longToLastSentDate(chatRoomInfo.lastSentTime)
             }
         }
 

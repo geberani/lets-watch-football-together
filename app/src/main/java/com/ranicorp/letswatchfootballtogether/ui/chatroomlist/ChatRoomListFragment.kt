@@ -47,6 +47,10 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
             }
         }
         viewModel.latestChatList.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.guideMessage =
+                    getString(R.string.guide_message_participated_in_no_chat_room)
+            }
             chatRoomAdapter.submitList(it)
         }
     }
