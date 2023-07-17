@@ -5,6 +5,14 @@
 
     <data>
 
+        <variable
+            name="imageUri"
+            type="String" />
+
+        <variable
+            name="nickName"
+            type="String" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,10 +33,12 @@
 
         <ImageView
             android:id="@+id/ivProfileImage"
+            circleCropImageUri="@{imageUri}"
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@id/tvNickNameLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileToolbar" />
@@ -55,6 +65,7 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/background_rounded_black_line"
             android:gravity="center"
+            android:text="@{nickName}"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
