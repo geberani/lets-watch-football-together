@@ -81,4 +81,10 @@
     <string name="error_message_chat_room_list_loading_failed">채팅목록 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
     <string name="guide_message_participated_in_no_chat_room">참여 중인 채팅방이 없습니다.</string>
 
+    <!-- 프로필 -->
+    <string name="title_profile">프로필</string>
+    <string name="label_nick_name">닉네임</string>
+    <string name="label_my_events">내 모임</string>
+    <string name="label_delete_account">탈퇴하기</string>
+
 </resources>

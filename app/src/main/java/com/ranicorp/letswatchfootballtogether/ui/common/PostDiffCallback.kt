@@ -1,4 +1,4 @@
-package com.ranicorp.letswatchfootballtogether.ui.home
+package com.ranicorp.letswatchfootballtogether.ui.common
 
 import androidx.recyclerview.widget.DiffUtil
 import com.ranicorp.letswatchfootballtogether.data.model.Post
