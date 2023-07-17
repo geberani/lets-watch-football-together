@@ -8,6 +8,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.databinding.ItemNewPostBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener
+import com.ranicorp.letswatchfootballtogether.ui.common.PostDiffCallback
 
 class NewPostAdapter(private val clickListener: PostClickListener) :
     ListAdapter<Post, NewPostAdapter.NewPostItemViewHolder>(PostDiffCallback()) {

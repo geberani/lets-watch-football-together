@@ -8,6 +8,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.databinding.ItemPopularPostBinding
 import com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener
+import com.ranicorp.letswatchfootballtogether.ui.common.PostDiffCallback
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 
 class PopularPostAdapter(private val clickListener: PostClickListener) :
