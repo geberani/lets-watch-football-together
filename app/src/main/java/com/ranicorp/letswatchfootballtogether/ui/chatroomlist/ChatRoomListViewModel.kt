@@ -40,7 +40,9 @@ class ChatRoomListViewModel @Inject constructor(
                     val participatingEvents =
                         getUserDetailCall.data?.values?.first()?.participatingEvent?.toList()
                             ?: emptyList()
-                    getLatestChat(participatingEvents)
+                    if (participatingEvents.isNotEmpty()) {
+                        getLatestChat(participatingEvents)
+                    }
                 }
                 is ApiResultError -> {
                     _isLoaded.value = Event(false)
