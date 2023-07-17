@@ -30,4 +30,17 @@
         app:layout_constraintTop_toBottomOf="@id/chatRoomListToolBar"
         tools:listitem="@layout/item_chat_room" />
 
+    <TextView
+        android:id="@+id/tvNoChatRoom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chatRoomListToolBar"
+        tools:text="참여 중인 채팅방이 없습니다." />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
