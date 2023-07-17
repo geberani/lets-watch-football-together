@@ -61,6 +61,9 @@ class ChatRoomListViewModel @Inject constructor(
 
     private fun getLatestChat(participatingEvents: List<String>) {
         viewModelScope.launch {
+            if (!_latestChatList.value.isNullOrEmpty()) {
+                _latestChatList.value!!.clear()
+            }
             participatingEvents.forEach { participatingEventUid ->
                 val getLatestChatCall = latestChatRepository.getLatestChat(participatingEventUid)
                 when (getLatestChatCall) {
