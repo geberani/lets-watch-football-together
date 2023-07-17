@@ -45,8 +45,20 @@ class DetailViewModel @Inject constructor(
             val postResponse = postRepository.getPostNoFirebaseUid(postUid)
             when (postResponse) {
                 is ApiResultSuccess -> {
-                    postFirebaseUid = postResponse.data.keys.first()
-                    _selectedPost.value = postResponse.data.values.first()
+                    postFirebaseUid = postResponse.data?.keys?.first() ?: ""
+                    _selectedPost.value = postResponse.data?.values?.first() ?: Post(
+                        "",
+                        "",
+                        0,
+                        "",
+                        "",
+                        "",
+                        "",
+                        0,
+                        "",
+                        emptyList(),
+                        mutableListOf()
+                    )
                     participantsUidList.addAll(
                         selectedPost.value?.participantsUidList ?: emptyList()
                     )
@@ -76,7 +88,14 @@ class DetailViewModel @Inject constructor(
                 val userInfoCall = userRepository.getUserNoFirebaseUid(participantUid)
                 when (userInfoCall) {
                     is ApiResultSuccess -> {
-                        participantsList.add(userInfoCall.data.values.first())
+                        participantsList.add(
+                            userInfoCall.data?.values?.first() ?: User(
+                                "",
+                                "",
+                                "",
+                                mutableListOf()
+                            )
+                        )
                     }
                     is ApiResultError -> {
                         _isLoaded.value = Event(false)

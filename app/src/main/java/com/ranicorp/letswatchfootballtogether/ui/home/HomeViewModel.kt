@@ -28,7 +28,8 @@ class HomeViewModel @Inject constructor(private val postRepository: PostReposito
             val loadAllPostsResult = postRepository.getAllPosts()
             when (loadAllPostsResult) {
                 is ApiResultSuccess -> {
-                    _allPosts.value = Event(loadAllPostsResult.data.values.flatMap { it.values })
+                    _allPosts.value =
+                        Event(loadAllPostsResult.data?.values?.flatMap { it.values } ?: emptyList())
                     _isLoadingComplete.value = Event(true)
                 }
                 is ApiResultError -> {

@@ -3,12 +3,13 @@ package com.ranicorp.letswatchfootballtogether.ui.chatroomlist
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.databinding.ItemChatRoomBinding
+import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 
-class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>() {
+class ChatRoomAdapter(private val clickListener: ChatRoomClickListener) :
+    RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>() {
 
     private val chatRooms = mutableListOf<ChatRoomInfo>()
 
@@ -20,24 +21,34 @@ class ChatRoomAdapter : RecyclerView.Adapter<ChatRoomAdapter.ChatRoomViewHolder>
     }
 
     override fun onBindViewHolder(holder: ChatRoomViewHolder, position: Int) {
-        holder.bind(chatRooms[position])
+        holder.bind(chatRooms[position], clickListener)
     }
 
     override fun getItemCount(): Int {
         return chatRooms.size
     }
 
+    fun submitList(list: List<ChatRoomInfo>) {
+        chatRooms.clear()
+        chatRooms.addAll(list)
+        notifyDataSetChanged()
+    }
+
     class ChatRoomViewHolder(private val binding: ItemChatRoomBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(chatRoomInfo: ChatRoomInfo) {
+        fun bind(chatRoomInfo: ChatRoomInfo, clickListener: ChatRoomClickListener) {
+            binding.clickListener = clickListener
+            binding.chatRoomInfo = chatRoomInfo
             val imageRef = FirebaseStorage.getInstance().reference.child(chatRoomInfo.imageLocation)
             imageRef.downloadUrl.addOnSuccessListener {
-                binding.ivPostPreview.load(it)
+                binding.imageUri = it.toString()
             }
-            binding.tvLastMsg.text = chatRoomInfo.lastMsg
-            binding.tvPostTitle.text = chatRoomInfo.title
-            binding.tvSentTime.text = chatRoomInfo.lastSentTime
+            binding.sentTime = if (chatRoomInfo.lastSentTime.toInt() == 0) {
+                ""
+            } else {
+                DateFormatText.longToLastSentDate(chatRoomInfo.lastSentTime)
+            }
         }
 
         companion object {

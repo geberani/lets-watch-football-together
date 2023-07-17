@@ -81,7 +81,7 @@ class SettingViewModel @Inject constructor(
             val networkResult = userRepository.getUserNickNames()
             when (networkResult) {
                 is ApiResultSuccess -> {
-                    existingNickName.value = networkResult.data.values.toList()
+                    existingNickName.value = networkResult.data?.values?.toList() ?: listOf()
                     _hasAllNickName.value = true
                 }
                 is ApiResultError -> {

@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.data.model.Message
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.model.User
@@ -70,6 +71,14 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
 
     suspend fun getUserNoFirebaseUid(userUid: String): ApiResponse<Map<String, User>> {
         return apiClient.getUserNoFirebaseUid(userUid)
+    }
+
+    suspend fun addLatestChat(postUid: String, chatRoomInfo: ChatRoomInfo): ApiResponse<ChatRoomInfo> {
+        return apiClient.addLatestChat(postUid, chatRoomInfo)
+    }
+
+    suspend fun getLatestChat(postUid: String): ApiResponse<ChatRoomInfo> {
+        return apiClient.getLatestChat(postUid)
     }
 
     fun addChatEventListener(
