@@ -105,7 +105,7 @@ class ProfileViewModel @Inject constructor(
             val networkResult = userRepository.deleteUserNoFirebaseUid(userUid)
             when (networkResult) {
                 is ApiResultSuccess -> {
-                    userPreferenceRepository.deleteUser()
+                    userPreferenceRepository.clearPreferences()
                     _isDeleted.value = Event(true)
                 }
                 is ApiResultError -> {

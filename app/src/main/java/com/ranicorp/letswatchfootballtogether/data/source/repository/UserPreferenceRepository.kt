@@ -30,9 +30,9 @@ class UserPreferenceRepository @Inject constructor(private val preferencesManage
         }
     }
 
-    fun deleteUser() {
+    fun clearPreferences() {
         with(preferencesManager) {
-            deleteUser()
+            clearPreferences()
         }
     }
 }
