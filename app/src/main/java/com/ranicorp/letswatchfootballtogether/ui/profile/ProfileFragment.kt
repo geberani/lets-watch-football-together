@@ -45,7 +45,7 @@ class ProfileFragment : Fragment(), PostClickListener {
         binding.nickName = viewModel.userNickName
         setObservers()
         binding.btnDeleteAccount.setOnClickListener {
-            viewModel.deleteUser()
+            viewModel.deleteAccount()
         }
     }
 

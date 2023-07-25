@@ -32,6 +32,8 @@ class ProfileViewModel @Inject constructor(
     val profileImage: LiveData<Event<String>> = _profileImage
     private val _eventsList: MutableLiveData<Event<List<Post>>> = MutableLiveData()
     val eventsList: LiveData<Event<List<Post>>> = _eventsList
+    private val _eventsUidList: MutableLiveData<Event<List<String>>> = MutableLiveData()
+    val eventsUidList: LiveData<Event<List<String>>> = _eventsUidList
     private val _isDeleted: MutableLiveData<Event<Boolean>> = MutableLiveData()
     val isDeleted: LiveData<Event<Boolean>> = _isDeleted
 
@@ -42,8 +44,8 @@ class ProfileViewModel @Inject constructor(
                 is ApiResultSuccess -> {
                     val user = networkResult.data?.values?.first()
                     _profileImage.value = Event(user?.profileUri ?: "")
-                    val eventsUidList = user?.participatingEvent ?: mutableListOf()
-                    getEvents(eventsUidList)
+                    _eventsUidList.value = Event(user?.participatingEvent ?: mutableListOf())
+                    getEvents(eventsUidList.value?.content ?: emptyList())
                 }
                 is ApiResultError -> {
                     _isLoaded.value = Event(false)
@@ -60,26 +62,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getEvents(eventsUidList: MutableList<String>) {
+    fun getEvents(eventsUidList: List<String>) {
         viewModelScope.launch {
             val result = mutableListOf<Post>()
             eventsUidList.forEach { eventUid ->
                 val networkResult = postRepository.getPostNoFirebaseUid(eventUid)
                 when (networkResult) {
                     is ApiResultSuccess -> {
-                        val postInfo = networkResult.data?.values?.first() ?: Post(
-                            "",
-                            "",
-                            0,
-                            "",
-                            "",
-                            "",
-                            "",
-                            0,
-                            "",
-                            listOf(),
-                            mutableListOf()
-                        )
+                        val postInfo = networkResult.data?.values?.first() ?: Post()
                         result.add(postInfo)
                         _isLoaded.value = Event(true)
                     }
@@ -97,6 +87,55 @@ class ProfileViewModel @Inject constructor(
                 }
             }
             _eventsList.value = Event(result)
+        }
+    }
+
+    fun deleteAccount() {
+        if (eventsUidList.value?.content.isNullOrEmpty()) {
+            deleteUser()
+            return
+        }
+        viewModelScope.launch {
+            eventsUidList.value?.content?.forEach { postUid ->
+                val networkResult = postRepository.getPostNoFirebaseUid(postUid)
+                when (networkResult) {
+                    is ApiResultSuccess -> {
+                        val eventFirebaseUid = networkResult.data?.keys?.first() ?: ""
+                        val post = networkResult.data?.values?.first()
+                        post?.participantsUidList?.remove(userUid)
+                        val updatePostCall =
+                            postRepository.updatePost(postUid, eventFirebaseUid, post ?: Post())
+                        when (updatePostCall) {
+                            is ApiResultSuccess -> {
+
+                            }
+                            is ApiResultError -> {
+                                _isDeleted.value = Event(false)
+                                Log.d(
+                                    "ProfileViewModel",
+                                    "Error code: ${updatePostCall.code}, message: ${updatePostCall.message}"
+                                )
+                            }
+                            is ApiResultException -> {
+                                _isDeleted.value = Event(false)
+                                Log.d("ProfileViewModel", "Exception: ${updatePostCall.throwable}")
+                            }
+                        }
+                    }
+                    is ApiResultError -> {
+                        _isDeleted.value = Event(false)
+                        Log.d(
+                            "ProfileViewModel",
+                            "Error code: ${networkResult.code}, message: ${networkResult.message}"
+                        )
+                    }
+                    is ApiResultException -> {
+                        _isDeleted.value = Event(false)
+                        Log.d("ProfileViewModel", "Exception: ${networkResult.throwable}")
+                    }
+                }
+            }
+            deleteUser()
         }
     }
 
