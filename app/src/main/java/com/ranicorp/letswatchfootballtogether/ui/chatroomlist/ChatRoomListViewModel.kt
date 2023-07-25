@@ -42,6 +42,8 @@ class ChatRoomListViewModel @Inject constructor(
                             ?: emptyList()
                     if (participatingEvents.isNotEmpty()) {
                         getLatestChat(participatingEvents)
+                    } else {
+                        _latestChatList.value = mutableListOf()
                     }
                 }
                 is ApiResultError -> {
