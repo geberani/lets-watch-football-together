@@ -14,5 +14,19 @@ data class Post(
     val maxParticipants: Int,
     val description: String,
     val imageLocations: List<String>,
-    val participantsUidList: MutableList<String>
-)
+    val participantsUidList: MutableList<String>?
+) {
+    constructor() : this(
+        "",
+        "",
+        0,
+        "",
+        "",
+        "",
+        "",
+        0,
+        "",
+        emptyList(),
+        mutableListOf()
+    )
+}
