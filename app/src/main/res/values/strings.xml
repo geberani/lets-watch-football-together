@@ -86,5 +86,8 @@
     <string name="label_nick_name">닉네임</string>
     <string name="label_my_events">내 모임</string>
     <string name="label_delete_account">탈퇴하기</string>
+    <string name="error_message_profile_loading_failed">프로필 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
+    <string name="guide_message_delete_user_successful">성공적으로 탈퇴되었습니다.</string>
+    <string name="error_message_delete_user_failed">탈퇴 실패하였습니다. 잠시후 다시 시도해주세요.</string>
 
 </resources>

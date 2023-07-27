@@ -81,6 +81,10 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
         return apiClient.getLatestChat(postUid)
     }
 
+    suspend fun deleteUserNoFirebaseUid(userUid: String): ApiResponse<Map<String, User>> {
+        return apiClient.deleteUserNoFirebaseUid(userUid)
+    }
+
     fun addChatEventListener(
         chatRoomUid: String,
         onChatItemAdded: (Message) -> Unit
@@ -109,5 +113,4 @@ class RemoteDataSource @Inject constructor(private val apiClient: ApiClient) {
         database.child("chat").child(chatRoomUid).addChildEventListener(chatEventListener)
         return chatEventListener
     }
-
 }

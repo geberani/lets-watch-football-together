@@ -56,4 +56,7 @@ interface ApiClient {
 
     @GET("latestChat/{postUid}.json")
     suspend fun getLatestChat(@Path("postUid") postUid: String): ApiResponse<ChatRoomInfo>
+
+    @DELETE("users/{userUid}.json")
+    suspend fun deleteUserNoFirebaseUid(@Path("userUid") userUid: String): ApiResponse<Map<String, User>>
 }
