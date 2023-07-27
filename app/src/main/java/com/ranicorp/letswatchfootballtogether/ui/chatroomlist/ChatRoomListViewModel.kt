@@ -15,8 +15,6 @@ import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPrefere
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
 import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,70 +63,68 @@ class ChatRoomListViewModel @Inject constructor(
 
     private fun getLatestChat(participatingEvents: List<String>) {
         viewModelScope.launch {
-            if (_latestChatList.value?.isEmpty() == false) {
-                _latestChatList.value?.clear()
+            if (!_latestChatList.value.isNullOrEmpty()) {
+                _latestChatList.value!!.clear()
             }
-
-            val chatRoomInfoDeferredList = participatingEvents.map { participatingEventUid ->
-                async {
-                    val getLatestChatCall =
-                        latestChatRepository.getLatestChat(participatingEventUid)
-                    when (getLatestChatCall) {
-                        is ApiResultSuccess -> {
-                            if (getLatestChatCall.data !== null) {
-                                getLatestChatCall.data
-                            } else {
-                                val postDetailCall =
-                                    postRepository.getPostNoFirebaseUid(participatingEventUid)
-                                when (postDetailCall) {
-                                    is ApiResultSuccess -> {
-                                        val post = postDetailCall.data?.values?.first()
-                                        ChatRoomInfo(
-                                            participatingEventUid,
-                                            post?.title ?: "",
-                                            "",
-                                            0,
-                                            post?.imageLocations?.first() ?: ""
-                                        )
-                                        _isLoaded.value = Event(true)
-                                    }
-                                    is ApiResultError -> {
-                                        _isLoaded.value = Event(false)
-                                        Log.d(
-                                            "ChatRoomListViewModel",
-                                            "Error code: ${postDetailCall.code}, message: ${postDetailCall.message}"
-                                        )
-                                    }
-                                    is ApiResultException -> {
-                                        _isLoaded.value = Event(false)
-                                        Log.d(
-                                            "ChatRoomListViewModel",
-                                            "Exception: ${postDetailCall.throwable}"
-                                        )
-                                    }
-                                }
-                            }
+            participatingEvents.forEach { participatingEventUid ->
+                val getLatestChatCall = latestChatRepository.getLatestChat(participatingEventUid)
+                when (getLatestChatCall) {
+                    is ApiResultSuccess -> {
+                        if (getLatestChatCall.data !== null) {
+                            val newChatRoomInfo = getLatestChatCall.data
+                            val currentList = _latestChatList.value ?: mutableListOf()
+                            currentList.add(newChatRoomInfo)
+                            _latestChatList.value = currentList
+                        } else {
+                            getPostDetail(participatingEventUid)
                         }
-                        is ApiResultError -> {
-                            _isLoaded.value = Event(false)
-                            Log.d(
-                                "ChatRoomListViewModel",
-                                "Error code: ${getLatestChatCall.code}, message: ${getLatestChatCall.message}"
-                            )
-                        }
-                        is ApiResultException -> {
-                            _isLoaded.value = Event(false)
-                            Log.d(
-                                "ChatRoomListViewModel",
-                                "Exception: ${getLatestChatCall.throwable}"
-                            )
-                        }
+                        _isLoaded.value = Event(true)
+                    }
+                    is ApiResultError -> {
+                        _isLoaded.value = Event(false)
+                        Log.d(
+                            "ChatRoomListViewModel",
+                            "Error code: ${getLatestChatCall.code}, message: ${getLatestChatCall.message}"
+                        )
+                    }
+                    is ApiResultException -> {
+                        _isLoaded.value = Event(false)
+                        Log.d("ChatRoomListViewModel", "Exception: ${getLatestChatCall.throwable}")
                     }
                 }
             }
-            val chatRoomInfoList =
-                chatRoomInfoDeferredList.awaitAll().filterIsInstance<ChatRoomInfo>()
-            _latestChatList.value?.addAll(chatRoomInfoList)
+        }
+    }
+
+    private fun getPostDetail(participatingEventUid: String) {
+        viewModelScope.launch {
+            val getPostDetailCall = postRepository.getPostNoFirebaseUid(participatingEventUid)
+            when (getPostDetailCall) {
+                is ApiResultSuccess -> {
+                    val post = getPostDetailCall.data?.values?.first()
+                    val newChatRoomInfo = ChatRoomInfo(
+                        participatingEventUid,
+                        post?.title ?: "",
+                        "",
+                        0,
+                        post?.imageLocations?.first() ?: ""
+                    )
+                    val currentList = _latestChatList.value ?: mutableListOf()
+                    currentList.add(newChatRoomInfo)
+                    _latestChatList.value = currentList
+                }
+                is ApiResultError -> {
+                    _isLoaded.value = Event(false)
+                    Log.d(
+                        "ChatRoomListViewModel",
+                        "Error code: ${getPostDetailCall.code}, message: ${getPostDetailCall.message}"
+                    )
+                }
+                is ApiResultException -> {
+                    _isLoaded.value = Event(false)
+                    Log.d("ChatRoomListViewModel", "Exception: ${getPostDetailCall.throwable}")
+                }
+            }
         }
     }
 }
