@@ -44,18 +44,6 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
         binding.rvChatRoomList.adapter = chatRoomAdapter
         viewModel.getParticipatingEventList()
         lifecycleScope.launch {
-            viewModel.latestChatList
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { latestChatList ->
-                    if (latestChatList.isEmpty()) {
-                        binding.guideMessage =
-                            getString(R.string.guide_message_participated_in_no_chat_room)
-                    }
-                    chatRoomAdapter.submitList(latestChatList)
-                }
-        }
-
-        lifecycleScope.launch {
             viewModel.isLoaded
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { isLoaded ->
@@ -65,6 +53,23 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
                             getString(R.string.error_message_chat_room_list_loading_failed),
                             Toast.LENGTH_SHORT
                         ).show()
+                    } else if (isLoaded == true) {
+                        lifecycleScope.launch {
+                            viewModel.latestChatList
+                                .flowWithLifecycle(
+                                    viewLifecycleOwner.lifecycle,
+                                    Lifecycle.State.STARTED
+                                )
+                                .collectLatest { latestChatList ->
+                                    if (latestChatList.isEmpty()) {
+                                        binding.guideMessage =
+                                            getString(R.string.guide_message_participated_in_no_chat_room)
+                                    } else {
+                                        binding.guideMessage = ""
+                                    }
+                                    chatRoomAdapter.submitList(latestChatList)
+                                }
+                        }
                     }
                 }
         }

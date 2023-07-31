@@ -2,6 +2,7 @@ package com.ranicorp.letswatchfootballtogether.ui.chatroomlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranicorp.letswatchfootballtogether.data.model.ChatRoom
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.data.source.repository.LatestChatRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
@@ -30,7 +31,10 @@ class ChatRoomListViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.getUserNoFirebaseUid(
                 onComplete = { },
-                onError = { _isLoaded.value = false },
+                onError = {
+                    _isLoaded.value = false
+                    getLocalDBChatRoomList()
+                },
                 userUid
             ).collect { response ->
                 val participatingEvents =
@@ -41,6 +45,29 @@ class ChatRoomListViewModel @Inject constructor(
                     _latestChatList.value = mutableListOf()
                 }
             }
+        }
+    }
+
+    private fun getLocalDBChatRoomList() {
+        viewModelScope.launch {
+            val savedChatRoomList = latestChatRepository.getAllLocalChatRoom()
+            _isLoaded.value = true
+            if (savedChatRoomList.isNullOrEmpty()) {
+                _latestChatList.value = mutableListOf()
+                return@launch
+            }
+            val result = mutableListOf<ChatRoomInfo>()
+            savedChatRoomList.sortedByDescending { it.lastMsg }.forEach { chatRoom ->
+                val chatRoomInfo = ChatRoomInfo(
+                    chatRoom.uid,
+                    chatRoom.title,
+                    chatRoom.lastMsg,
+                    chatRoom.lastSentTime,
+                    chatRoom.imageLocation
+                )
+                result.add(chatRoomInfo)
+            }
+            _latestChatList.value = result
         }
     }
 
@@ -84,7 +111,27 @@ class ChatRoomListViewModel @Inject constructor(
                 )
                 val currentList = _latestChatList.value
                 currentList.add(newChatRoomInfo)
+                currentList.toList().sortedByDescending {
+                    it.lastSentTime
+                }
                 _latestChatList.value = currentList
+                updateRoom(currentList.toList())
+            }
+        }
+    }
+
+    private fun updateRoom(chatRoomInfoList: List<ChatRoomInfo>) {
+        viewModelScope.launch {
+            latestChatRepository.deleteAllChatRooms()
+            chatRoomInfoList.forEach { chatRoomInfo ->
+                val chatRoom = ChatRoom(
+                    chatRoomInfo.uid,
+                    chatRoomInfo.title,
+                    chatRoomInfo.lastMsg,
+                    chatRoomInfo.lastSentTime,
+                    chatRoomInfo.imageLocation
+                )
+                latestChatRepository.insertLocal(chatRoom)
             }
         }
     }

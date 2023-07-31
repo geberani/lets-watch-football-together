@@ -78,7 +78,7 @@
 
     <!-- 채팅 목록 -->
     <string name="title_chat_room_list">채팅</string>
-    <string name="error_message_chat_room_list_loading_failed">채팅목록 불러오기에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
+    <string name="error_message_chat_room_list_loading_failed">네트워크 통신에 실패하였습니다. 잠시후 다시 시도해주세요.</string>
     <string name="guide_message_participated_in_no_chat_room">참여 중인 채팅방이 없습니다.</string>
 
     <!-- 프로필 -->
