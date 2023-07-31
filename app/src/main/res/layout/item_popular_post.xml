@@ -27,7 +27,7 @@
         android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="13dp"
-        android:background="@drawable/background_white_rounded_corners"
+        android:background="@drawable/background_white_square"
         android:onClick="@{() -> clickListener.onPostClick(postUid)}"
         android:padding="10dp">
 
