@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ranicorp.letswatchfootballtogether.HomeGraphDirections
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentHomeBinding
-import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), PostClickListener {
@@ -51,25 +54,32 @@ class HomeFragment : Fragment(), PostClickListener {
     }
 
     private fun updateData() {
-        viewModel.loadAllPosts()
-        viewModel.allPosts.observe(viewLifecycleOwner, EventObserver { allPosts ->
-            homeAdapter.submitAllPostList(
-                allPosts,
-                getString(R.string.header_new_posts),
-                getString(R.string.header_popular_posts),
-                getString(R.string.header_all_posts)
-            )
-            binding.refreshLayout.isRefreshing = false
-        })
-        viewModel.isLoadingComplete.observe(viewLifecycleOwner, EventObserver {
-            if (!it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_loading_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+        lifecycleScope.launch {
+            viewModel.allPosts
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { posts ->
+                    homeAdapter.submitAllPostList(
+                        posts,
+                        getString(R.string.header_new_posts),
+                        getString(R.string.header_popular_posts),
+                        getString(R.string.header_all_posts)
+                    )
+                    binding.refreshLayout.isRefreshing = false
+                }
+        }
+        lifecycleScope.launch {
+            viewModel.isLoadingComplete
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isLoadingComplete ->
+                    if (!isLoadingComplete) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_message_loading_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
     }
 
     override fun onDestroyView() {

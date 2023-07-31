@@ -13,6 +13,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
@@ -27,6 +30,7 @@ import com.ranicorp.letswatchfootballtogether.BuildConfig
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentSignInBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SignInFragment : Fragment() {
@@ -61,14 +65,18 @@ class SignInFragment : Fragment() {
         binding.btnSignInWithGoogle.setOnClickListener {
             onClick()
         }
-        viewModel.hasAllUsers.observe(viewLifecycleOwner) {
-            if (it == false) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_sign_in_not_available),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        lifecycleScope.launch {
+            viewModel.hasAllUsers
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { hasAllUsers ->
+                    if (hasAllUsers == false) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_message_sign_in_not_available),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
         }
     }
 
@@ -135,18 +143,31 @@ class SignInFragment : Fragment() {
                         ).show()
                         return@addOnCompleteListener
                     }
-                    viewModel.confirmExistingUid(googleUid)
-                    viewModel.hasJoined.observe(viewLifecycleOwner) {
-                        if (it) {
-                            findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToHomeFragment())
-                        } else {
-                            findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSettingFragment(googleUid)
+                    viewModel.confirmHasJoined(googleUid)
+                    lifecycleScope.launch {
+                        viewModel.hasJoined
+                            .flowWithLifecycle(
+                                viewLifecycleOwner.lifecycle,
+                                Lifecycle.State.STARTED
                             )
-                        }
+                            .collect { hasJoined ->
+                                if (hasJoined) {
+                                    viewModel.saveUserInfo(googleUid)
+                                    findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToHomeFragment())
+                                } else {
+                                    findNavController().navigate(
+                                        SignInFragmentDirections.actionSignInFragmentToSettingFragment(
+                                            googleUid
+                                        )
+                                    )
+                                }
+                            }
                     }
                 } else {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
                 }
+            }
+            .addOnFailureListener {
             }
     }
 

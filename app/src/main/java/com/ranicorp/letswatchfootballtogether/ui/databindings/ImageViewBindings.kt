@@ -9,7 +9,7 @@ import com.ranicorp.letswatchfootballtogether.R
 
 @BindingAdapter("circleCropImageUri")
 fun loadCircleCropImage(view: ImageView, uri: String?) {
-    if (uri != null) {
+    if (!uri.isNullOrEmpty()) {
         view.load(uri) {
             transformations(CircleCropTransformation())
             error(R.drawable.ic_image_not_supported)
@@ -21,7 +21,7 @@ fun loadCircleCropImage(view: ImageView, uri: String?) {
 
 @BindingAdapter("squareCropImageUri")
 fun loadSquareCropImage(view: ImageView, uri: String?) {
-    if (uri != null) {
+    if (!uri.isNullOrEmpty()) {
         view.load(uri) {
             transformations(RoundedCornersTransformation(8f))
             error(R.drawable.ic_image_not_supported)

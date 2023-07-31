@@ -7,14 +7,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.storage.FirebaseStorage
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentProfileBinding
-import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.ui.common.PostClickListener
 import com.ranicorp.letswatchfootballtogether.ui.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(), PostClickListener {
@@ -43,48 +45,47 @@ class ProfileFragment : Fragment(), PostClickListener {
         viewModel.getUserInfo()
         binding.rvMyEvent.adapter = eventsAdapter
         binding.nickName = viewModel.userNickName
-        setObservers()
+        setSubscribers()
         binding.btnDeleteAccount.setOnClickListener {
             viewModel.deleteAccount()
         }
     }
 
-    private fun setObservers() {
-        viewModel.isLoaded.observe(viewLifecycleOwner, EventObserver {
-            if (!it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_profile_loading_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-        viewModel.eventsList.observe(viewLifecycleOwner, EventObserver {
-            eventsAdapter.submitList(it)
-        })
-        viewModel.profileImage.observe(viewLifecycleOwner, EventObserver {
-            val imageRef = FirebaseStorage.getInstance().reference.child(it)
-            imageRef.downloadUrl.addOnSuccessListener {
-                binding.imageUri = it.toString()
-            }
-        })
-        viewModel.isDeleted.observe(viewLifecycleOwner, EventObserver {
-            if (it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.guide_message_delete_user_successful),
-                    Toast.LENGTH_SHORT
-                ).show()
-                val action = ProfileFragmentDirections.actionProfileFragmentToSignInFragment()
-                findNavController().navigate(action)
-            } else {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_delete_user_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+    private fun setSubscribers() {
+        lifecycleScope.launch {
+            viewModel.guideMsgResId
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { guideMsgResId ->
+                    if (guideMsgResId != null) {
+                        Toast.makeText(
+                            context,
+                            getString(guideMsgResId),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    if (guideMsgResId == R.string.guide_message_delete_user_successful) {
+                        val action =
+                            ProfileFragmentDirections.actionProfileFragmentToSignInFragment()
+                        findNavController().navigate(action)
+                    }
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.eventsList
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { eventsList ->
+                    eventsAdapter.submitList(eventsList)
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.profileImage
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { profileImage ->
+                    binding.imageUri = profileImage
+                }
+        }
     }
 
     override fun onDestroyView() {

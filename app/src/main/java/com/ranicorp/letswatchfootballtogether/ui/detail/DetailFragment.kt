@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentDetailBinding
-import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -24,6 +27,7 @@ class DetailFragment : Fragment() {
     private val args: DetailFragmentArgs by navArgs()
     private val participantsAdapter = ParticipantsAdapter()
     private val bannerAdapter = BannerAdapter()
+    private var maxParticipants = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,54 +54,75 @@ class DetailFragment : Fragment() {
             findNavController().navigateUp()
         }
         setPostDetail()
-        viewModel.isLoaded.observe(viewLifecycleOwner, EventObserver {
-            if (!it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_not_loaded),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-        viewModel.isParticipateCompleted.observe(viewLifecycleOwner, EventObserver {
-            if (!it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_participate_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+
+        lifecycleScope.launch {
+            viewModel.isLoaded
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isLoaded ->
+                    if (isLoaded == false) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_message_not_loaded),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.isParticipateCompleted
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isParticipateCompleted ->
+                    if (isParticipateCompleted == false) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_message_participate_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
         setParticipateBtn()
         setJoinChatBtn()
     }
 
     private fun setPostDetail() {
         viewModel.getPostDetail(args.postUid)
-        viewModel.selectedPost.observe(viewLifecycleOwner) {
-            binding.post = it
-            binding.tvNumberOfParticipants.text = getString(
-                R.string.label_number_of_participants,
-                it.participantsUidList?.size ?: 0,
-                it.maxParticipants
-            )
-            binding.locationInfoLayout.setInfo(it.location)
-            bannerAdapter.submitBannersList(it.imageLocations)
+        lifecycleScope.launch {
+            viewModel.selectedPost
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { selectedPost ->
+                    binding.post = selectedPost
+                    maxParticipants = selectedPost.maxParticipants
+                    binding.locationInfoLayout.setInfo(selectedPost.location)
+                    bannerAdapter.submitBannersList(selectedPost.imageLocations)
+                }
         }
-        viewModel.participantsInfo.observe(viewLifecycleOwner) {
-            participantsAdapter.submitList(it.content)
+
+        lifecycleScope.launch {
+            viewModel.participantsInfo
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { participantsInfo ->
+                    participantsAdapter.submitList(participantsInfo)
+                    binding.tvNumberOfParticipants.text = getString(
+                        R.string.label_number_of_participants,
+                        participantsInfo.size,
+                        maxParticipants
+                    )
+                }
         }
     }
 
     private fun setParticipateBtn() {
         binding.btnParticipate.setOnClickListener {
-            if (viewModel.isParticipated.value == true) {
+            if (viewModel.isParticipated.value) {
                 Toast.makeText(
                     context,
                     getString(R.string.guide_message_already_participated),
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if (viewModel.selectedPost.value?.maxParticipants == viewModel.selectedPost.value?.participantsUidList?.size) {
+            } else if (viewModel.selectedPost.value.maxParticipants == viewModel.selectedPost.value.participantsUidList?.size) {
                 Toast.makeText(
                     context,
                     getString(R.string.guide_message_exceed_maximum_participants),
@@ -116,8 +141,12 @@ class DetailFragment : Fragment() {
 
     private fun setJoinChatBtn() {
         binding.btnJoinChat.setOnClickListener {
-            if (viewModel.isParticipated.value == true) {
-                TODO("채팅방으로 이동")
+            if (viewModel.isParticipated.value) {
+                val action = DetailFragmentDirections.actionDetailFragmentToChatRoomFragment(
+                    viewModel.selectedPost.value.postUid,
+                    viewModel.selectedPost.value.title
+                )
+                findNavController().navigate(action)
             } else {
                 Toast.makeText(
                     context,

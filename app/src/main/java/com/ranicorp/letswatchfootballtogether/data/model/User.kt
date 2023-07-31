@@ -8,4 +8,11 @@ data class User(
     val nickName: String,
     val profileUri: String,
     val participatingEvent: MutableList<String> = mutableListOf()
-)
+) {
+    constructor() : this(
+        "",
+        "",
+        "",
+        mutableListOf()
+    )
+}

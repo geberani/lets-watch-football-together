@@ -9,6 +9,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -16,9 +19,9 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
-import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
@@ -52,19 +55,18 @@ class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
 
     private fun setLayout() {
         setImageList()
-        setObservers()
+        setSubscribers()
         setOnClickListeners()
-        viewModel.isComplete.observe(viewLifecycleOwner, EventObserver {
-            if (it) {
-                findNavController().navigateUp()
-            } else {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_post_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+        lifecycleScope.launch {
+            viewModel.isComplete
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isSettingComplete ->
+                    if (isSettingComplete) {
+                        findNavController().navigateUp()
+                        findNavController().navigateUp()
+                    }
+                }
+        }
     }
 
     private fun setImageList() {
@@ -73,19 +75,30 @@ class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
             ConcatAdapter(imageHeaderAdapter, imageListAdapter)
     }
 
-    private fun setObservers() {
-        viewModel.errorMsgResId.observe(viewLifecycleOwner, EventObserver {
-            Toast.makeText(
-                context,
-                getString(it),
-                Toast.LENGTH_SHORT
-            ).show()
-        })
-        viewModel.isLoading.observe(viewLifecycleOwner, EventObserver {
-            if (it) {
-                findNavController().navigate(PostingFragmentDirections.actionPostingFragmentToProgressDialogFragment())
-            }
-        })
+    private fun setSubscribers() {
+        lifecycleScope.launch {
+            viewModel.errorMsgResId
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { errorMsgResId ->
+                    if (errorMsgResId != null) {
+                        Toast.makeText(
+                            context,
+                            getString(errorMsgResId),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
+        lifecycleScope.launch {
+            viewModel.isLoading
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isLoading ->
+                    if (isLoading) {
+                        findNavController().navigate(PostingFragmentDirections.actionPostingFragmentToProgressDialogFragment())
+                    }
+                }
+        }
     }
 
     private fun setOnClickListeners() {

@@ -7,10 +7,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentChatRoomListBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
@@ -38,21 +43,30 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
     private fun setLayout() {
         binding.rvChatRoomList.adapter = chatRoomAdapter
         viewModel.getParticipatingEventList()
-        viewModel.isLoaded.observe(viewLifecycleOwner) { event ->
-            if (!event.content) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_chat_room_list_loading_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        lifecycleScope.launch {
+            viewModel.latestChatList
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { latestChatList ->
+                    if (latestChatList.isEmpty()) {
+                        binding.guideMessage =
+                            getString(R.string.guide_message_participated_in_no_chat_room)
+                    }
+                    chatRoomAdapter.submitList(latestChatList)
+                }
         }
-        viewModel.latestChatList.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
-                binding.guideMessage =
-                    getString(R.string.guide_message_participated_in_no_chat_room)
-            }
-            chatRoomAdapter.submitList(it)
+
+        lifecycleScope.launch {
+            viewModel.isLoaded
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collectLatest { isLoaded ->
+                    if (isLoaded == false) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.error_message_chat_room_list_loading_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
         }
     }
 
@@ -62,7 +76,10 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
     }
 
     override fun onChatRoomClick(postUid: String, postTitle: String) {
-        val action = ChatRoomListFragmentDirections.actionChatRoomListFragmentToChatRoomFragment(postUid, postTitle)
+        val action = ChatRoomListFragmentDirections.actionChatRoomListFragmentToChatRoomFragment(
+            postUid,
+            postTitle
+        )
         findNavController().navigate(action)
     }
 }
