@@ -70,6 +70,9 @@
         <argument
             android:name="postUid"
             app:argType="string" />
+        <action
+            android:id="@+id/action_detailFragment_to_chatRoomFragment"
+            app:destination="@id/chatRoomFragment" />
     </fragment>
 
     <action

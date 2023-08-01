@@ -11,13 +11,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentSettingBinding
-import com.ranicorp.letswatchfootballtogether.ui.common.EventObserver
 import com.ranicorp.letswatchfootballtogether.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingFragment : Fragment() {
@@ -34,7 +37,6 @@ class SettingFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     viewModel.setProfileUri(uri.toString())
-                } else {
                 }
             }
     }
@@ -57,41 +59,57 @@ class SettingFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         viewModel.updateExistingNickNameList()
+        setSettingCompleteNavigation()
+        setNickNameErrorMsg()
+        setSettingErrorMsg()
+    }
+
+    private fun setSettingCompleteNavigation() {
+        lifecycleScope.launch {
+            viewModel.isSettingComplete
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isSettingComplete ->
+                    if (isSettingComplete) {
+                        findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
+                    }
+                }
+        }
+    }
+
+    private fun setNickNameErrorMsg() {
         binding.etNickname.doAfterTextChanged {
             viewModel.setNickName(it.toString())
             viewModel.validateNickName(it.toString())
-            viewModel.errorMsg.observe(viewLifecycleOwner, EventObserver { errorMsg ->
-                setErrorMsg(errorMsg)
-            })
+            lifecycleScope.launch {
+                viewModel.nickNameErrorType
+                    .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                    .collect { errorMsg ->
+                        if (!errorMsg.isNullOrEmpty()) {
+                            setErrorMsg(errorMsg)
+                        }
+                    }
+            }
         }
-        viewModel.isInputComplete.observe(viewLifecycleOwner, EventObserver {
-            if(!it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_setting_input_not_complete),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-        viewModel.isSettingComplete.observe(viewLifecycleOwner, EventObserver {
-            if (it) {
-                findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
-            } else {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_setting_failed),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-        viewModel.hasAllNickName.observe(viewLifecycleOwner) {
-            if (!it) {
-                Toast.makeText(
-                    context,
-                    getString(R.string.error_message_setting_not_available),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+    }
+
+    private fun setSettingErrorMsg() {
+        lifecycleScope.launch {
+            viewModel.settingErrorType
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { settingErrorType ->
+                    if (settingErrorType != null) {
+                        val errorMsg = when (settingErrorType) {
+                            Constants.ERROR_SETTING_NOT_AVAILABLE -> getString(R.string.error_message_setting_not_available)
+                            Constants.ERROR_SETTING_FAILED -> getString(R.string.error_message_setting_failed)
+                            else -> getString(R.string.error_message_setting_input_not_complete)
+                        }
+                        Toast.makeText(
+                            context,
+                            errorMsg,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
         }
     }
 

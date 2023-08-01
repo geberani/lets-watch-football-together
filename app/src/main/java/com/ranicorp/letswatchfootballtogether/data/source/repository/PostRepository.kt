@@ -3,27 +3,105 @@ package com.ranicorp.letswatchfootballtogether.data.source.repository
 import com.ranicorp.letswatchfootballtogether.data.model.Post
 import com.ranicorp.letswatchfootballtogether.data.source.remote.RemoteDataSource
 import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResponse
+import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultSuccess
+import com.ranicorp.letswatchfootballtogether.data.source.remote.onError
+import com.ranicorp.letswatchfootballtogether.data.source.remote.onException
+import com.ranicorp.letswatchfootballtogether.data.source.remote.onSuccess
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
 import javax.inject.Inject
 
 class PostRepository @Inject constructor(private val remoteDataSource: RemoteDataSource) {
 
-    suspend fun addPost(postUid: String, post: Post): ApiResponse<Map<String, String>> {
-        return remoteDataSource.addPost(postUid, post)
-    }
+    fun addPost(
+        onComplete: () -> Unit,
+        onError: (message: String?) -> Unit,
+        postUid: String,
+        post: Post
+    ): Flow<ApiResponse<Map<String, String>>> = flow {
+        val response = remoteDataSource.addPost(postUid, post)
+        response.onSuccess { data ->
+            emit(ApiResultSuccess(data))
+        }.onError { code, message ->
+            onError("code: $code, message: $message")
+        }.onException {
+            onError(it.message)
+        }
+    }.onCompletion {
+        onComplete()
+    }.flowOn(Dispatchers.Default)
 
-    suspend fun getAllPosts(): ApiResponse<Map<String, Map<String, Post>>> {
-        return remoteDataSource.getAllPosts()
-    }
+    fun getAllPosts(
+        onComplete: () -> Unit,
+        onError: (message: String?) -> Unit
+    ): Flow<List<Post>> = flow {
+        val response = remoteDataSource.getAllPosts()
+        response.onSuccess { data ->
+            val posts = data?.values?.flatMap { it.values } ?: emptyList()
+            emit(posts)
+        }.onError { code, message ->
+            onError("code: $code, message: $message")
+        }.onException {
+            onError(it.message)
+        }
+    }.onCompletion {
+        onComplete()
+    }.flowOn(Dispatchers.Default)
 
-    suspend fun updatePost(postUid: String, firebaseUid: String, post: Post): ApiResponse<Post> {
-        return remoteDataSource.updatePost(postUid, firebaseUid, post)
-    }
+    fun updatePost(
+        onComplete: () -> Unit,
+        onError: (message: String?) -> Unit,
+        postUid: String,
+        firebaseUid: String,
+        post: Post
+    ): Flow<ApiResponse<Post>> = flow {
+        val response = remoteDataSource.updatePost(postUid, firebaseUid, post)
+        response.onSuccess { data ->
+            emit(ApiResultSuccess(data))
+        }.onError { code, message ->
+            onError("code: $code, message: $message")
+        }.onException {
+            onError(it.message)
+        }
+    }.onCompletion {
+        onComplete()
+    }.flowOn(Dispatchers.Default)
 
-    suspend fun getPost(postUid: String, firebaseUid: String): ApiResponse<Post> {
-        return remoteDataSource.getPost(postUid, firebaseUid)
-    }
+    fun getPost(
+        onComplete: () -> Unit,
+        onError: (message: String?) -> Unit,
+        postUid: String,
+        firebaseUid: String
+    ): Flow<ApiResponse<Post>> = flow {
+        val response = remoteDataSource.getPost(postUid, firebaseUid)
+        response.onSuccess { data ->
+            emit(ApiResultSuccess(data))
+        }.onError { code, message ->
+            onError("code: $code, message: $message")
+        }.onException {
+            onError(it.message)
+        }
+    }.onCompletion {
+        onComplete()
+    }.flowOn(Dispatchers.Default)
 
-    suspend fun getPostNoFirebaseUid(postUid: String): ApiResponse<Map<String, Post>> {
-        return remoteDataSource.getPostNoFirebaseUid(postUid)
-    }
+    fun getPostNoFirebaseUid(
+        onComplete: () -> Unit,
+        onError: (message: String?) -> Unit,
+        postUid: String
+    ): Flow<Map<String, Post>> = flow {
+        val response = remoteDataSource.getPostNoFirebaseUid(postUid)
+        response.onSuccess { data ->
+            emit(data ?: mapOf<String, Post>())
+        }.onError { code, message ->
+            onError("code: $code, message: $message")
+        }.onException {
+            onError(it.message)
+        }
+    }.onCompletion {
+        onComplete()
+    }.flowOn(Dispatchers.Default)
 }

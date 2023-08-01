@@ -1,19 +1,14 @@
 package com.ranicorp.letswatchfootballtogether.ui.chatroom
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.ChildEventListener
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.data.model.Message
-import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultError
-import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultException
-import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultSuccess
 import com.ranicorp.letswatchfootballtogether.data.source.repository.*
-import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,14 +21,13 @@ class ChatRoomViewModel @Inject constructor(
     private val postRepository: PostRepository
 ) : ViewModel() {
 
-    private val _allChat = MutableLiveData<Event<List<Message>>>()
-    val allChat: LiveData<Event<List<Message>>> = _allChat
+    private val _allChat = MutableStateFlow<List<Message>>(emptyList())
+    val allChat: StateFlow<List<Message>> = _allChat
     private var postUid: String = ""
     val userUid = preferenceRepository.getUserUid()
-    private val _isSendingComplete = MutableLiveData<Event<Boolean>>()
-    val isSendingComplete: LiveData<Event<Boolean>> = _isSendingComplete
-    private val _isLoaded = MutableLiveData<Event<Boolean>>()
-    val isLoaded: LiveData<Event<Boolean>> = _isLoaded
+    private val isSendingComplete: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    private val _isLoaded: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    val isLoaded: StateFlow<Boolean?> = _isLoaded
     private var chatEventListener: ChildEventListener? = null
     private var profileUri = ""
     private var postTitle = ""
@@ -45,22 +39,14 @@ class ChatRoomViewModel @Inject constructor(
         viewModelScope.launch {
             this@ChatRoomViewModel.messageText = messageText
             if (profileUri.isEmpty()) {
-                val userInfoCall = userRepository.getUserNoFirebaseUid(userUid)
-                when (userInfoCall) {
-                    is ApiResultSuccess -> {
-                        val user = userInfoCall.data?.values?.first()
-                        profileUri = user?.profileUri ?: ""
-                    }
-                    is ApiResultError -> {
-                        _isSendingComplete.value = Event(false)
-                        Log.d(
-                            "ChatRoomViewModel",
-                            "Error code: ${userInfoCall.code}, message: ${userInfoCall.message}"
-                        )
-                    }
-                    is ApiResultException -> {
-                        _isSendingComplete.value = Event(false)
-                        Log.d("ChatRoomViewModel", "Exception: ${userInfoCall.throwable}")
+                viewModelScope.launch {
+                    userRepository.getUserNoFirebaseUid(
+                        onComplete = { },
+                        onError = { isSendingComplete.value = false },
+                        userUid
+                    ).collect { response ->
+                        val user = response.values.first()
+                        profileUri = user.profileUri
                     }
                 }
             }
@@ -81,47 +67,23 @@ class ChatRoomViewModel @Inject constructor(
 
     private fun addChat(message: Message) {
         viewModelScope.launch {
-            val addChatCall = chatRepository.addChat(postUid, message)
-            when (addChatCall) {
-                is ApiResultSuccess -> {
-                    getPostDetail()
-                }
-                is ApiResultError -> {
-                    _isSendingComplete.value = Event(false)
-                    Log.d(
-                        "ChatRoomViewModel",
-                        "Error code: ${addChatCall.code}, message: ${addChatCall.message}"
-                    )
-                }
-                is ApiResultException -> {
-                    _isSendingComplete.value = Event(false)
-                    Log.d("ChatRoomViewModel", "Exception: ${addChatCall.throwable}")
-                }
-            }
+            chatRepository.addChat(
+                onComplete = { getPostDetail() },
+                onError = { isSendingComplete.value = false },
+                postUid, message
+            ).collect { }
         }
     }
 
-    fun getPostDetail() {
+    private fun getPostDetail() {
         viewModelScope.launch {
-            val getPostCall = postRepository.getPostNoFirebaseUid(postUid)
-            when (getPostCall) {
-                is ApiResultSuccess -> {
-                    postTitle = getPostCall.data?.values?.first()?.title ?: ""
-                    postImageLocation =
-                        getPostCall.data?.values?.first()?.imageLocations?.first() ?: ""
-                    addLatestChat()
-                }
-                is ApiResultError -> {
-                    _isSendingComplete.value = Event(false)
-                    Log.d(
-                        "ChatRoomViewModel",
-                        "Error code: ${getPostCall.code}, message: ${getPostCall.message}"
-                    )
-                }
-                is ApiResultException -> {
-                    _isSendingComplete.value = Event(false)
-                    Log.d("ChatRoomViewModel", "Exception: ${getPostCall.throwable}")
-                }
+            postRepository.getPostNoFirebaseUid(
+                onComplete = { addLatestChat() },
+                onError = { isSendingComplete.value = false },
+                postUid
+            ).collect { response ->
+                postTitle = response.values.first().title
+                postImageLocation = response.values.first().imageLocations.first()
             }
         }
     }
@@ -130,45 +92,21 @@ class ChatRoomViewModel @Inject constructor(
         viewModelScope.launch {
             val chatRoomInfo =
                 ChatRoomInfo(postUid, postTitle, messageText, sentTime, postImageLocation)
-            val addLatestChatCall = latestChatRepository.addLatestChat(postUid, chatRoomInfo)
-            when (addLatestChatCall) {
-                is ApiResultSuccess -> {
-                    _isSendingComplete.value = Event(true)
-                }
-                is ApiResultError -> {
-                    _isSendingComplete.value = Event(false)
-                    Log.d(
-                        "ChatRoomViewModel",
-                        "Error code: ${addLatestChatCall.code}, message: ${addLatestChatCall.message}"
-                    )
-                }
-                is ApiResultException -> {
-                    _isSendingComplete.value = Event(false)
-                    Log.d("ChatRoomViewModel", "Exception: ${addLatestChatCall.throwable}")
-                }
-            }
+            latestChatRepository.addLatestChat(
+                onComplete = { isSendingComplete.value = true },
+                onError = { isSendingComplete.value = false },
+                postUid, chatRoomInfo
+            ).collect { }
         }
     }
 
     fun getAllChat() {
         viewModelScope.launch {
-            val loadChatCall = chatRepository.getAllChat(postUid)
-            when (loadChatCall) {
-                is ApiResultSuccess -> {
-                    _isLoaded.value = Event(true)
-                }
-                is ApiResultError -> {
-                    _isLoaded.value = Event(false)
-                    Log.d(
-                        "ChatRoomViewModel",
-                        "Error code: ${loadChatCall.code}, message: ${loadChatCall.message}"
-                    )
-                }
-                is ApiResultException -> {
-                    _isLoaded.value = Event(false)
-                    Log.d("ChatRoomViewModel", "Exception: ${loadChatCall.throwable}")
-                }
-            }
+            chatRepository.getAllChat(
+                onComplete = { _isLoaded.value = true },
+                onError = { _isLoaded.value = false },
+                postUid
+            ).collect { }
         }
     }
 
@@ -177,10 +115,12 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun addChatEventListener() {
-        chatEventListener = chatRepository.addChatEventListener(postUid) { chatItem ->
-            val currentList = _allChat.value?.content ?: emptyList()
-            val newList = currentList.toMutableList().apply { add(chatItem) }
-            _allChat.value = Event(newList)
+        viewModelScope.launch {
+            chatEventListener = chatRepository.addChatEventListener(postUid) { chatItem ->
+                val currentList = _allChat.value
+                val newList = currentList.toMutableList().apply { add(chatItem) }
+                _allChat.value = newList
+            }
         }
     }
 

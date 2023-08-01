@@ -1,19 +1,17 @@
 package com.ranicorp.letswatchfootballtogether.ui.profile
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.data.model.Post
-import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultError
-import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultException
-import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultSuccess
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserPreferenceRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.UserRepository
-import com.ranicorp.letswatchfootballtogether.ui.common.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,38 +24,34 @@ class ProfileViewModel @Inject constructor(
 
     private val userUid = userPreferenceRepository.getUserUid()
     val userNickName = userPreferenceRepository.getUserNickName()
-    private val _isLoaded: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    val isLoaded: LiveData<Event<Boolean>> = _isLoaded
-    private val _profileImage: MutableLiveData<Event<String>> = MutableLiveData()
-    val profileImage: LiveData<Event<String>> = _profileImage
-    private val _eventsList: MutableLiveData<Event<List<Post>>> = MutableLiveData()
-    val eventsList: LiveData<Event<List<Post>>> = _eventsList
-    private val _eventsUidList: MutableLiveData<Event<List<String>>> = MutableLiveData()
-    val eventsUidList: LiveData<Event<List<String>>> = _eventsUidList
-    private val _isDeleted: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    val isDeleted: LiveData<Event<Boolean>> = _isDeleted
+    private val isLoaded: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    private val _profileImage: MutableStateFlow<String> = MutableStateFlow("")
+    val profileImage: StateFlow<String> = _profileImage
+    private val _eventsList: MutableStateFlow<List<Post>> = MutableStateFlow(emptyList())
+    val eventsList: StateFlow<List<Post>> = _eventsList
+    private val _eventsUidList: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val eventsUidList: StateFlow<List<String>> = _eventsUidList
+    private val isDeleted: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    private val _guideMsgResId = MutableStateFlow<Int?>(null)
+    val guideMsgResId: StateFlow<Int?> = _guideMsgResId
 
     fun getUserInfo() {
         viewModelScope.launch {
-            val networkResult = userRepository.getUserNoFirebaseUid(userUid)
-            when (networkResult) {
-                is ApiResultSuccess -> {
-                    val user = networkResult.data?.values?.first()
-                    _profileImage.value = Event(user?.profileUri ?: "")
-                    _eventsUidList.value = Event(user?.participatingEvent ?: mutableListOf())
-                    getEvents(eventsUidList.value?.content ?: emptyList())
+            userRepository.getUserNoFirebaseUid(
+                onComplete = { },
+                onError = {
+                    isLoaded.value = false
+                    _guideMsgResId.value = R.string.error_message_profile_loading_failed
+                },
+                userUid
+            ).collect { response ->
+                val user = response.values.first()
+                val imageRef = FirebaseStorage.getInstance().reference.child(user.profileUri)
+                imageRef.downloadUrl.addOnSuccessListener {
+                    _profileImage.value = it.toString()
                 }
-                is ApiResultError -> {
-                    _isLoaded.value = Event(false)
-                    Log.d(
-                        "ProfileViewModel",
-                        "Error code: ${networkResult.code}, message: ${networkResult.message}"
-                    )
-                }
-                is ApiResultException -> {
-                    _isLoaded.value = Event(false)
-                    Log.d("ProfileViewModel", "Exception: ${networkResult.throwable}")
-                }
+                _eventsUidList.value = user.participatingEvent
+                getEvents(eventsUidList.value)
             }
         }
     }
@@ -66,99 +60,82 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val result = mutableListOf<Post>()
             eventsUidList.forEach { eventUid ->
-                val networkResult = postRepository.getPostNoFirebaseUid(eventUid)
-                when (networkResult) {
-                    is ApiResultSuccess -> {
-                        val postInfo = networkResult.data?.values?.first() ?: Post()
-                        result.add(postInfo)
-                        _isLoaded.value = Event(true)
-                    }
-                    is ApiResultError -> {
-                        _isLoaded.value = Event(false)
-                        Log.d(
-                            "ProfileViewModel",
-                            "Error code: ${networkResult.code}, message: ${networkResult.message}"
-                        )
-                    }
-                    is ApiResultException -> {
-                        _isLoaded.value = Event(false)
-                        Log.d("ProfileViewModel", "Exception: ${networkResult.throwable}")
-                    }
+                postRepository.getPostNoFirebaseUid(
+                    onComplete = { isLoaded.value = true },
+                    onError = {
+                        isLoaded.value = false
+                        _guideMsgResId.value = R.string.error_message_profile_loading_failed
+                    },
+                    eventUid
+                ).collect { response ->
+                    val postInfo = response.values.first()
+                    result.add(postInfo)
                 }
             }
-            _eventsList.value = Event(result)
+            _eventsList.value = result
         }
     }
 
     fun deleteAccount() {
-        if (eventsUidList.value?.content.isNullOrEmpty()) {
-            deleteUser()
+        if (eventsUidList.value.isEmpty()) {
+            deleteUserFirebaseAuth()
             return
         }
         viewModelScope.launch {
-            eventsUidList.value?.content?.forEach { postUid ->
-                val networkResult = postRepository.getPostNoFirebaseUid(postUid)
-                when (networkResult) {
-                    is ApiResultSuccess -> {
-                        val eventFirebaseUid = networkResult.data?.keys?.first() ?: ""
-                        val post = networkResult.data?.values?.first()
-                        post?.participantsUidList?.remove(userUid)
-                        val updatePostCall =
-                            postRepository.updatePost(postUid, eventFirebaseUid, post ?: Post())
-                        when (updatePostCall) {
-                            is ApiResultSuccess -> {
-
-                            }
-                            is ApiResultError -> {
-                                _isDeleted.value = Event(false)
-                                Log.d(
-                                    "ProfileViewModel",
-                                    "Error code: ${updatePostCall.code}, message: ${updatePostCall.message}"
-                                )
-                            }
-                            is ApiResultException -> {
-                                _isDeleted.value = Event(false)
-                                Log.d("ProfileViewModel", "Exception: ${updatePostCall.throwable}")
-                            }
+            eventsUidList.value.forEach { postUid ->
+                postRepository.getPostNoFirebaseUid(
+                    onComplete = { },
+                    onError = {
+                        isDeleted.value = false
+                        _guideMsgResId.value = R.string.error_message_delete_user_failed
+                    },
+                    postUid
+                ).collect { response ->
+                    val eventFirebaseUid = response.keys.first()
+                    val post = response.values.first()
+                    post.participantsUidList?.remove(userUid)
+                    viewModelScope.launch {
+                        postRepository.updatePost(
+                            onComplete = { },
+                            onError = {
+                                isDeleted.value = false
+                                _guideMsgResId.value = R.string.error_message_delete_user_failed
+                            },
+                            postUid, eventFirebaseUid, post
+                        ).collect {
                         }
-                    }
-                    is ApiResultError -> {
-                        _isDeleted.value = Event(false)
-                        Log.d(
-                            "ProfileViewModel",
-                            "Error code: ${networkResult.code}, message: ${networkResult.message}"
-                        )
-                    }
-                    is ApiResultException -> {
-                        _isDeleted.value = Event(false)
-                        Log.d("ProfileViewModel", "Exception: ${networkResult.throwable}")
                     }
                 }
             }
-            deleteUser()
+            deleteUserFirebaseAuth()
         }
     }
 
-    fun deleteUser() {
-        viewModelScope.launch {
-            val networkResult = userRepository.deleteUserNoFirebaseUid(userUid)
-            when (networkResult) {
-                is ApiResultSuccess -> {
-                    userPreferenceRepository.clearPreferences()
-                    _isDeleted.value = Event(true)
-                }
-                is ApiResultError -> {
-                    _isDeleted.value = Event(false)
-                    Log.d(
-                        "ProfileViewModel",
-                        "Error code: ${networkResult.code}, message: ${networkResult.message}"
-                    )
-                }
-                is ApiResultException -> {
-                    _isDeleted.value = Event(false)
-                    Log.d("ProfileViewModel", "Exception: ${networkResult.throwable}")
-                }
+    private fun deleteUserFirebaseAuth() {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.delete()
+            ?.addOnCompleteListener {
+                deleteUser()
             }
+            ?.addOnFailureListener {
+                isDeleted.value = false
+            }
+    }
+
+    private fun deleteUser() {
+        viewModelScope.launch {
+            userRepository.deleteUserNoFirebaseUid(
+                onComplete = {
+                    isDeleted.value = true
+                    _guideMsgResId.value = R.string.guide_message_delete_user_successful
+                    userPreferenceRepository.clearPreferences()
+                },
+                onError = {
+                    isDeleted.value = false
+                    _guideMsgResId.value = R.string.error_message_delete_user_failed
+                },
+                userUid
+            ).collect { }
         }
     }
 }
