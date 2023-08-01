@@ -38,6 +38,7 @@ class HomeFragment : Fragment(), PostClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        viewModel.loadAllPosts()
         setLayout()
     }
 
