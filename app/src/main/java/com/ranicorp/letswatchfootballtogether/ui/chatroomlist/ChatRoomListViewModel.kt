@@ -42,6 +42,7 @@ class ChatRoomListViewModel @Inject constructor(
                 if (participatingEvents.isNotEmpty()) {
                     getLatestChat(participatingEvents)
                 } else {
+                    _isLoaded.value = true
                     _latestChatList.value = mutableListOf()
                 }
             }
@@ -75,8 +76,8 @@ class ChatRoomListViewModel @Inject constructor(
         if (_latestChatList.value.isNotEmpty()) {
             _latestChatList.value.clear()
         }
-        participatingEvents.forEach { participatingEventUid ->
-            viewModelScope.launch {
+        viewModelScope.launch {
+            participatingEvents.forEach { participatingEventUid ->
                 latestChatRepository.getLatestChat(
                     onComplete = { },
                     onError = { _isLoaded.value = false },
@@ -91,6 +92,9 @@ class ChatRoomListViewModel @Inject constructor(
                     }
                 }
             }
+            _isLoaded.value = true
+            _isLoaded.value = null
+            updateRoom(_latestChatList.value.toList())
         }
     }
 
@@ -111,11 +115,7 @@ class ChatRoomListViewModel @Inject constructor(
                 )
                 val currentList = _latestChatList.value
                 currentList.add(newChatRoomInfo)
-                currentList.toList().sortedByDescending {
-                    it.lastSentTime
-                }
                 _latestChatList.value = currentList
-                updateRoom(currentList.toList())
             }
         }
     }
