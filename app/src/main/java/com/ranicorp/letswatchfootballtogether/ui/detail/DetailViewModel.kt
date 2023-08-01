@@ -78,12 +78,8 @@ class DetailViewModel @Inject constructor(
     fun participate() {
         viewModelScope.launch {
             userRepository.getUserNoFirebaseUid(
-                onComplete = {
-                    updatePost()
-                },
-                onError = {
-                    _isParticipateCompleted.value = false
-                },
+                onComplete = { updatePost() },
+                onError = { _isParticipateCompleted.value = false },
                 userUid
             ).collect { response ->
                 userInfo = response
