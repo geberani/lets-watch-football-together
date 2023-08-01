@@ -8,9 +8,9 @@
         android:pathData="M0,0h140v144h-140z"/>
     <path
         android:pathData="M70,70m-70,0a70,70 0,1 1,140 0a70,70 0,1 1,-140 0"
-        android:fillColor="#D9D9D9"/>
+        android:fillColor="@color/grey"/>
     <path
         android:pathData="M72.33,82.33C89,82.33 102.5,68.61 102.5,51.67C102.5,34.72 89,21 72.33,21C55.67,21 42.17,34.72 42.17,51.67C42.17,68.61 55.67,82.33 72.33,82.33ZM72.33,97.67C52.2,97.67 12,107.94 12,128.33V143.67H132.67V128.33C132.67,107.94 92.47,97.67 72.33,97.67Z"
-        android:fillColor="@color/grey"/>
+        android:fillColor="#151515"/>
   </group>
 </vector>
