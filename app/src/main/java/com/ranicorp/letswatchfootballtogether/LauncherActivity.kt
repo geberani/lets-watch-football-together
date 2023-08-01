@@ -28,8 +28,14 @@ class LauncherActivity : AppCompatActivity() {
     private fun setNavigation() {
         val navController =
             supportFragmentManager.findFragmentById(R.id.homeNavHost)?.findNavController()
-        navController?.let {
-            binding.homeBottomNavigationView.setupWithNavController(it)
+        if (resources.configuration.screenWidthDp >= 600) {
+            navController?.let {
+                binding.homeNavigationRailView?.setupWithNavController(navController)
+            }
+        } else {
+            navController?.let {
+                binding.homeBottomNavigationView?.setupWithNavController(navController)
+            }
         }
 
         if (userPreferenceRepository.getUserUid().isEmpty()) {
@@ -39,12 +45,15 @@ class LauncherActivity : AppCompatActivity() {
 
         navController?.addOnDestinationChangedListener { _, destination, _ ->
             val bottomNavigation = binding.homeBottomNavigationView
+            val navigationRailView = binding.homeNavigationRailView
             when (destination.id) {
                 R.id.homeFragment, R.id.profileFragment, R.id.chatRoomListFragment -> {
-                    bottomNavigation.isVisible = true
+                    bottomNavigation?.isVisible = true
+                    navigationRailView?.isVisible = true
                 }
                 else -> {
-                    bottomNavigation.isVisible = false
+                    bottomNavigation?.isVisible = false
+                    navigationRailView?.isVisible = false
                 }
             }
         }
