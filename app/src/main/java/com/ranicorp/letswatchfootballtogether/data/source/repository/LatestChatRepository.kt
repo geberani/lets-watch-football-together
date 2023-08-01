@@ -1,6 +1,8 @@
 package com.ranicorp.letswatchfootballtogether.data.source.repository
 
+import com.ranicorp.letswatchfootballtogether.data.model.ChatRoom
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
+import com.ranicorp.letswatchfootballtogether.data.source.local.ChatRoomListDatabaseDataSource
 import com.ranicorp.letswatchfootballtogether.data.source.remote.RemoteDataSource
 import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResponse
 import com.ranicorp.letswatchfootballtogether.data.source.remote.apicalladapter.ApiResultSuccess
@@ -15,7 +17,8 @@ import kotlinx.coroutines.flow.onCompletion
 import javax.inject.Inject
 
 class LatestChatRepository @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val chatRoomListDatabaseDataSource: ChatRoomListDatabaseDataSource
 ) {
 
     fun addLatestChat(
@@ -52,4 +55,16 @@ class LatestChatRepository @Inject constructor(
     }.onCompletion {
         onComplete()
     }.flowOn(Dispatchers.Default)
+
+    suspend fun insertLocal(chatRoom: ChatRoom) {
+        return chatRoomListDatabaseDataSource.insert(chatRoom)
+    }
+
+    suspend fun getAllLocalChatRoom(): List<ChatRoom>? {
+        return chatRoomListDatabaseDataSource.getAllChatRoom()
+    }
+
+    suspend fun deleteAllChatRooms() {
+        return chatRoomListDatabaseDataSource.deleteAllChatRooms()
+    }
 }

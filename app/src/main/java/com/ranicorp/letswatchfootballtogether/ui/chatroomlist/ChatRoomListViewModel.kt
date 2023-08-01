@@ -2,6 +2,7 @@ package com.ranicorp.letswatchfootballtogether.ui.chatroomlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ranicorp.letswatchfootballtogether.data.model.ChatRoom
 import com.ranicorp.letswatchfootballtogether.data.model.ChatRoomInfo
 import com.ranicorp.letswatchfootballtogether.data.source.repository.LatestChatRepository
 import com.ranicorp.letswatchfootballtogether.data.source.repository.PostRepository
@@ -30,7 +31,10 @@ class ChatRoomListViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.getUserNoFirebaseUid(
                 onComplete = { },
-                onError = { _isLoaded.value = false },
+                onError = {
+                    _isLoaded.value = false
+                    getLocalDBChatRoomList()
+                },
                 userUid
             ).collect { response ->
                 val participatingEvents =
@@ -38,9 +42,33 @@ class ChatRoomListViewModel @Inject constructor(
                 if (participatingEvents.isNotEmpty()) {
                     getLatestChat(participatingEvents)
                 } else {
+                    _isLoaded.value = true
                     _latestChatList.value = mutableListOf()
                 }
             }
+        }
+    }
+
+    private fun getLocalDBChatRoomList() {
+        viewModelScope.launch {
+            val savedChatRoomList = latestChatRepository.getAllLocalChatRoom()
+            _isLoaded.value = true
+            if (savedChatRoomList.isNullOrEmpty()) {
+                _latestChatList.value = mutableListOf()
+                return@launch
+            }
+            val result = mutableListOf<ChatRoomInfo>()
+            savedChatRoomList.sortedByDescending { it.lastMsg }.forEach { chatRoom ->
+                val chatRoomInfo = ChatRoomInfo(
+                    chatRoom.uid,
+                    chatRoom.title,
+                    chatRoom.lastMsg,
+                    chatRoom.lastSentTime,
+                    chatRoom.imageLocation
+                )
+                result.add(chatRoomInfo)
+            }
+            _latestChatList.value = result
         }
     }
 
@@ -48,8 +76,8 @@ class ChatRoomListViewModel @Inject constructor(
         if (_latestChatList.value.isNotEmpty()) {
             _latestChatList.value.clear()
         }
-        participatingEvents.forEach { participatingEventUid ->
-            viewModelScope.launch {
+        viewModelScope.launch {
+            participatingEvents.forEach { participatingEventUid ->
                 latestChatRepository.getLatestChat(
                     onComplete = { },
                     onError = { _isLoaded.value = false },
@@ -64,6 +92,9 @@ class ChatRoomListViewModel @Inject constructor(
                     }
                 }
             }
+            _isLoaded.value = true
+            _isLoaded.value = null
+            updateRoom(_latestChatList.value.toList())
         }
     }
 
@@ -85,6 +116,22 @@ class ChatRoomListViewModel @Inject constructor(
                 val currentList = _latestChatList.value
                 currentList.add(newChatRoomInfo)
                 _latestChatList.value = currentList
+            }
+        }
+    }
+
+    private fun updateRoom(chatRoomInfoList: List<ChatRoomInfo>) {
+        viewModelScope.launch {
+            latestChatRepository.deleteAllChatRooms()
+            chatRoomInfoList.forEach { chatRoomInfo ->
+                val chatRoom = ChatRoom(
+                    chatRoomInfo.uid,
+                    chatRoomInfo.title,
+                    chatRoomInfo.lastMsg,
+                    chatRoomInfo.lastSentTime,
+                    chatRoomInfo.imageLocation
+                )
+                latestChatRepository.insertLocal(chatRoom)
             }
         }
     }

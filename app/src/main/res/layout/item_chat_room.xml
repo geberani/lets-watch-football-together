@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@drawable/background_white_rounded_corners"
+        android:background="@drawable/background_white_long_rounded_corners"
         android:onClickListener="@{() -> clickListener.onChatRoomClick(chatRoomInfo.uid, chatRoomInfo.title)}"
         android:padding="5dp">
 
