@@ -74,7 +74,7 @@ class HomeAdapter(private val clickListener: PostClickListener) :
         allPostsHeader: String
     ) {
         items.clear()
-        newPostsList = Posts.sortedByDescending { it.createdTimeMillis }.take(10)
+        newPostsList = Posts.sortedByDescending { it.createdTimeMillis }.take(8)
         popularPostsList =
             Posts.sortedByDescending { it.participantsUidList?.size }.take(10)
         allPostsList = Posts
