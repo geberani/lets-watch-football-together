@@ -42,7 +42,7 @@
     <string name="guide_message_set_location">장소를 추가해주세요.</string>
     <string name="guide_message_set_date">날짜를 추가해주세요.</string>
     <string name="guide_message_set_time">시간을 추가해주세요.</string>
-    <string name="guide_message_set_max_participants">모집 인원을 작성해주세요.</string>
+    <string name="guide_message_set_max_participants">모집 인원을 작성해주세요.(모집 인원이 0명인 모임은 개설할 수 없습니다.)</string>
     <string name="guide_message_set_description">모집에 대한 설명을 작성해주세요.</string>
     <string name="guide_message_limit_max_images">사진은 10장까지 추가할 수 있습니다.</string>
     <string name="title_set_date">모임 날짜를 정해주세요.</string>
