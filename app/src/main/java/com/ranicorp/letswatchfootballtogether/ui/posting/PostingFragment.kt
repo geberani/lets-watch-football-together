@@ -108,13 +108,13 @@ class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
         binding.ivDate.setOnClickListener {
             chooseDate()
         }
-        binding.etDate.setOnClickListener {
+        binding.tvDate.setOnClickListener {
             chooseDate()
         }
         binding.ivTime.setOnClickListener {
             chooseTime()
         }
-        binding.etTime.setOnClickListener {
+        binding.tvTime.setOnClickListener {
             chooseTime()
         }
         binding.postingToolbar.setNavigationOnClickListener {
@@ -130,7 +130,7 @@ class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
                 .build()
         datePicker.show(childFragmentManager, null)
         datePicker.addOnPositiveButtonClickListener {
-            binding.etDate.setText(DateFormatText.longToDateString(it))
+            binding.tvDate.text = DateFormatText.longToDateString(it)
         }
     }
 
@@ -147,11 +147,13 @@ class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
             var hour = timePicker.hour
             val minute = timePicker.minute
 
-            if (hour <= 12) {
-                binding.etTime.setText(getString(R.string.label_am_time, hour, minute))
+            if (hour < 12) {
+                binding.tvTime.text = getString(R.string.label_am_time, hour, minute)
+            } else if (hour == 12) {
+                binding.tvTime.text = getString(R.string.label_pm_time, hour, minute)
             } else {
                 hour -= 12
-                binding.etTime.setText(getString(R.string.label_pm_time, hour, minute))
+                binding.tvTime.text = getString(R.string.label_pm_time, hour, minute)
             }
         }
     }
