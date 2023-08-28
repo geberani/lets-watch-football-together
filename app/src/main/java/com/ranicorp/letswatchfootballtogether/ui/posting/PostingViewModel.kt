@@ -151,4 +151,8 @@ class PostingViewModel @Inject constructor(
                 location
             }
         }
+
+    fun removeSelectedImage(imageContent: ImageContent) {
+        updateImageList(imageList.toMutableList().apply{ remove(imageContent) })
+    }
 }

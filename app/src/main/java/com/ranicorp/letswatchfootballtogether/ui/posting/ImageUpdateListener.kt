@@ -1,6 +1,8 @@
 package com.ranicorp.letswatchfootballtogether.ui.posting
 
+import com.ranicorp.letswatchfootballtogether.data.model.ImageContent
+
 interface ImageUpdateListener {
 
-    fun removeImage(position: Int)
+    fun removeImage(imageContent: ImageContent)
 }

@@ -18,6 +18,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.ranicorp.letswatchfootballtogether.R
+import com.ranicorp.letswatchfootballtogether.data.model.ImageContent
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentPostingBinding
 import com.ranicorp.letswatchfootballtogether.util.DateFormatText
 import dagger.hilt.android.AndroidEntryPoint
@@ -183,8 +184,10 @@ class PostingFragment : Fragment(), ImageRequestListener, ImageUpdateListener {
         }
     }
 
-    override fun removeImage(position: Int) {
-        imageListAdapter.removeImage(position)
-        imageHeaderAdapter.removeImage()
+    override fun removeImage(imageContent: ImageContent) {
+        viewModel.removeSelectedImage(imageContent)
+        imageListAdapter.removeImage(imageContent)
+        imageHeaderAdapter.updateImageHeader(imageListAdapter.itemCount)
+        viewModel.updateImageList(imageListAdapter.getItems())
     }
 }
