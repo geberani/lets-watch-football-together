@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_settingFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_progressDialogFragment"
+            app:destination="@id/progressDialogFragment" />
         <argument
             android:name="googleUid"
             app:argType="string" />
@@ -94,6 +97,9 @@
         <action
             android:id="@+id/action_chatRoomListFragment_to_chatRoomFragment"
             app:destination="@id/chatRoomFragment" />
+        <action
+            android:id="@+id/action_chatRoomListFragment_to_progressDialogFragment"
+            app:destination="@id/progressDialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/progressDialogFragment"

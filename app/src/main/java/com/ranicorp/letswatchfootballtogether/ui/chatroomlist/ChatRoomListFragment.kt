@@ -43,11 +43,15 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
     private fun setLayout() {
         binding.rvChatRoomList.adapter = chatRoomAdapter
         viewModel.getParticipatingEventList()
+        findNavController().navigate(
+            ChatRoomListFragmentDirections.actionChatRoomListFragmentToProgressDialogFragment()
+        )
         lifecycleScope.launch {
             viewModel.isLoaded
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { isLoaded ->
                     if (isLoaded == false) {
+                        findNavController().navigateUp()
                         Toast.makeText(
                             context,
                             getString(R.string.error_message_chat_room_list_loading_failed),
@@ -61,6 +65,7 @@ class ChatRoomListFragment : Fragment(), ChatRoomClickListener {
                                     Lifecycle.State.STARTED
                                 )
                                 .collectLatest { latestChatList ->
+                                    findNavController().navigateUp()
                                     if (latestChatList.isEmpty()) {
                                         binding.guideMessage =
                                             getString(R.string.guide_message_participated_in_no_chat_room)

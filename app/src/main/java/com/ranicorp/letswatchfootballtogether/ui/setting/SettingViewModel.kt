@@ -32,14 +32,16 @@ class SettingViewModel @Inject constructor(
     private val isValidProfileUri: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val isValidNickName: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _existingNickName = MutableStateFlow<List<String>>(emptyList())
-    val existingNickName: StateFlow<List<String>> = _existingNickName
+    private val existingNickName: StateFlow<List<String>> = _existingNickName
     private val _isSettingComplete: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isSettingComplete: StateFlow<Boolean> = _isSettingComplete
     private val isInputComplete: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val isAddUserComplete = MutableStateFlow(false)
     private val isAddNickNameComplete = MutableStateFlow(false)
     private val _hasAllNickName: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val hasAllNickName: StateFlow<Boolean> = _hasAllNickName
+    private val hasAllNickName: StateFlow<Boolean> = _hasAllNickName
+    private val _isLoading: MutableStateFlow<String> = MutableStateFlow(Constants.SETTING_READY)
+    val isLoading: StateFlow<String> = _isLoading
 
     fun setProfileUri(uri: String) {
         profileUri.value = uri
@@ -65,7 +67,7 @@ class SettingViewModel @Inject constructor(
     }
 
     private fun verifyDuplicateNickName(nickName: String) {
-        if (hasAllNickName.value == false) return
+        if (!hasAllNickName.value) return
         if (!existingNickName.value.contains(nickName)) {
             isValidNickName.value = true
             _nickNameErrorType.value = null
@@ -101,6 +103,7 @@ class SettingViewModel @Inject constructor(
 
         viewModelScope.launch {
             isInputComplete.value = true
+            _isLoading.value = Constants.SETTING_LOADING
             val imageLocations = addImageToStorage(profileUri.value)
             val user =
                 User(
@@ -114,11 +117,13 @@ class SettingViewModel @Inject constructor(
             async { addUserCall(googleUid, user) }.await()
 
             if (isAddNickNameComplete.value && isAddUserComplete.value) {
+                _isLoading.value = Constants.SETTING_COMPLETE
                 _isSettingComplete.value = true
                 userPreferenceRepository.saveUserInfo(googleUid)
                 userPreferenceRepository.saveUserNickName(nickName.value)
             } else {
                 _isSettingComplete.value = false
+                _isLoading.value = Constants.SETTING_COMPLETE
                 _settingErrorType.value = Constants.ERROR_SETTING_FAILED
             }
         }
