@@ -35,9 +35,8 @@ class ChatRoomViewModel @Inject constructor(
     private var messageText = ""
     private var sentTime: Long = 0
 
-    fun sendChat(messageText: String) {
+    fun getUserDetail() {
         viewModelScope.launch {
-            this@ChatRoomViewModel.messageText = messageText
             if (profileUri.isEmpty()) {
                 viewModelScope.launch {
                     userRepository.getUserNoFirebaseUid(
@@ -50,18 +49,25 @@ class ChatRoomViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
 
-            if (profileUri.isNotEmpty()) {
-                sentTime = System.currentTimeMillis()
-                val message = Message(
-                    userUid,
-                    preferenceRepository.getUserNickName(),
-                    profileUri,
-                    sentTime,
-                    messageText
-                )
-                addChat(message)
+    fun sendChat(messageText: String) {
+        viewModelScope.launch {
+            this@ChatRoomViewModel.messageText = messageText
+            if (profileUri.isEmpty()) {
+                getUserDetail()
             }
+
+            sentTime = System.currentTimeMillis()
+            val message = Message(
+                userUid,
+                preferenceRepository.getUserNickName(),
+                profileUri,
+                sentTime,
+                messageText
+            )
+            addChat(message)
         }
     }
 
