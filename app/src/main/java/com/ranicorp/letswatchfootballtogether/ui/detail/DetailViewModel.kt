@@ -44,7 +44,9 @@ class DetailViewModel @Inject constructor(
                 postUid
             ).collect { response ->
                 postFirebaseUid = response.keys.first()
-                _selectedPost.value = response.values.first()
+                _selectedPost.value = response.values.first().apply {
+                    this.participantsUidList?.remove("")
+                }
                 if (participantsUidList.isNotEmpty()) {
                     participantsUidList.clear()
                 }
