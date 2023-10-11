@@ -30,8 +30,8 @@ android {
         applicationId "com.ranicorp.letswatchfootballtogether"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 4
+        versionName "1.0.2"
         setProperty("archivesBaseName", "footballapp-v${versionName}")
 
         buildConfigField "String", "GOOGLE_CLIENT_ID", properties["google_client_id"]
@@ -44,7 +44,7 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
-            debuggable false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix "-release"
         }

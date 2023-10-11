@@ -12,6 +12,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ranicorp.letswatchfootballtogether.R
 import com.ranicorp.letswatchfootballtogether.databinding.FragmentDetailBinding
@@ -60,10 +61,10 @@ class DetailFragment : Fragment() {
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { isLoaded ->
                     if (isLoaded == false) {
-                        Toast.makeText(
-                            context,
+                        Snackbar.make(
+                            binding.root,
                             getString(R.string.error_message_not_loaded),
-                            Toast.LENGTH_SHORT
+                            Snackbar.LENGTH_SHORT
                         ).show()
                     }
                 }
