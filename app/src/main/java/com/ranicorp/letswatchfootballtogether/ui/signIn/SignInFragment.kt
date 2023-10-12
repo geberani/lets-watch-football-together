@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,11 +43,19 @@ class SignInFragment : Fragment() {
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var auth: FirebaseAuth
     private val viewModel: SignInViewModel by viewModels()
+    private var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         oneTapClient = Identity.getSignInClient(requireActivity())
         activityResultLauncher = setActivityResultLauncher(oneTapClient)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if(System.currentTimeMillis() - backPressedTime >= 2000) {
+                backPressedTime = System.currentTimeMillis()
+            } else {
+                requireActivity().finish()
+            }
+        }
     }
 
     override fun onCreateView(

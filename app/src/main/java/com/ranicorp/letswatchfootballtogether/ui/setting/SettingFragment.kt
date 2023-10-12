@@ -62,6 +62,7 @@ class SettingFragment : Fragment() {
         setSettingCompleteNavigation()
         setNickNameErrorMsg()
         setSettingErrorMsg()
+        setProgressDialog()
     }
 
     private fun setSettingCompleteNavigation() {
@@ -119,6 +120,20 @@ class SettingFragment : Fragment() {
             Constants.ERROR_MAX_LENGTH -> getString(R.string.error_message_max_length)
             Constants.ERROR_DUPLICATE_NICK_NAME -> getString(R.string.error_message_duplicate_nick_name)
             else -> null
+        }
+    }
+
+    private fun setProgressDialog() {
+        lifecycleScope.launch {
+            viewModel.isLoading
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { isLoading ->
+                    if (isLoading == Constants.SETTING_LOADING) {
+                        findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToProgressDialogFragment())
+                    } else if (isLoading == Constants.SETTING_COMPLETE) {
+                        findNavController().navigateUp()
+                    }
+                }
         }
     }
 

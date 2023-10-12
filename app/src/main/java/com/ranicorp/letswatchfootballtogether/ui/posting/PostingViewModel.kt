@@ -65,7 +65,7 @@ class PostingViewModel @Inject constructor(
     }
 
     private fun isNotValidInfo(text: String?, messageResId: Int): Boolean {
-        if (text.isNullOrBlank() || text == "null" || text == "[]") {
+        if (text.isNullOrBlank() || text == "null" || text == "[]" || text == "0") {
             _errorMsgResId.value = messageResId
             return true
         }
@@ -151,4 +151,8 @@ class PostingViewModel @Inject constructor(
                 location
             }
         }
+
+    fun removeSelectedImage(imageContent: ImageContent) {
+        updateImageList(imageList.toMutableList().apply{ remove(imageContent) })
+    }
 }

@@ -36,9 +36,9 @@ class ImageAdapter(private val limit: Int, private val listener: ImageUpdateList
         }
     }
 
-    fun removeImage(position: Int) {
-        items.removeAt(position)
-        notifyItemRemoved(position)
+    fun removeImage(imageContent: ImageContent) {
+        items.remove(imageContent)
+        notifyDataSetChanged()
     }
 
     class ImageViewHolder(private val binding: ItemAttachedImageBinding) :

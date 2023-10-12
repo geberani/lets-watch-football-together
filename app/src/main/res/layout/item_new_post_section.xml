@@ -9,14 +9,14 @@
         android:id="@+id/rvNewPostSection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
+        android:layout_marginEnd="6dp"
+        android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:spanCount="2"
+        app:spanCount="4"
         tools:listitem="@layout/item_new_post" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

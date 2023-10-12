@@ -54,6 +54,7 @@ class ChatRoomFragment : Fragment() {
         }
         binding.rvChat.adapter = messageAdapter
         viewModel.getAllChat()
+        getUserDetail()
         sendText()
         setData()
         viewModel.addChatEventListener()
@@ -70,6 +71,10 @@ class ChatRoomFragment : Fragment() {
                     }
                 }
         }
+    }
+
+    private fun getUserDetail() {
+        viewModel.getUserDetail()
     }
 
     private fun sendText() {

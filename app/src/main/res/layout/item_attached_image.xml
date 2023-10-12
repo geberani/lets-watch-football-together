@@ -43,7 +43,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="54dp"
-            android:onClick="@{() -> listener.removeImage(position)}"
+            android:onClick="@{() -> listener.removeImage(imageContent)}"
             android:src="@drawable/ic_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

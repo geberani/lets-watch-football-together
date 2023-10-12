@@ -50,14 +50,14 @@
                     android:layout_marginTop="17dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toTopOf="@id/etTitle"
+                    app:layout_constraintBottom_toTopOf="@id/tvTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:listitem="@layout/item_attached_image" />
 
                 <EditText
-                    android:id="@+id/etTitle"
+                    android:id="@+id/tvTitle"
                     style="@style/App.EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -75,51 +75,55 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/ic_location_pin"
                     app:layout_constraintBottom_toTopOf="@id/ivDate"
                     app:layout_constraintEnd_toStartOf="@id/etLocation"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/etTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
                 <EditText
                     android:id="@+id/etLocation"
-                    style="@style/App.EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="16dp"
+                    android:background="@drawable/background_grey_underline"
                     android:hint="@string/hint_post_location"
                     android:inputType="text"
                     android:text="@={viewModel.location}"
-                    app:layout_constraintBottom_toTopOf="@id/etDate"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@id/tvDate"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivLocationPin"
-                    app:layout_constraintTop_toBottomOf="@id/etTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
                 <ImageView
                     android:id="@+id/ivDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/ic_calendar"
                     app:layout_constraintBottom_toTopOf="@id/ivTime"
-                    app:layout_constraintEnd_toStartOf="@id/etDate"
+                    app:layout_constraintEnd_toStartOf="@id/tvDate"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/ivLocationPin" />
 
-                <EditText
-                    android:id="@+id/etDate"
-                    style="@style/App.EditText"
+                <TextView
+                    android:id="@+id/tvDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="16dp"
+                    android:background="@drawable/background_grey_underline"
+                    android:backgroundTint="@color/grey"
                     android:hint="@string/hint_posting_date"
-                    android:inputType="date"
                     android:text="@={viewModel.date}"
-                    app:layout_constraintBottom_toTopOf="@id/etTime"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@id/tvTime"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivDate"
                     app:layout_constraintTop_toBottomOf="@id/etLocation" />
@@ -129,26 +133,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/ic_clock"
-                    app:layout_constraintEnd_toStartOf="@id/etTime"
+                    app:layout_constraintBottom_toTopOf="@id/etNumberOfRecruits"
+                    app:layout_constraintEnd_toStartOf="@id/tvTime"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/ivDate" />
 
-                <EditText
-                    android:id="@+id/etTime"
-                    style="@style/App.EditText"
+                <TextView
+                    android:id="@+id/tvTime"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="16dp"
+                    android:background="@drawable/background_grey_underline"
+                    android:backgroundTint="@color/grey"
                     android:hint="@string/hint_post_time"
-                    android:inputType="time"
                     android:text="@={viewModel.time}"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@id/etNumberOfRecruits"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivTime"
-                    app:layout_constraintTop_toBottomOf="@id/etDate" />
+                    app:layout_constraintTop_toBottomOf="@id/tvDate" />
 
                 <EditText
                     android:id="@+id/etNumberOfRecruits"
@@ -162,7 +169,7 @@
                     app:layout_constraintBottom_toTopOf="@id/etDescription"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/etTime" />
+                    app:layout_constraintTop_toBottomOf="@id/tvTime" />
 
                 <EditText
                     android:id="@+id/etDescription"

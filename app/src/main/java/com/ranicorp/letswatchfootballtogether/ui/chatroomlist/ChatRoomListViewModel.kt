@@ -26,6 +26,7 @@ class ChatRoomListViewModel @Inject constructor(
     val isLoaded: StateFlow<Boolean?> = _isLoaded
     private val _latestChatList = MutableStateFlow<MutableList<ChatRoomInfo>>(mutableListOf())
     val latestChatList: StateFlow<MutableList<ChatRoomInfo>> = _latestChatList
+    private val updatedList: MutableList<ChatRoomInfo> = mutableListOf()
 
     fun getParticipatingEventList() {
         viewModelScope.launch {
@@ -39,11 +40,11 @@ class ChatRoomListViewModel @Inject constructor(
             ).collect { response ->
                 val participatingEvents =
                     response.values.first().participatingEvent.toList()
-                if (participatingEvents.isNotEmpty()) {
-                    getLatestChat(participatingEvents)
-                } else {
+                if (participatingEvents.isEmpty()) {
                     _isLoaded.value = true
                     _latestChatList.value = mutableListOf()
+                } else {
+                    getLatestChat(participatingEvents)
                 }
             }
         }
@@ -83,40 +84,35 @@ class ChatRoomListViewModel @Inject constructor(
                     onError = { _isLoaded.value = false },
                     participatingEventUid
                 ).collect { response ->
-                    if (response != null) {
-                        val currentList = _latestChatList.value
-                        currentList.add(response)
-                        _latestChatList.value = currentList
+                    if (!response?.lastMsg.isNullOrEmpty()) {
+                        updatedList.addAll(listOf(response!!))
                     } else {
                         getPostDetail(participatingEventUid)
                     }
                 }
             }
+            _latestChatList.value = updatedList
             _isLoaded.value = true
             _isLoaded.value = null
             updateRoom(_latestChatList.value.toList())
         }
     }
 
-    private fun getPostDetail(participatingEventUid: String) {
-        viewModelScope.launch {
-            postRepository.getPostNoFirebaseUid(
-                onComplete = { _isLoaded.value = true },
-                onError = { _isLoaded.value = false },
-                participatingEventUid
-            ).collect { response ->
-                val post = response.values.first()
-                val newChatRoomInfo = ChatRoomInfo(
-                    participatingEventUid,
-                    post.title,
-                    "",
-                    0,
-                    post.imageLocations.first()
-                )
-                val currentList = _latestChatList.value
-                currentList.add(newChatRoomInfo)
-                _latestChatList.value = currentList
-            }
+    private suspend fun getPostDetail(participatingEventUid: String) {
+        postRepository.getPostNoFirebaseUid(
+            onComplete = {  },
+            onError = { _isLoaded.value = false },
+            participatingEventUid
+        ).collect { response ->
+            val post = response.values.first()
+            val newChatRoomInfo = ChatRoomInfo(
+                participatingEventUid,
+                post.title,
+                "",
+                0,
+                post.imageLocations.first()
+            )
+            updatedList.add(newChatRoomInfo)
         }
     }
 

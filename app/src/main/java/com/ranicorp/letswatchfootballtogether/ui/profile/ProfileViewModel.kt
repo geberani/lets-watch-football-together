@@ -51,7 +51,11 @@ class ProfileViewModel @Inject constructor(
                     _profileImage.value = it.toString()
                 }
                 _eventsUidList.value = user.participatingEvent
-                getEvents(eventsUidList.value)
+                if (user.participatingEvent.isNotEmpty()) {
+                    getEvents(eventsUidList.value)
+                } else {
+                    _eventsList.value = emptyList()
+                }
             }
         }
     }
@@ -68,8 +72,10 @@ class ProfileViewModel @Inject constructor(
                     },
                     eventUid
                 ).collect { response ->
-                    val postInfo = response.values.first()
-                    result.add(postInfo)
+                    if (response.isNotEmpty()) {
+                        val postInfo = response.values.first()
+                        result.add(postInfo)
+                    }
                 }
             }
             _eventsList.value = result

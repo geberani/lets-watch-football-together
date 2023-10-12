@@ -23,7 +23,11 @@ class HomeViewModel @Inject constructor(private val postRepository: PostReposito
                 onComplete = { _isLoadingComplete.value = true },
                 onError = { _isLoadingComplete.value = false }
             ).collect { response ->
-                _allPosts.value = response
+                val filteredPosts = response.map { post ->
+                    post.participantsUidList?.remove("")
+                    post
+                }
+                _allPosts.value = filteredPosts
             }
         }
     }

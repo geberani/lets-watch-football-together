@@ -5,12 +5,24 @@ plugins {
     id 'androidx.navigation.safeargs'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'com.google.firebase.crashlytics'
 }
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+Properties keystoreProperties = new Properties()
+keystoreProperties.load(rootProject.file('keystore.properties').newDataInputStream())
 
 android {
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
     namespace 'com.ranicorp.letswatchfootballtogether'
     compileSdk 33
 
@@ -18,8 +30,8 @@ android {
         applicationId "com.ranicorp.letswatchfootballtogether"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 4
+        versionName "1.0.2"
         setProperty("archivesBaseName", "footballapp-v${versionName}")
 
         buildConfigField "String", "GOOGLE_CLIENT_ID", properties["google_client_id"]
@@ -29,12 +41,15 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
-            debuggable false
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             versionNameSuffix "-release"
         }
         debug {
+            minifyEnabled false
             debuggable true
             versionNameSuffix "-debug"
         }
@@ -106,4 +121,9 @@ dependencies {
     kapt ("androidx.room:room-compiler:2.5.2")
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    // Add the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
